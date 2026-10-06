@@ -21,7 +21,7 @@
 :root{
   --bg:#F2F3F7; --surface:#FFFFFF; --surface-2:#F7F8FB; --ink:#141A2E; --muted:#636B82; --line:#E3E6EE;
   --accent:#3355E6; --accent-ink:#FFFFFF;
-  --save:#119B6A; --ant:#D98400; --fixed:#6474B8; --danger:#D23A3E; --loan:#0B8AA3;
+  --save:#119B6A; --ant:#D98400; --fixed:#6474B8; --danger:#D23A3E; --loan:#0B8AA3; --nequi:#C2187A; --cash:#2F8F4E; --bank:#4A5BC4;
   --hero:#141A2E; --hero-ink:#F2F4FA; --hero-muted:#A9B1C9; --hero-track:#2A3250;
   --shadow:0 1px 2px rgba(20,26,46,.05),0 8px 24px rgba(20,26,46,.06);
   --display:"Bricolage Grotesque",ui-rounded,system-ui,sans-serif;
@@ -33,7 +33,7 @@
 @media (prefers-color-scheme:dark){:root{
   --bg:#0B0F1A; --surface:#151B2B; --surface-2:#1B2234; --ink:#EEF1F8; --muted:#97A0B8; --line:#262E44;
   --accent:#7C95FF; --accent-ink:#0B0F1A;
-  --save:#35D19A; --ant:#FFB547; --fixed:#9AA8E6; --danger:#FF7B7F; --loan:#4FD1E8;
+  --save:#35D19A; --ant:#FFB547; --fixed:#9AA8E6; --danger:#FF7B7F; --loan:#4FD1E8; --nequi:#FF6BBE; --cash:#5FD38A; --bank:#8E9CFF;
   --hero:#1B2440; --hero-ink:#F2F4FA; --hero-muted:#A9B1C9; --hero-track:#2E3858;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
   color-scheme:dark}}
@@ -108,6 +108,7 @@ input{font:inherit;font-size:16px}
 .ico.hormiga{background:color-mix(in srgb,var(--ant) 16%,transparent);color:var(--ant)}
 .ico.fijo{background:color-mix(in srgb,var(--fixed) 16%,transparent);color:var(--fixed)}
 .ico.ahorro{background:color-mix(in srgb,var(--save) 16%,transparent);color:var(--save)}
+.ico.ingreso{background:color-mix(in srgb,var(--save) 16%,transparent);color:var(--save)}
 .ico.prestamo{background:color-mix(in srgb,var(--loan) 16%,transparent);color:var(--loan)}
 .row .name{min-width:0}
 .row .name b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -120,11 +121,36 @@ input{font:inherit;font-size:16px}
 .more{background:none;border:none;color:var(--accent);font-weight:600;padding:10px 0 0;width:100%;text-align:center}
 
 /* ---------- Segmentos ---------- */
-.seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--surface);border-radius:14px;padding:4px;box-shadow:var(--shadow)}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);background:var(--surface);border-radius:14px;padding:4px;box-shadow:var(--shadow)}
 .seg button{border:none;background:none;border-radius:10px;padding:9px 6px;font-weight:600;font-size:.92rem;color:var(--muted)}
 .seg button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
 .total-line{display:flex;justify-content:space-between;align-items:baseline;padding:0 4px}
 .total-line .num{font-size:1.4rem;font-weight:600}
+
+/* ---------- Mi dinero ---------- */
+.money-total{font-family:var(--num);font-size:2.3rem;font-weight:600;letter-spacing:-.04em;line-height:1.1;margin:2px 0 4px}
+.money-total.neg{color:var(--danger)}
+.money-note{color:var(--muted);font-size:.85rem;margin:0 0 14px}
+.accts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.acct{border:1px solid var(--line);background:var(--surface-2);border-radius:16px;padding:12px 14px;text-align:left;display:flex;flex-direction:column;gap:4px;min-width:0}
+.acct span:first-child{display:flex;align-items:center;gap:8px;font-weight:600;font-size:.9rem;min-width:0}
+.acct span:first-child em{font-style:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.acct .num{font-size:1.15rem;font-weight:600;overflow-wrap:anywhere}
+.acct .num.neg{color:var(--danger)}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.dot.nequi{background:var(--nequi)} .dot.efectivo{background:var(--cash)} .dot.banco{background:var(--bank)} .dot.otro{background:var(--muted)}
+.row-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.hint{background:color-mix(in srgb,var(--accent) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 30%,transparent)}
+.hint p{margin:4px 0 12px;color:var(--muted)}
+.picks{display:flex;flex-wrap:wrap;gap:8px}
+.pick{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--line);background:var(--surface-2);border-radius:999px;padding:8px 13px;font-weight:600;font-size:.88rem}
+.pick[aria-pressed="true"]{border-color:var(--ink);background:var(--surface)}
+.acct-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.acct-row:last-child{border-bottom:none}
+.acct-row b{display:flex;align-items:center;gap:8px;font-weight:600;min-width:0}
+.select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 52%,calc(100% - 13px) 52%;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px}
+.adj-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:12px;align-items:center;margin-bottom:10px}
+.adj-row label{display:flex;align-items:center;gap:8px;font-weight:600}
 
 /* ---------- Préstamos ---------- */
 .owed{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
@@ -180,8 +206,8 @@ input{font:inherit;font-size:16px}
 .sheet.open{transform:none;visibility:visible;transition:transform .28s cubic-bezier(.2,.8,.2,1)}
 .grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 14px}
 .sheet h3{font-family:var(--display);font-weight:700;font-size:1.3rem;margin:0 0 14px}
-.types{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:14px}
-.type{border:1.5px solid var(--line);background:var(--surface-2);border-radius:14px;padding:10px 2px;font-weight:600;font-size:.82rem;display:flex;flex-direction:column;align-items:center;gap:4px}
+.types{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin-bottom:14px}
+.type{border:1.5px solid var(--line);background:var(--surface-2);border-radius:14px;padding:10px 1px;font-weight:600;font-size:.74rem;display:flex;flex-direction:column;align-items:center;gap:4px}
 .type i{width:10px;height:10px;border-radius:3px}
 .type[aria-pressed="true"]{border-color:var(--ink);background:var(--surface)}
 .amount-input{font-family:var(--num);font-size:2rem;font-weight:600;text-align:center;border:none;background:none;color:var(--ink);width:100%;padding:6px 0 10px;letter-spacing:-.03em}
@@ -213,10 +239,15 @@ input{font:inherit;font-size:16px}
     <img src="icons/icon-192.png" alt="">
     <div>
       <h1>Mi plata del mes</h1>
-      <p>Tus gastos y tu ahorro, en el bolsillo.</p>
+      <p>Tu plata, tus gastos y tus metas, en el bolsillo.</p>
     </div>
   </div>
   <form id="fLogin" class="card stack-gap">
+    <div class="seg two" role="tablist" aria-label="Entrar o registrarse" style="margin:0">
+      <button type="button" role="tab" data-auth="login" aria-selected="true">Entrar</button>
+      <button type="button" role="tab" data-auth="signup" aria-selected="false">Crear cuenta</button>
+    </div>
+    <div class="field" id="lNombreWrap" hidden><label for="lNombre">Tu nombre</label><input class="input" id="lNombre" autocomplete="given-name" maxlength="40" placeholder="¿Cómo te llamamos?"></div>
     <div class="field"><label for="lEmail">Correo</label><input class="input" id="lEmail" type="email" autocomplete="username" inputmode="email" required></div>
     <div class="field"><label for="lPass">Contraseña</label><input class="input" id="lPass" type="password" autocomplete="current-password" required></div>
     <button class="btn" id="lBtn" type="submit">Entrar</button>
@@ -236,6 +267,23 @@ input{font:inherit;font-size:16px}
 
     <!-- Inicio -->
     <section class="view" id="v-inicio">
+      <article class="card hint" id="planHint" hidden>
+        <div class="card-head" style="margin:0"><h2>Arma tu plan</h2></div>
+        <p>Pon cuánto ganas, cuánto quieres ahorrar y para qué. Con eso calculamos tu mes.</p>
+        <button class="btn" type="button" data-go="ajustes">Ir a Ajustes</button>
+      </article>
+
+      <article class="card" aria-labelledby="moneyLbl">
+        <span class="label" id="moneyLbl">Tu dinero hoy</span>
+        <div class="money-total" id="moneyTotal">$0</div>
+        <p class="money-note" id="moneyNote"></p>
+        <div class="accts" id="accts"></div>
+        <div class="row-btns">
+          <button class="btn ghost" type="button" id="btnAjustar">Ajustar saldos</button>
+          <button class="btn ghost" type="button" id="btnPasar">Pasar plata</button>
+        </div>
+      </article>
+
       <article class="hero" aria-labelledby="metaLbl">
         <div class="ring" aria-hidden="true">
           <svg viewBox="0 0 120 120"><circle class="track" cx="60" cy="60" r="52" fill="none" stroke-width="12"/><circle class="val" id="ringVal" cx="60" cy="60" r="52" fill="none" stroke-width="12" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="326.73"/></svg>
@@ -298,6 +346,7 @@ input{font:inherit;font-size:16px}
     <section class="view" id="v-movs" hidden>
       <div class="seg" role="tablist" aria-label="Tipo de movimiento">
         <button role="tab" data-seg="hormiga" aria-selected="true">Hormiga</button>
+        <button role="tab" data-seg="ingreso" aria-selected="false">Ingresos</button>
         <button role="tab" data-seg="fijo" aria-selected="false">Fijos</button>
         <button role="tab" data-seg="ahorro" aria-selected="false">Ahorros</button>
       </div>
@@ -328,7 +377,8 @@ input{font:inherit;font-size:16px}
     <!-- Ajustes -->
     <section class="view" id="v-ajustes" hidden>
       <article class="card stack-gap">
-        <div class="card-head" style="margin:0"><h2>Tu plan</h2></div>
+        <div class="card-head" style="margin:0"><h2>Tu perfil y plan</h2></div>
+        <div class="field"><label for="pfNombre">Tu nombre</label><input class="input" id="pfNombre" maxlength="40" autocomplete="given-name"></div>
         <div class="grid2">
           <div class="field"><label for="ajIng">Sueldo quincenal</label><input class="input num" id="ajIng" inputmode="numeric"></div>
           <div class="field"><label for="ajAhorro">Ahorro por quincena</label><input class="input num" id="ajAhorro" inputmode="numeric"></div>
@@ -336,6 +386,15 @@ input{font:inherit;font-size:16px}
           <div class="field"><label for="ajNombre">Nombre de la meta</label><input class="input" id="ajNombre" maxlength="40"></div>
         </div>
         <button class="btn" id="ajGuardar" type="button">Guardar plan</button>
+      </article>
+      <article class="card stack-gap">
+        <div class="card-head" style="margin:0"><h2>Tus cuentas</h2></div>
+        <div id="acctList"></div>
+        <div class="grid2">
+          <div class="field"><label for="newAcct">Nueva cuenta</label><input class="input" id="newAcct" maxlength="30" placeholder="Bancolombia, Daviplata…"></div>
+          <div class="field"><label for="newAcctTipo">Tipo</label><select class="input select" id="newAcctTipo"><option value="banco">Banco</option><option value="nequi">Nequi</option><option value="efectivo">Efectivo</option><option value="otro">Otro</option></select></div>
+        </div>
+        <button class="btn ghost" id="addAcct" type="button">Agregar cuenta</button>
       </article>
       <article class="card stack-gap">
         <div class="card-head" style="margin:0"><h2>Seguridad</h2></div>
@@ -366,10 +425,11 @@ input{font:inherit;font-size:16px}
     <div class="grab"></div>
     <h3 id="sheetTitle">Agregar movimiento</h3>
     <div class="types" role="group" aria-label="Tipo">
-      <button type="button" class="type" data-type="hormiga" aria-pressed="true"><i style="background:var(--ant)"></i>Hormiga</button>
-      <button type="button" class="type" data-type="fijo" aria-pressed="false"><i style="background:var(--fixed)"></i>Fijo</button>
+      <button type="button" class="type" data-type="hormiga" aria-pressed="true"><i style="background:var(--ant)"></i>Gasto</button>
+      <button type="button" class="type" data-type="ingreso" aria-pressed="false"><i style="background:var(--save)"></i>Ingreso</button>
       <button type="button" class="type" data-type="ahorro" aria-pressed="false"><i style="background:var(--save)"></i>Ahorro</button>
       <button type="button" class="type" data-type="prestamo" aria-pressed="false"><i style="background:var(--loan)"></i>Préstamo</button>
+      <button type="button" class="type" data-type="fijo" aria-pressed="false"><i style="background:var(--fixed)"></i>Fijo</button>
     </div>
     <div class="seg two" id="shDir" role="group" aria-label="Dirección del préstamo" hidden>
       <button type="button" data-dir="preste" aria-selected="true">Yo presté</button>
@@ -377,8 +437,16 @@ input{font:inherit;font-size:16px}
     </div>
     <input class="amount-input" id="shMonto" inputmode="numeric" placeholder="$0" aria-label="Monto">
     <div class="field" id="shNombreWrap" style="margin-bottom:14px"><label for="shNombre" id="shNombreLbl">¿En qué?</label><input class="input" id="shNombre" maxlength="80" placeholder="Tinto, almuerzo, Uber…"></div>
+    <div class="field" id="shCuentaWrap" style="margin-bottom:14px"><label id="shCuentaLbl">¿De dónde sale?</label><div class="picks" id="shCuentas" role="group"></div></div>
     <div class="field" id="shFechaWrap" style="margin-bottom:14px" hidden><label for="shFecha">¿Para cuándo te paga? (opcional)</label><input class="input" id="shFecha" type="date"></div>
     <button class="btn" id="shGuardar" type="submit">Guardar</button>
+  </form>
+
+  <form class="sheet" id="sheet2" aria-labelledby="s2Title" autocomplete="off">
+    <div class="grab"></div>
+    <h3 id="s2Title"></h3>
+    <div id="s2Body"></div>
+    <button class="btn" id="s2Btn" type="submit">Guardar</button>
   </form>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -394,10 +462,10 @@ const $ = id => document.getElementById(id);
 const fmt = n => new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(Math.round(n||0)).replace(/\s/g,'');
 const dots = n => n ? new Intl.NumberFormat('es-CO').format(n) : '';
 const parse = s => Number(String(s||'').replace(/[^\d]/g,''))||0;
-const DEF = {ingreso_quincenal:883333, ahorro_quincenal:333000, meta_monto:2000000, meta_nombre:'iPhone'};
+const DEF = {ingreso_quincenal:0, ahorro_quincenal:0, meta_monto:0, meta_nombre:'Mi meta', nombre:''};
 const QUICK = [['Tinto',2500],['Empanada',3000],['Gaseosa',3500],['Snack',4000],['Almuerzo',15000],['Domicilio',8000],['Uber',12000]];
 const TITLES = {inicio:'Inicio', movs:'Movimientos', prestamos:'Préstamos', ajustes:'Ajustes'};
-let cfg = {...DEF}, gastos = [], ahorros = [], prestamos = [], abonos = [], uid = null, seg = 'hormiga', sheetType = 'hormiga', sheetDir = 'preste', abonoLoan = null;
+let cfg = {...DEF}, gastos = [], ahorros = [], prestamos = [], abonos = [], cuentas = [], cuentaSel = null, authMode = 'login', s2Mode = null, uid = null, seg = 'hormiga', sheetType = 'hormiga', sheetDir = 'preste', abonoLoan = null;
 
 const sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {auth:{persistSession:true,autoRefreshToken:true}}) : null;
 
@@ -419,12 +487,21 @@ function cuando(iso){
   if(d.toDateString()===ay.toDateString()) return 'Ayer';
   return d.toLocaleDateString('es-CO',{day:'numeric',month:'short'});
 }
+const TIPO_CTA = {nequi:'Nequi', efectivo:'Efectivo', banco:'Banco', otro:'Otro'};
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function cuentaDefault(){ const id=cuentaSel||lsGet('mp_cuenta'); return (cuentas.find(c=>c.id===id)||cuentas[0]||{}).id||null; }
+function nombreCuenta(id){ return (cuentas.find(c=>c.id===id)||{}).nombre||''; }
+function dotEl(tipo){ const d=document.createElement('span'); d.className='dot '+tipo; return d; }
 function moneyInput(el){ el.addEventListener('input',()=>{ const v=parse(el.value); el.value = v? (el.classList.contains('amount-input')?'$':'')+dots(v) : ''; }); }
 
 /* ---------- render ---------- */
 function render(){
   const mes = mesKey();
   const mt=new Date().toLocaleDateString('es-CO',{month:'long',year:'numeric'}); $('mesTxt').textContent = mt.charAt(0).toUpperCase()+mt.slice(1);
+  if(!$('v-inicio').hidden) $('title').textContent = cfg.nombre ? 'Hola, '+cfg.nombre : 'Hola';
+  $('planHint').hidden = !!cfg.ingreso_quincenal || !!cfg.meta_monto;
+  renderMoney();
   const ingreso = cfg.ingreso_quincenal*2;
   const fijos = gastos.filter(g=>g.tipo==='fijo');
   const hormiga = gastos.filter(g=>g.tipo==='hormiga' && localMes(g.fecha)===mes);
@@ -445,18 +522,20 @@ function render(){
   $('sFijo').style.width=pct(tFijo); $('sAnt').style.width=pct(tAnt); $('sAhorro').style.width=pct(ahMes); $('sLoan').style.width=pct(Math.max(0,-loanNet));
 
   const total = ahorros.reduce((s,a)=>s+a.monto,0), falta = Math.max(0,cfg.meta_monto-total);
+  $('moneyNote').textContent = total ? 'Aparte tienes '+fmt(total)+' guardados para tu '+cfg.meta_nombre+'.' : 'Suma de tus cuentas. Toca una para ajustar su saldo.';
   const p = cfg.meta_monto ? Math.min(100,total/cfg.meta_monto*100) : 0;
   $('ringVal').style.strokeDashoffset = 326.73*(1-p/100);
   $('metaPct').textContent = Math.floor(p)+'%';
   $('metaNombre').textContent = cfg.meta_nombre; $('metaAhorrado').textContent = fmt(total);
-  $('metaTotal').textContent = 'de '+fmt(cfg.meta_monto);
-  if(falta===0) $('metaTexto').textContent = '¡Lo lograste! Ya tienes la plata para tu '+cfg.meta_nombre+'.';
+  $('metaTotal').textContent = cfg.meta_monto ? 'de '+fmt(cfg.meta_monto) : '';
+  if(!cfg.meta_monto) $('metaTexto').textContent = 'Ponle nombre y precio a tu meta en Ajustes.';
+  else if(falta===0) $('metaTexto').textContent = '¡Lo lograste! Ya tienes la plata para tu '+cfg.meta_nombre+'.';
   else { const q = cfg.ahorro_quincenal>0 ? Math.ceil(falta/cfg.ahorro_quincenal) : null;
     $('metaTexto').textContent = 'Te faltan '+fmt(falta)+(q? '. Ahorrando '+fmt(cfg.ahorro_quincenal)+' por quincena, llegas en '+q+' quincena'+(q>1?'s':'')+'.' : '.'); }
   $('proxima').textContent = 'Próximo: '+proximaFecha().toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short'});
 
   // últimos movimientos (hormiga + ahorros de cualquier fecha, gastos fijos no)
-  const movs = [...gastos.filter(g=>g.tipo==='hormiga').map(g=>({...g,_t:'hormiga',_tabla:'gastos'})), ...ahorros.map(a=>({...a,nombre:'Ahorro para '+cfg.meta_nombre,_t:'ahorro',_tabla:'ahorros'})),
+  const movs = [...gastos.filter(g=>g.tipo==='hormiga'||g.tipo==='ingreso').map(g=>({...g,_t:g.tipo,_tabla:'gastos'})), ...ahorros.map(a=>({...a,nombre:'Ahorro para '+cfg.meta_nombre,_t:'ahorro',_tabla:'ahorros'})),
     ...prestamos.map(l=>({...l,nombre: l.direccion==='preste' ? 'Le prestaste a '+l.persona : l.persona+' te prestó',_t:'prestamo',_tabla:'prestamos',_sign: l.direccion==='preste'?'−':'+'})),
     ...abonos.filter(a=>loanById[a.prestamo_id]).map(a=>{ const l=loanById[a.prestamo_id]; return {...a,nombre: l.direccion==='preste' ? l.persona+' te pagó' : 'Le pagaste a '+l.persona,_t:'prestamo',_tabla:'prestamo_abonos',_sign: l.direccion==='preste'?'+':'−'}; })]
     .sort((a,b)=>b.fecha.localeCompare(a.fecha));
@@ -464,20 +543,23 @@ function render(){
 
   // pestaña movimientos
   let items, lbl, tot;
-  if(seg==='hormiga'){ items=hormiga.map(g=>({...g,_t:'hormiga',_tabla:'gastos'})); lbl='Total hormiga este mes'; tot=tAnt; }
+  if(seg==='hormiga'){ items=hormiga.map(g=>({...g,_t:'hormiga',_tabla:'gastos'})); lbl='Total gastos este mes'; tot=tAnt; }
+  else if(seg==='ingreso'){ items=gastos.filter(g=>g.tipo==='ingreso'&&localMes(g.fecha)===mes).map(g=>({...g,_t:'ingreso',_tabla:'gastos'})); lbl='Ingresos este mes'; tot=items.reduce((s,g)=>s+g.monto,0); }
   else if(seg==='fijo'){ items=fijos.map(g=>({...g,_t:'fijo',_tabla:'gastos'})).sort((a,b)=>b.monto-a.monto); lbl='Total fijos al mes'; tot=tFijo; }
   else { items=ahorros.map(a=>({...a,nombre:'Ahorro para '+cfg.meta_nombre,_t:'ahorro',_tabla:'ahorros'})); lbl='Total ahorrado'; tot=total; }
   if(seg!=='fijo') items.sort((a,b)=>b.fecha.localeCompare(a.fecha));
   $('segLbl').textContent=lbl; $('segTotal').textContent=fmt(tot);
-  fillList($('segList'), items, {hormiga:'Sin gastos hormiga este mes. Bien ahí.',fijo:'No tienes gastos fijos registrados.',ahorro:'Todavía no has registrado ahorros.'}[seg]);
+  fillList($('segList'), items, {hormiga:'Sin gastos este mes. Bien ahí.',ingreso:'Aún no registras ingresos este mes. Cuando te paguen, agrégalo con +.',fijo:'No tienes gastos fijos registrados.',ahorro:'Todavía no has registrado ahorros.'}[seg]);
 
   renderPrestamos(loanById);
 
-  if(!['ajIng','ajAhorro','ajMeta','ajNombre'].includes(document.activeElement?.id)){
+  renderCuentasAjustes();
+  if(!['ajIng','ajAhorro','ajMeta','ajNombre','pfNombre'].includes(document.activeElement?.id)){
+    $('pfNombre').value=cfg.nombre||'';
     $('ajIng').value=dots(cfg.ingreso_quincenal); $('ajAhorro').value=dots(cfg.ahorro_quincenal); $('ajMeta').value=dots(cfg.meta_monto); $('ajNombre').value=cfg.meta_nombre;
   }
 }
-const LETRA = {hormiga:'H', fijo:'F', ahorro:'A', prestamo:'P'};
+const LETRA = {hormiga:'G', fijo:'F', ahorro:'A', prestamo:'P', ingreso:'I'};
 function fillList(ul, items, emptyTxt){
   ul.textContent='';
   if(!items.length){ const p=document.createElement('p'); p.className='empty'; p.textContent=emptyTxt; ul.appendChild(p); return; }
@@ -486,11 +568,11 @@ function fillList(ul, items, emptyTxt){
     const ico=document.createElement('span'); ico.className='ico '+it._t; ico.textContent=LETRA[it._t];
     const n=document.createElement('span'); n.className='name';
     const b=document.createElement('b'); b.textContent=it.nombre;
-    const sm=document.createElement('small'); sm.textContent = it._t==='fijo' ? 'Cada mes' : cuando(it.fecha);
+    const sm=document.createElement('small'); sm.textContent = it._t==='fijo' ? 'Cada mes' : cuando(it.fecha)+(it.cuenta_id && nombreCuenta(it.cuenta_id) ? ' · '+nombreCuenta(it.cuenta_id) : '');
     n.append(b,sm);
-    const sign = it._sign || (it._t==='ahorro'?'+':'−');
+    const sign = it._sign || (it._t==='ahorro'||it._t==='ingreso'?'+':'−');
     const m=document.createElement('span'); m.className='amt'; m.textContent=sign+fmt(it.monto);
-    if(it._t==='ahorro') m.style.color='var(--save)'; else if(it._t==='prestamo' && sign==='+') m.style.color='var(--loan)';
+    if(it._t==='ahorro'||it._t==='ingreso') m.style.color='var(--save)'; else if(it._t==='prestamo' && sign==='+') m.style.color='var(--loan)';
     const d=document.createElement('button'); d.className='del'; d.type='button'; d.setAttribute('aria-label','Borrar '+it.nombre);
     d.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
     d.onclick=()=>borrar(it._tabla,it.id,d);
@@ -498,6 +580,31 @@ function fillList(ul, items, emptyTxt){
   }
 }
 
+function renderMoney(){
+  const tot = cuentas.reduce((s,c)=>s+c.saldo,0);
+  $('moneyTotal').textContent = fmt(tot); $('moneyTotal').classList.toggle('neg', tot<0);
+  const box=$('accts'); box.textContent='';
+  for(const c of cuentas){
+    const b=document.createElement('button'); b.type='button'; b.className='acct';
+    const top=document.createElement('span'); const nm=document.createElement('em'); nm.textContent=c.nombre; top.append(dotEl(c.tipo),nm);
+    const v=document.createElement('span'); v.className='num'+(c.saldo<0?' neg':''); v.textContent=fmt(c.saldo);
+    b.append(top,v); b.onclick=()=>openAjustar(c.id); box.appendChild(b);
+  }
+  $('btnPasar').hidden = cuentas.length<2;
+}
+function renderCuentasAjustes(){
+  const box=$('acctList'); box.textContent='';
+  if(!cuentas.length){ const p=document.createElement('p'); p.className='empty'; p.textContent='Agrega tu primera cuenta abajo.'; box.appendChild(p); return; }
+  for(const c of cuentas){
+    const r=document.createElement('div'); r.className='acct-row';
+    const b=document.createElement('b'); const nm=document.createElement('span'); nm.textContent=c.nombre; b.append(dotEl(c.tipo),nm);
+    const v=document.createElement('span'); v.className='num'; v.textContent=fmt(c.saldo);
+    const d=document.createElement('button'); d.className='del'; d.type='button'; d.setAttribute('aria-label','Borrar cuenta '+c.nombre);
+    d.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+    d.onclick=()=>borrar('cuentas',c.id,d);
+    r.append(b,v,d); box.appendChild(r);
+  }
+}
 function iniciales(n){ return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase() || 'P'; }
 function renderPrestamos(loanById){
   const pagadoDe = {}; for(const a of abonos) pagadoDe[a.prestamo_id]=(pagadoDe[a.prestamo_id]||0)+a.monto;
@@ -552,41 +659,43 @@ function loanList(box, items, emptyTxt, hoy){
 async function pagarTodo(l, btn){
   if(pendingDel!=='all'+l.id){ pendingDel='all'+l.id; btn.textContent='Toca para confirmar'; setTimeout(()=>{ if(pendingDel==='all'+l.id){ pendingDel=null; render(); } },2500); return; }
   pendingDel=null;
-  const {error}=await sb.from('prestamo_abonos').insert({prestamo_id:l.id, monto:l.saldo});
+  const {error}=await sb.from('prestamo_abonos').insert({prestamo_id:l.id, monto:l.saldo, cuenta_id:cuentaDefault()});
   if(error){ toast('No se pudo guardar.',true); return; }
   toast(l.direccion==='preste' ? '¡'+l.persona+' quedó a paz y salvo!' : 'Deuda con '+l.persona+' saldada'); cargar();
 }
 
 /* ---------- datos ---------- */
 async function cargar(){
-  const [g,a,c,pr,ab] = await Promise.all([
+  const [g,a,c,pr,ab,cu] = await Promise.all([
     sb.from('gastos').select('*').order('fecha',{ascending:false}),
     sb.from('ahorros').select('*').order('fecha',{ascending:false}),
     sb.from('ajustes').select('*').maybeSingle(),
     sb.from('prestamos').select('*').order('fecha',{ascending:false}),
-    sb.from('prestamo_abonos').select('*').order('fecha',{ascending:false})
+    sb.from('prestamo_abonos').select('*').order('fecha',{ascending:false}),
+    sb.from('cuentas').select('*').order('orden').order('creada')
   ]);
-  if(g.error||a.error||c.error||pr.error||ab.error){ toast('No se pudieron cargar tus datos. Revisa tu conexión.',true); return }
+  if(g.error||a.error||c.error||pr.error||ab.error||cu.error){ toast('No se pudieron cargar tus datos. Revisa tu conexión.',true); return }
   gastos=g.data.map(x=>({...x,monto:Number(x.monto)})); ahorros=a.data.map(x=>({...x,monto:Number(x.monto)}));
   prestamos=pr.data.map(x=>({...x,monto:Number(x.monto)})); abonos=ab.data.map(x=>({...x,monto:Number(x.monto)}));
+  cuentas=cu.data.map(x=>({...x,saldo:Number(x.saldo)}));
   cfg = c.data ? {...DEF,...c.data,ingreso_quincenal:Number(c.data.ingreso_quincenal),ahorro_quincenal:Number(c.data.ahorro_quincenal),meta_monto:Number(c.data.meta_monto)} : {...DEF};
   render();
 }
 async function guardar(tipo, nombre, monto){
   if(!monto){ toast('Escribe el monto.',true); return false; }
-  let r;
-  if(tipo==='ahorro') r = await sb.from('ahorros').insert({monto});
+  let r; const cuenta_id = tipo==='fijo' ? null : cuentaDefault();
+  if(tipo==='ahorro') r = await sb.from('ahorros').insert({monto, cuenta_id});
   else if(tipo==='abono'){
     const l=abonoLoan; const pag=abonos.filter(a=>a.prestamo_id===l.id).reduce((s,a)=>s+a.monto,0); const saldo=Math.max(0,l.monto-pag);
     if(monto>saldo){ toast('El abono es mayor a lo que falta ('+fmt(saldo)+').',true); return false; }
-    r = await sb.from('prestamo_abonos').insert({prestamo_id:l.id, monto});
+    r = await sb.from('prestamo_abonos').insert({prestamo_id:l.id, monto, cuenta_id});
   }
   else if(tipo==='prestamo'){ if(!nombre){ toast(sheetDir==='preste'?'Escribe a quién le prestaste.':'Escribe quién te prestó.',true); return false; }
-    r = await sb.from('prestamos').insert({direccion:sheetDir, persona:nombre, monto, fecha_limite:$('shFecha').value||null}); }
-  else { if(!nombre){ toast('Escribe en qué fue el gasto.',true); return false; } r = await sb.from('gastos').insert({nombre,monto,tipo}); }
+    r = await sb.from('prestamos').insert({direccion:sheetDir, persona:nombre, monto, fecha_limite:$('shFecha').value||null, cuenta_id}); }
+  else { if(!nombre){ toast(tipo==='ingreso'?'Escribe de dónde vino la plata.':'Escribe en qué fue el gasto.',true); return false; } r = await sb.from('gastos').insert({nombre,monto,tipo,cuenta_id}); }
   if(r.error){ toast('No se pudo guardar. Intenta de nuevo.',true); return false; }
   if(navigator.vibrate) navigator.vibrate(10);
-  toast(tipo==='ahorro' ? 'Ahorro de '+fmt(monto)+' guardado. ¡Vas bien!' : tipo==='prestamo' ? 'Préstamo guardado' : tipo==='abono' ? 'Abono de '+fmt(monto)+' guardado' : 'Gasto guardado');
+  toast((tipo==='ahorro' ? 'Ahorro de '+fmt(monto)+' guardado. ¡Vas bien!' : tipo==='prestamo' ? 'Préstamo guardado' : tipo==='abono' ? 'Abono de '+fmt(monto)+' guardado' : tipo==='ingreso' ? 'Ingreso de '+fmt(monto)+' guardado' : 'Gasto guardado')+(cuenta_id && nombreCuenta(cuenta_id) ? ' · '+nombreCuenta(cuenta_id) : ''));
   cargar(); return true;
 }
 let pendingDel=null;
@@ -602,7 +711,7 @@ async function borrar(tabla,id,btn){
 function go(view){
   for(const v of ['inicio','movs','prestamos','ajustes']) $('v-'+v).hidden = v!==view;
   document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', t.dataset.go===view));
-  $('title').textContent = TITLES[view];
+  $('title').textContent = view==='inicio' ? (cfg.nombre ? 'Hola, '+cfg.nombre : 'Hola') : TITLES[view];
   $('fab').hidden = view==='ajustes';
   window.scrollTo({top:0});
 }
@@ -612,8 +721,16 @@ document.querySelectorAll('[data-seg]').forEach(b=>b.addEventListener('click',()
 }));
 
 /* ---------- hoja para agregar ---------- */
+function entra(){ return sheetType==='ingreso' || (sheetType==='prestamo' && sheetDir==='me_prestaron') || (sheetType==='abono' && abonoLoan && abonoLoan.direccion==='preste'); }
+function updCuentaLbl(){ $('shCuentaLbl').textContent = entra() ? '¿A dónde entra?' : '¿De dónde sale?'; }
+function renderPicks(){
+  const box=$('shCuentas'); box.textContent=''; const sel=cuentaDefault();
+  for(const c of cuentas){ const b=document.createElement('button'); b.type='button'; b.className='pick'; b.setAttribute('aria-pressed', c.id===sel);
+    const t=document.createElement('span'); t.textContent=c.nombre; b.append(dotEl(c.tipo),t);
+    b.onclick=()=>{ cuentaSel=c.id; lsSet('mp_cuenta',c.id); renderPicks(); }; box.appendChild(b); }
+}
 function setDir(d){
-  sheetDir=d; document.querySelectorAll('[data-dir]').forEach(b=>b.setAttribute('aria-selected', b.dataset.dir===d));
+  sheetDir=d; if(sheetType==='prestamo') updCuentaLbl(); document.querySelectorAll('[data-dir]').forEach(b=>b.setAttribute('aria-selected', b.dataset.dir===d));
   $('shNombreLbl').textContent = d==='preste' ? '¿A quién le prestaste?' : '¿Quién te prestó?';
   $('shFechaWrap').querySelector('label').textContent = d==='preste' ? '¿Para cuándo te paga? (opcional)' : '¿Para cuándo debes pagar? (opcional)';
 }
@@ -624,9 +741,12 @@ function setType(t){
   $('shNombreWrap').hidden = t==='ahorro' || t==='abono';
   $('shDir').hidden = t!=='prestamo'; $('shFechaWrap').hidden = t!=='prestamo';
   $('shNombreLbl').textContent = '¿En qué?';
-  $('shNombre').placeholder = t==='fijo' ? 'Arriendo, celular, gimnasio…' : t==='prestamo' ? 'Nombre de tu amigo' : 'Tinto, almuerzo, Uber…';
+  $('shNombre').placeholder = t==='fijo' ? 'Arriendo, celular, gimnasio…' : t==='prestamo' ? 'Nombre de tu amigo' : t==='ingreso' ? 'Quincena, venta, trabajo extra…' : 'Tinto, almuerzo, Uber…';
+  if(t==='ingreso') $('shNombreLbl').textContent='¿De dónde viene?';
   if(t==='prestamo') setDir(sheetDir);
-  $('sheetTitle').textContent = t==='ahorro' ? 'Guardar ahorro' : t==='fijo' ? 'Nuevo gasto fijo' : t==='prestamo' ? 'Nuevo préstamo' : t==='abono' ? $('sheetTitle').textContent : 'Nuevo gasto hormiga';
+  $('shCuentaWrap').hidden = t==='fijo' || !cuentas.length;
+  updCuentaLbl(); renderPicks();
+  $('sheetTitle').textContent = t==='ahorro' ? 'Guardar ahorro' : t==='fijo' ? 'Nuevo gasto fijo' : t==='prestamo' ? 'Nuevo préstamo' : t==='abono' ? $('sheetTitle').textContent : t==='ingreso' ? 'Nuevo ingreso' : 'Nuevo gasto';
   $('shGuardar').textContent = t==='abono' ? 'Guardar abono' : 'Guardar';
 }
 function openAbono(l){
@@ -638,13 +758,70 @@ function openAbono(l){
   setTimeout(()=>{ $('shMonto').focus(); $('shMonto').select(); },250);
 }
 function openSheet(t){
-  setType(t || (!$('v-prestamos').hidden ? 'prestamo' : seg==='fijo' && !$('v-movs').hidden ? 'fijo' : 'hormiga'));
+  setType(t || (!$('v-prestamos').hidden ? 'prestamo' : !$('v-movs').hidden && (seg==='fijo'||seg==='ingreso') ? seg : 'hormiga'));
   $('shMonto').value = sheetType==='ahorro' && cfg.ahorro_quincenal ? '$'+dots(cfg.ahorro_quincenal) : '';
-  $('shNombre').value=''; $('shFecha').value='';
+  $('shNombre').value = sheetType==='ingreso' ? 'Quincena' : ''; $('shFecha').value='';
+  if(sheetType==='ingreso' && cfg.ingreso_quincenal) $('shMonto').value='$'+dots(cfg.ingreso_quincenal);
   $('scrim').classList.add('open'); $('sheet').classList.add('open');
   setTimeout(()=>$('shMonto').focus(),250);
 }
-function closeSheet(){ $('scrim').classList.remove('open'); $('sheet').classList.remove('open'); document.activeElement?.blur(); }
+function closeSheet(){ $('scrim').classList.remove('open'); $('sheet').classList.remove('open'); $('sheet2').classList.remove('open'); document.activeElement?.blur(); }
+
+/* ---------- ajustar saldos / pasar plata ---------- */
+function openSheet2(){ $('scrim').classList.add('open'); $('sheet2').classList.add('open'); }
+function openAjustar(focusId){
+  if(!cuentas.length){ go('ajustes'); toast('Primero agrega una cuenta.'); return; }
+  s2Mode='ajustar'; $('s2Title').textContent='¿Cuánto tienes hoy?'; $('s2Btn').textContent='Guardar saldos';
+  const body=$('s2Body'); body.textContent='';
+  const p=document.createElement('p'); p.className='money-note'; p.textContent='Escribe lo que ves en cada cuenta ahora mismo. Desde aquí, tus movimientos lo irán actualizando solos.'; body.appendChild(p);
+  for(const c of cuentas){
+    const r=document.createElement('div'); r.className='adj-row';
+    const l=document.createElement('label'); l.htmlFor='adj-'+c.id; const t=document.createElement('span'); t.textContent=c.nombre; l.append(dotEl(c.tipo),t);
+    const i=document.createElement('input'); i.className='input num'; i.id='adj-'+c.id; i.inputMode='numeric'; i.value=c.saldo? '$'+dots(Math.abs(c.saldo)) : ''; i.placeholder='$0'; i.dataset.id=c.id;
+    i.addEventListener('input',()=>{ const v=parse(i.value); i.value=v?'$'+dots(v):''; });
+    r.append(l,i); body.appendChild(r);
+  }
+  openSheet2(); setTimeout(()=>{ const el=$('adj-'+(focusId||cuentas[0].id)); el?.focus(); el?.select(); },250);
+}
+function openPasar(){
+  if(cuentas.length<2) return;
+  s2Mode='pasar'; $('s2Title').textContent='Pasar plata'; $('s2Btn').textContent='Pasar';
+  const body=$('s2Body'); body.textContent='';
+  let desde = cuentas.find(c=>c.tipo==='nequi')?.id || cuentas[0].id, hacia = (cuentas.find(c=>c.id!==desde && c.tipo==='efectivo')||cuentas.find(c=>c.id!==desde)).id;
+  const amt=document.createElement('input'); amt.className='amount-input'; amt.id='s2Monto'; amt.inputMode='numeric'; amt.placeholder='$0'; amt.setAttribute('aria-label','Monto'); moneyInput(amt);
+  const mkPicks=(lbl,get,set)=>{ const f=document.createElement('div'); f.className='field'; f.style.marginBottom='14px';
+    const l=document.createElement('label'); l.textContent=lbl; const box=document.createElement('div'); box.className='picks';
+    const draw=()=>{ box.textContent=''; for(const c of cuentas){ const b=document.createElement('button'); b.type='button'; b.className='pick'; b.setAttribute('aria-pressed', c.id===get());
+      const t=document.createElement('span'); t.textContent=c.nombre; b.append(dotEl(c.tipo),t); b.onclick=()=>{ set(c.id); drawAll(); }; box.appendChild(b);} };
+    f.append(l,box); body.appendChild(f); return draw; };
+  body.appendChild(amt);
+  const d1=mkPicks('Desde',()=>desde,v=>{desde=v; if(hacia===v) hacia=cuentas.find(c=>c.id!==v).id;});
+  const d2=mkPicks('Hacia',()=>hacia,v=>{hacia=v; if(desde===v) desde=cuentas.find(c=>c.id!==v).id;});
+  const drawAll=()=>{ d1(); d2(); }; drawAll();
+  $('sheet2').dataset.desde=''; $('sheet2')._get=()=>({desde,hacia});
+  openSheet2(); setTimeout(()=>amt.focus(),250);
+}
+$('btnAjustar').addEventListener('click',()=>openAjustar());
+$('btnPasar').addEventListener('click',openPasar);
+$('sheet2').addEventListener('submit',async e=>{
+  e.preventDefault(); const btn=$('s2Btn'); btn.disabled=true;
+  try{
+    if(s2Mode==='ajustar'){
+      for(const i of $('s2Body').querySelectorAll('input[data-id]')){
+        const c=cuentas.find(x=>x.id===i.dataset.id); const v=parse(i.value);
+        if(c && v!==c.saldo){ const {error}=await sb.from('cuentas').update({saldo:v}).eq('id',c.id); if(error) throw error; }
+      }
+      toast('Saldos actualizados');
+    } else if(s2Mode==='pasar'){
+      const {desde,hacia}=$('sheet2')._get(); const m=parse($('s2Monto').value);
+      if(!m){ toast('Escribe el monto.',true); btn.disabled=false; return; }
+      const {error}=await sb.rpc('transferir',{desde,hacia,monto:m}); if(error) throw error;
+      toast('Pasaste '+fmt(m)+' de '+nombreCuenta(desde)+' a '+nombreCuenta(hacia));
+    }
+    closeSheet(); cargar();
+  }catch(err){ toast('No se pudo guardar. Intenta de nuevo.',true); }
+  btn.disabled=false;
+});
 $('fab').addEventListener('click',()=>openSheet());
 $('btnAhorro').addEventListener('click',()=>openSheet('ahorro'));
 $('scrim').addEventListener('click',closeSheet);
@@ -664,10 +841,16 @@ QUICK.forEach(([n,v])=>{ const b=document.createElement('button'); b.type='butto
 
 /* ---------- ajustes ---------- */
 $('ajGuardar').addEventListener('click',async()=>{
-  const n={user_id:uid,ingreso_quincenal:parse($('ajIng').value)||DEF.ingreso_quincenal,ahorro_quincenal:parse($('ajAhorro').value),meta_monto:parse($('ajMeta').value)||DEF.meta_monto,meta_nombre:$('ajNombre').value.trim()||'iPhone'};
+  const n={user_id:uid,nombre:$('pfNombre').value.trim()||null,ingreso_quincenal:parse($('ajIng').value),ahorro_quincenal:parse($('ajAhorro').value),meta_monto:parse($('ajMeta').value),meta_nombre:$('ajNombre').value.trim()||'Mi meta'};
   const {error}=await sb.from('ajustes').upsert(n);
-  if(error){ toast('No se pudo guardar el plan.',true); return; }
+  if(error){ toast('No se pudo guardar.',true); return; }
   document.activeElement?.blur(); toast('Plan guardado'); cargar();
+});
+$('addAcct').addEventListener('click',async()=>{
+  const nombre=$('newAcct').value.trim(); if(!nombre){ toast('Escribe el nombre de la cuenta.',true); return; }
+  const {error}=await sb.from('cuentas').insert({nombre,tipo:$('newAcctTipo').value,orden:cuentas.length});
+  if(error){ toast('No se pudo agregar la cuenta.',true); return; }
+  $('newAcct').value=''; toast('Cuenta '+nombre+' agregada'); cargar();
 });
 $('passGuardar').addEventListener('click',async()=>{
   const p=$('newPass').value;
@@ -679,9 +862,33 @@ $('passGuardar').addEventListener('click',async()=>{
 $('logout').addEventListener('click',()=>sb.auth.signOut());
 
 /* ---------- sesión ---------- */
+function setAuth(m){
+  authMode=m; document.querySelectorAll('[data-auth]').forEach(b=>b.setAttribute('aria-selected', b.dataset.auth===m));
+  $('lNombreWrap').hidden = m!=='signup'; $('lNombre').required = m==='signup';
+  $('lPass').autocomplete = m==='signup' ? 'new-password' : 'current-password';
+  $('lPass').placeholder = m==='signup' ? 'Mínimo 8 caracteres' : '';
+  $('lBtn').textContent = m==='signup' ? 'Crear mi cuenta' : 'Entrar'; $('lStatus').textContent='';
+}
+document.querySelectorAll('[data-auth]').forEach(b=>b.addEventListener('click',()=>setAuth(b.dataset.auth)));
 $('fLogin').addEventListener('submit',async e=>{
-  e.preventDefault(); const st=$('lStatus'), btn=$('lBtn'); st.textContent=''; btn.disabled=true; btn.textContent='Entrando…';
-  const {error}=await sb.auth.signInWithPassword({email:$('lEmail').value.trim(),password:$('lPass').value});
+  e.preventDefault(); const st=$('lStatus'), btn=$('lBtn'); st.textContent='';
+  const email=$('lEmail').value.trim(), password=$('lPass').value;
+  if(authMode==='signup'){
+    const nombre=$('lNombre').value.trim();
+    if(!nombre){ st.textContent='Escribe tu nombre.'; return; }
+    if(password.length<8){ st.textContent='La contraseña debe tener mínimo 8 caracteres.'; return; }
+    btn.disabled=true; btn.textContent='Creando tu cuenta…';
+    const {data,error}=await sb.auth.signUp({email,password,options:{data:{nombre}}});
+    if(error){ btn.disabled=false; setAuth('signup');
+      const m=(error.message||'').toLowerCase();
+      st.textContent = m.includes('already') || m.includes('registered') ? 'Ese correo ya tiene cuenta. Toca "Entrar".' : m.includes('rate') ? 'Hay muchos registros en este momento. Intenta en unos minutos.' : m.includes('password') ? 'Esa contraseña es muy débil. Usa una más larga.' : 'No se pudo crear la cuenta. Revisa el correo e intenta otra vez.';
+      return; }
+    if(!data.session){ const r=await sb.auth.signInWithPassword({email,password}); if(r.error){ btn.disabled=false; setAuth('signup'); st.textContent='Tu cuenta se creó, pero no pudimos entrar. Toca "Entrar" e intenta de nuevo.'; return; } }
+    btn.disabled=false; setAuth('login');
+    return;
+  }
+  btn.disabled=true; btn.textContent='Entrando…';
+  const {error}=await sb.auth.signInWithPassword({email,password});
   btn.disabled=false; btn.textContent='Entrar';
   if(error) st.textContent='Correo o contraseña incorrectos.';
 });
@@ -689,7 +896,7 @@ function mostrar(session){
   uid = session?.user?.id || null;
   $('loginView').hidden = !!session; $('appView').hidden = !session;
   if(session){ $('lPass').value=''; go('inicio'); render(); cargar(); }
-  else { gastos=[]; ahorros=[]; prestamos=[]; abonos=[]; }
+  else { gastos=[]; ahorros=[]; prestamos=[]; abonos=[]; cuentas=[]; cfg={...DEF}; }
 }
 if(sb){
   sb.auth.onAuthStateChange((evt,session)=>{ if(evt==='TOKEN_REFRESHED') return; mostrar(session); });
