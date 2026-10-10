@@ -1132,7 +1132,8 @@ function etaTxt(falta, aporte){
 }
 function renderMetas(total){
   const box=$('metasList'); box.textContent='';
-  $('metasTot').textContent = total ? fmt(total)+' ahorrado' : '';
+  const enMetas=metas.reduce((x,m)=>x+ahorradoDe(m),0);
+  $('metasTot').textContent = enMetas ? fmt(enMetas)+' ahorrado' : '';
   if(!metas.length){
     const p=document.createElement('p'); p.className='empty'; p.textContent='Crea tu primera meta (un teléfono, una moto, un viaje…) y dile cuánto quieres aportar.'; box.appendChild(p);
     const b=document.createElement('button'); b.type='button'; b.className='btn ghost'; b.textContent='Crear una meta'; b.onclick=()=>openMeta(); box.appendChild(b);
@@ -1791,7 +1792,7 @@ function renderCartera(){
   const mes=mesKey(), prev=mesOffset(mes,-1), now=new Date();
   const tCtas=cuentas.reduce((s,c)=>s+c.saldo,0), tAho=sumM(ahorros);
   $('cTotal').textContent=fmtS(tCtas);
-  $('cTotNote').textContent = cuentas.length+' cuenta'+(cuentas.length===1?'':'s')+(tAho?' · además tienes '+fmt(tAho)+' en tus metas':'');
+  $('cTotNote').textContent = cuentas.length+' cuenta'+(cuentas.length===1?'':'s')+(tAho?' · además tienes '+fmt(tAho)+' en ahorros':'');
   const box=$('cAccts'); box.textContent='';
   for(const c of cuentas){ const b=document.createElement('button'); b.type='button'; b.className='c-acct';
     const n=document.createElement('b'); const sp=document.createElement('span'); sp.textContent=c.nombre; n.append(dotEl(c.tipo),sp);
