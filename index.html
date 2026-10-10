@@ -1041,7 +1041,7 @@ function render(){
   renderMnav(); renderMoney();
   const fijos = gastos.filter(g=>g.tipo==='fijo'), tFijo = sumM(fijos);
   const total = sumM(ahorros);
-  $('moneyNote').textContent = total ? 'Aparte tienes '+fmt(total)+' guardados en tus metas. Toca una cuenta para ajustarla.' : 'Toca una cuenta para ajustar su saldo.';
+  $('moneyNote').textContent = total ? 'Aparte tienes '+fmt(total)+' guardados en ahorros. Toca una cuenta para ajustarla.' : 'Toca una cuenta para ajustar su saldo.';
   renderMetas(total);
   renderDashboard();
 
@@ -1173,8 +1173,9 @@ function renderAhorro(){
   const mes=mesKey(), prev=mesOffset(mes,-1), total=sumM(ahorros);
   const ahM=sumM(ahorros.filter(a=>localMes(a.fecha)===mes)), ahP=sumM(ahorros.filter(a=>localMes(a.fecha)===prev));
   const activas=metas.filter(m=>ahorradoDe(m)<m.monto), metaTot=sumM(metas.map(m=>({monto:m.monto})));
+  const enMetas=metas.reduce((x,m)=>x+ahorradoDe(m),0), enPl=plants.reduce((x,m)=>x+ahorradoDe(m),0);
   $('ahTot').textContent=fmt(total);
-  $('ahNote').textContent = metas.length ? 'de '+fmt(metaTot)+' entre tus '+metas.length+' meta'+(metas.length>1?'s':'')+(metaTot?' · '+Math.min(100,Math.round(total/metaTot*100))+'%':'') : 'Crea una meta para empezar a ahorrar.';
+  $('ahNote').textContent = (metas.length ? fmt(enMetas)+' en tus metas (de '+fmt(metaTot)+(metaTot?' · '+Math.min(100,Math.round(enMetas/metaTot*100))+'%':'')+')' : 'Sin metas todavía')+(plants.length?' · '+fmt(enPl)+' en plantillas':'')+'.';
   const bar=$('ahBarMetas'); bar.textContent=''; bar.hidden=!metas.length;
   metas.forEach((m,i)=>{ const v=ahorradoDe(m); if(!v||!metaTot) return; const e=document.createElement('i'); e.style.width=(v/metaTot*100)+'%'; e.style.background=catColor(i); e.title=m.nombre+' '+fmt(v); bar.appendChild(e); });
   $('ahMes').textContent=fmt(ahM); $('ahPrev').textContent=fmt(ahP); $('ahPrevL').textContent=mesCorto(prev).charAt(0).toUpperCase()+mesCorto(prev).slice(1);
@@ -1202,7 +1203,7 @@ function renderAhorro(){
   // mini de inicio
   $('dAho').textContent=fmt(total);
   $('dAhoNote').textContent = metas.length ? (ahM?fmt(ahM)+' este mes · ':'')+metas.length+' meta'+(metas.length>1?'s':'')+(conPl.length?' · '+conPl.length+' plantilla'+(conPl.length>1?'s':''):'') : 'Toca para crear tu primera meta';
-  $('dAhoBar').style.width=(metaTot?Math.min(100,total/metaTot*100):0)+'%';
+  $('dAhoBar').style.width=(metaTot?Math.min(100,enMetas/metaTot*100):0)+'%';
 }
 function openPlantillaNueva(){
   s2Mode='plant'; $('s2Title').textContent='Nueva plantilla de ahorro'; $('s2Btn').textContent='Crear plantilla'; $('s2Btn').hidden=false;
