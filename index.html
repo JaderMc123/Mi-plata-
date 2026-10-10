@@ -729,7 +729,7 @@ input{font:inherit;font-size:16px}
       </article>
       <article class="card" id="ahPlantCard">
         <div class="card-head"><h2>Plantillas de ahorro</h2><span class="label" id="ahPlCnt"></span></div>
-        <p class="money-note">Ahorra un poquito cada día tachando casillas, como la plantilla de papel. Te la armamos según tus ingresos para que llegues a tu meta.</p>
+        <p class="money-note">Ahorra un poquito cada día tachando casillas, como la plantilla de papel. Es aparte de tus metas: le pones nombre, monto y en cuántos meses, y te la armamos según tus ingresos.</p>
         <div id="ahPlList"></div>
         <button class="btn" type="button" id="ahPlNueva">Crear plantilla de ahorro diario</button>
       </article>
@@ -992,7 +992,8 @@ function dotEl(tipo){ const d=document.createElement('span'); d.className='dot '
 function moneyInput(el){ el.addEventListener('input',()=>{ const v=parse(el.value); el.value = v? (el.classList.contains('amount-input')?'$':'')+dots(v) : ''; }); }
 
 /* ---------- meses ---------- */
-let mesSel = mesKey(), metas = [], metaSel = null;
+let mesSel = mesKey(), metas = [], plants = [], metaSel = null;
+const todas = () => [...metas, ...plants];
 const mesDate = k => { const [y,m]=k.split('-').map(Number); return new Date(y,m-1,1); };
 const mesLabel = k => { const t=mesDate(k).toLocaleDateString('es-CO',{month:'long',year:'numeric'}); return t.charAt(0).toUpperCase()+t.slice(1); };
 const mesCorto = k => mesDate(k).toLocaleDateString('es-CO',{month:'long'});
@@ -1023,7 +1024,7 @@ const ahorradoDe = m => sumM(ahorros.filter(a=>a.meta_id===m.id));
 const esProg = it => it._tabla==='gastos' && it.tipo!=='fijo' && new Date(it.fecha) > new Date();
 function movsAll(){
   const byId = Object.fromEntries(prestamos.map(l=>[l.id,l]));
-  const metaN = id => (metas.find(m=>m.id===id)||{}).nombre;
+  const metaN = id => (todas().find(m=>m.id===id)||{}).nombre;
   return [...gastos.filter(g=>g.tipo==='hormiga'||g.tipo==='ingreso').map(g=>({...g,_t:g.tipo,_tabla:'gastos'})),
     ...ahorros.map(a=>({...a,nombre:'Ahorro'+(metaN(a.meta_id)?' · '+metaN(a.meta_id):''),_t:'ahorro',_tabla:'ahorros'})),
     ...prestamos.map(l=>({...l,nombre: l.direccion==='preste' ? 'Le prestaste a '+l.persona : l.persona+' te prestó',_t:'prestamo',_tabla:'prestamos',_sign: l.direccion==='preste'?'−':'+'})),
@@ -1179,15 +1180,15 @@ function renderAhorro(){
   $('ahMes').textContent=fmt(ahM); $('ahPrev').textContent=fmt(ahP); $('ahPrevL').textContent=mesCorto(prev).charAt(0).toUpperCase()+mesCorto(prev).slice(1);
   $('ahMetas').textContent=String(activas.length); $('ahAporte').textContent=fmt(sumM(activas.map(m=>({monto:m.aporte}))));
   // plantillas
-  const conPl=metas.filter(m=>m.plantilla), box=$('ahPlList'); box.textContent='';
+  const conPl=todas().filter(m=>m.plantilla), box=$('ahPlList'); box.textContent='';
   $('ahPlCnt').textContent = conPl.length ? conPl.length+' activa'+(conPl.length>1?'s':'') : '';
   for(const m of conPl){ const st=plEstado(m), fr=FREC[m.plantilla_frec||'diario'];
     const b=document.createElement('button'); b.type='button'; b.className='pl-item';
     const n=document.createElement('b'); n.textContent=m.nombre; const ch=document.createElement('span'); ch.className='chev'; ch.textContent='›';
     const br=document.createElement('span'); br.className='budget-bar save'; const i=document.createElement('i'); i.style.width=(st.n?st.on/st.n*100:0)+'%'; br.appendChild(i);
-    const sm=document.createElement('small'); sm.textContent=fr.txt+' · '+st.on+' de '+st.n+' casillas · '+fmt(st.hecho)+' de '+fmt(st.tot);
+    const sm=document.createElement('small'); sm.textContent=(m.clase==='plantilla'?'':'Meta · ')+fr.txt+' · '+st.on+' de '+st.n+' casillas · '+fmt(st.hecho)+' de '+fmt(st.tot);
     b.append(n,ch,br,sm); b.onclick=()=>verPlantilla(m.id); box.appendChild(b); }
-  $('ahPlNueva').textContent = conPl.length ? 'Crear otra plantilla de ahorro diario' : 'Crear plantilla de ahorro diario';
+  $('ahPlNueva').textContent = conPl.length ? '+ Nueva plantilla de ahorro diario' : 'Crear plantilla de ahorro diario';
   // barras 6 meses
   const bars=$('ahBars'); bars.textContent=''; const ms=[];
   for(let i=5;i>=0;i--){ const k=mesOffset(mes,-i); ms.push({k,t:sumM(ahorros.filter(a=>localMes(a.fecha)===k))}); }
@@ -1203,7 +1204,18 @@ function renderAhorro(){
   $('dAhoNote').textContent = metas.length ? (ahM?fmt(ahM)+' este mes · ':'')+metas.length+' meta'+(metas.length>1?'s':'')+(conPl.length?' · '+conPl.length+' plantilla'+(conPl.length>1?'s':''):'') : 'Toca para crear tu primera meta';
   $('dAhoBar').style.width=(metaTot?Math.min(100,total/metaTot*100):0)+'%';
 }
-function nuevaPlantilla(){
+function openPlantillaNueva(){
+  s2Mode='plant'; $('s2Title').textContent='Nueva plantilla de ahorro'; $('s2Btn').textContent='Crear plantilla'; $('s2Btn').hidden=false;
+  const body=$('s2Body'); body.textContent='';
+  const p=document.createElement('p'); p.className='money-note'; p.textContent='Un ahorro aparte de tus metas. Te armamos casillas con montos variados: cada vez que guardas, tachas una. Al tacharlas todas, lo lograste.'; body.appendChild(p);
+  s2Field('¿Para qué es este ahorro?','plNombre','',false,'Viaje, regalo, emergencias…').querySelector('input').maxLength=40;
+  s2Field('¿Cuánto quieres ahorrar?','plMonto',0,true,'$0');
+  plCamposComunes(body,'diario');
+  $('sheet2').dataset.pmid=''; $('plNombre').addEventListener('input',plPreview);
+  openSheet2(); plPreview(); setTimeout(()=>$('plNombre').focus(),250);
+}
+function nuevaPlantilla(){ openPlantillaNueva(); }
+function nuevaPlantillaVieja(){
   const libres=metas.filter(m=>!m.plantilla && ahorradoDe(m)<m.monto);
   if(!metas.length || !libres.length){ openMeta(); if(!metas.length) toast('Primero dale nombre y precio a tu meta.'); return; }
   if(libres.length===1){ openPlantilla(libres[0].id); return; }
@@ -1225,7 +1237,7 @@ function plEstado(m){
 }
 function capacidadDia(){
   const r=recomendar(); if(r.err) return null;
-  const activas=Math.max(1, metas.filter(m=>ahorradoDe(m)<m.monto).length);
+  const activas=Math.max(1, todas().filter(m=>ahorradoDe(m)<m.monto).length + (($('sheet2').dataset.pmid||'')===''?1:0));
   return r.sug/15/activas;
 }
 function genCasillas(T, N){
@@ -1242,8 +1254,9 @@ function genCasillas(T, N){
   return arr;
 }
 function plCalc(){
-  const mid=$('sheet2').dataset.pmid, m=metas.find(x=>x.id===mid); if(!m) return null;
-  const total=parse($('plMonto').value)||m.monto, falta=Math.max(0,total-ahorradoDe(m));
+  const mid=$('sheet2').dataset.pmid; let m=todas().find(x=>x.id===mid);
+  if(!m) m={id:null,nombre:($('plNombre')?.value||'').trim(),monto:0,plantilla:null};
+  const total=parse($('plMonto').value)||m.monto, falta=Math.max(0,total-(m.id?ahorradoDe(m):0));
   const fr=FREC[$('sheet2').dataset.pf||'diario'], plazo=$('plPlazo').value, cap=capacidadDia();
   let N, avg;
   if(plazo==='auto'){ const porCasilla = cap ? cap*fr.dias : null;
@@ -1256,48 +1269,58 @@ function plCalc(){
 function plPreview(){
   const c=plCalc(), el=$('plPrev'); if(!c) return;
   document.querySelectorAll('[data-pf]').forEach(b=>b.setAttribute('aria-selected', b.dataset.pf===($('sheet2').dataset.pf||'diario')));
-  $('plCap').textContent = c.cap ? 'Según tus ingresos, para esta meta puedes guardar unos '+fmt(Math.round(c.cap*c.fr.dias/1000)*1000)+' por '+c.fr.uno+' sin quedarte corto.' : 'Configura tus ingresos en Cartera para calcular el plazo según lo que ganas. Mientras tanto, elige un plazo.';
-  if(c.falta<=0){ el.className='trend down'; el.textContent='Esta meta ya está cumplida.'; $('s2Btn').disabled=true; return; }
+  $('plCap').textContent = c.cap ? 'Según tus ingresos, para este ahorro puedes guardar unos '+fmt(Math.round(c.cap*c.fr.dias/1000)*1000)+' por '+c.fr.uno+' sin quedarte corto.' : 'Configura tus ingresos en Cartera para calcular el plazo según lo que ganas. Mientras tanto, elige un plazo.';
+  if(c.falta<=0){ el.className='trend'+(c.m.id?' down':''); el.textContent=c.m.id?'Esta meta ya está cumplida.':'Escribe cuánto quieres ahorrar.'; $('s2Btn').disabled=!!c.m.id; return; }
   $('s2Btn').disabled=false;
   const fin=new Date(Date.now()+(c.N-1)*c.fr.dias*864e5);
   const over = c.cap && c.avg > c.cap*c.fr.dias*1.1;
   el.className='trend'+(over?' up':' down');
-  el.textContent=c.N+' casillas de unos '+fmt(Math.round(c.avg))+' (montos variados, como la plantilla de papel). Cubren '+fmt(c.falta)+' y terminas aprox. el '+fin.toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'})+'.'+(over?' Ojo: es más de lo que te alcanza según tus ingresos; elige más tiempo.':'');
+  const meses=Math.max(1,Math.round(c.N*c.fr.dias/30.4)); el.textContent=($('plPlazo').value==='auto'?'Según tus ingresos: unos '+meses+' mes'+(meses>1?'es':'')+'. ':'')+c.N+' casillas de unos '+fmt(Math.round(c.avg))+' (montos variados, como la plantilla de papel). Cubren '+fmt(c.falta)+' y terminas aprox. el '+fin.toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'})+'.'+(over?' Ojo: es más de lo que te alcanza según tus ingresos; elige más tiempo.':'');
 }
 function openPlantilla(mid){
-  const m=metas.find(x=>x.id===mid); if(!m) return;
+  const m=mid?todas().find(x=>x.id===mid):null; if(mid && !m) return;
+  if(!m) return openPlantillaNueva();
   s2Mode='plant'; $('s2Title').textContent='Plantilla para '+m.nombre; $('s2Btn').textContent=m.plantilla?'Crear plantilla nueva':'Crear plantilla'; $('s2Btn').hidden=false;
   const body=$('s2Body'); body.textContent='';
   const p=document.createElement('p'); p.className='money-note'; p.textContent='Te armamos casillas con montos variados. Cada vez que ahorras, tachas una. Cuando las tachas todas, cumpliste la meta.'+(m.plantilla?' Lo que ya tachaste sigue contando como ahorro; la nueva plantilla cubre lo que falta.':''); body.appendChild(p);
   s2Field('Meta total','plMonto',m.monto,true,'$0');
   const ya=ahorradoDe(m); if(ya){ const n=document.createElement('p'); n.className='money-note'; n.style.marginTop='-8px'; n.textContent='Ya llevas '+fmt(ya)+' ahorrados para esta meta.'; body.appendChild(n); }
+  plCamposComunes(body, m.plantilla_frec||'diario');
+  $('sheet2').dataset.pmid=mid;
+  openSheet2(); plPreview();
+}
+function plCamposComunes(body, frec){
   const fw=document.createElement('div'); fw.className='field'; fw.style.marginBottom='14px'; const fl=document.createElement('label'); fl.textContent='¿Cada cuánto quieres ahorrar?';
   const seg=document.createElement('div'); seg.className='seg three'; seg.style.margin='0';
   for(const [k,v] of Object.entries(FREC)){ const b=document.createElement('button'); b.type='button'; b.dataset.pf=k; b.textContent=v.txt; b.onclick=()=>{ $('sheet2').dataset.pf=k; plPreview(); }; seg.appendChild(b); }
   fw.append(fl,seg); body.appendChild(fw);
-  const pw=document.createElement('div'); pw.className='field'; pw.style.marginBottom='8px'; const pl=document.createElement('label'); pl.htmlFor='plPlazo'; pl.textContent='¿En cuánto tiempo?';
+  const pw=document.createElement('div'); pw.className='field'; pw.style.marginBottom='8px'; const pl=document.createElement('label'); pl.htmlFor='plPlazo'; pl.textContent='¿En cuántos meses?';
   const sel=document.createElement('select'); sel.className='input select'; sel.id='plPlazo';
-  for(const [v,t] of [['auto','Según mis ingresos (recomendado)'],['1','1 mes'],['2','2 meses'],['3','3 meses'],['4','4 meses'],['6','6 meses'],['9','9 meses'],['12','1 año'],['18','18 meses'],['24','2 años']]){ const o=document.createElement('option'); o.value=v; o.textContent=t; sel.appendChild(o); }
+  for(const [v,t] of [['auto','Lo que sugiera según mis ingresos'],['1','1 mes'],['2','2 meses'],['3','3 meses'],['4','4 meses'],['6','6 meses'],['9','9 meses'],['12','1 año'],['18','18 meses'],['24','2 años']]){ const o=document.createElement('option'); o.value=v; o.textContent=t; sel.appendChild(o); }
   pw.append(pl,sel); body.appendChild(pw);
   const cap=document.createElement('p'); cap.className='money-note'; cap.id='plCap'; body.appendChild(cap);
   const prev=document.createElement('p'); prev.id='plPrev'; prev.className='trend'; prev.style.margin='0 0 14px'; body.appendChild(prev);
-  $('sheet2').dataset.pmid=mid; $('sheet2').dataset.pf=m.plantilla_frec||'diario';
+  $('sheet2').dataset.pf=frec;
   sel.addEventListener('change',plPreview); $('plMonto').addEventListener('input',plPreview);
-  openSheet2(); plPreview();
 }
 async function guardarPlantilla(){
-  const c=plCalc(); if(!c || c.falta<=0){ toast('Esta meta ya está cumplida.',true); return false; }
+  const c=plCalc(); if(!c || c.falta<=0){ toast(c && !c.m.id ? 'Escribe cuánto quieres ahorrar.' : 'Esta meta ya está cumplida.',true); return false; }
   const arr=genCasillas(c.falta,c.N), frec=$('sheet2').dataset.pf||'diario';
   const aporte=Math.round(c.avg*15/c.fr.dias/1000)*1000;
+  if(!c.m.id){ if(!c.m.nombre){ toast('Ponle un nombre a tu ahorro.',true); return false; }
+    const r=await sb.from('metas').insert({nombre:c.m.nombre, monto:c.total, aporte, clase:'plantilla', orden:plants.length, plantilla:arr.map(m=>({m,a:null})), plantilla_frec:frec, plantilla_inicio:isoDia(new Date())}).select('id').single();
+    if(r.error){ dbErr(r.error); return false; } $('sheet2').dataset.pmid=r.data.id; toast('Plantilla creada: '+arr.length+' casillas'); return true; }
   const {error}=await sb.from('metas').update({monto:c.total, plantilla:arr.map(m=>({m,a:null})), plantilla_frec:frec, plantilla_inicio:isoDia(new Date()), aporte}).eq('id',c.m.id);
   if(error){ dbErr(error); return false; }
   toast('Plantilla creada: '+arr.length+' casillas'); return true;
 }
 function verPlantilla(mid){ plMetaId=mid; go('plantilla'); renderPlantilla(); }
 function renderPlantilla(){
-  const m=metas.find(x=>x.id===plMetaId);
+  const m=todas().find(x=>x.id===plMetaId);
   if(!m || !m.plantilla){ if(!$('v-plantilla').hidden) go('ahorro'); return; }
   const st=plEstado(m), fr=FREC[m.plantilla_frec||'diario'], ah=ahorradoDe(m);
+  $('plQuitar').textContent = m.clase==='plantilla' ? 'Borrar plantilla' : 'Quitar plantilla';
+  $('plLbl').textContent = m.clase==='plantilla' ? 'Plantilla de ahorro' : 'Plantilla de tu meta';
   $('plTitle').textContent=m.nombre; $('plAh').textContent=fmt(ah); $('plDe').textContent='ahorrados de '+fmt(m.monto)+(m.monto?' · '+Math.min(100,Math.round(ah/m.monto*100))+'%':'');
   $('plBar').style.width=Math.min(100,m.monto?ah/m.monto*100:0)+'%';
   $('plCas').textContent=st.on+' / '+st.n; $('plFrec').textContent=fr.txt; $('plFalta').textContent=fmt(Math.max(0,m.monto-ah));
@@ -1319,7 +1342,7 @@ function renderPlantilla(){
 }
 let plBusy=false;
 async function togglePl(mid, i, btn){
-  if(plBusy) return; const m=metas.find(x=>x.id===mid); if(!m) return;
+  if(plBusy) return; const m=todas().find(x=>x.id===mid); if(!m) return;
   plBusy=true; btn.disabled=true;
   const ids=new Set(ahorros.map(a=>a.id)), plant=m.plantilla.map(c=>({...c})), c=plant[i];
   try{
@@ -1332,11 +1355,11 @@ async function togglePl(mid, i, btn){
   plBusy=false; await cargar();
 }
 async function quitarPlantilla(btn){
-  const m=metas.find(x=>x.id===plMetaId); if(!m) return;
-  if(pendingDel!=='pl'+m.id){ pendingDel='pl'+m.id; btn.textContent='Toca para confirmar'; setTimeout(()=>{ if(pendingDel==='pl'+m.id){ pendingDel=null; btn.textContent='Quitar plantilla'; } },2500); return; }
-  pendingDel=null; btn.textContent='Quitar plantilla';
-  const {error}=await sb.from('metas').update({plantilla:null,plantilla_frec:null,plantilla_inicio:null}).eq('id',m.id); if(error){ dbErr(error); return; }
-  toast('Plantilla quitada. Lo ahorrado sigue en tu meta.'); go('ahorro'); cargar();
+  const m=todas().find(x=>x.id===plMetaId); if(!m) return; const sola=m.clase==='plantilla', lbl=sola?'Borrar plantilla':'Quitar plantilla';
+  if(pendingDel!=='pl'+m.id){ pendingDel='pl'+m.id; btn.textContent='Toca para confirmar'; setTimeout(()=>{ if(pendingDel==='pl'+m.id){ pendingDel=null; btn.textContent=lbl; } },2500); return; }
+  pendingDel=null; btn.textContent=lbl;
+  const {error}= sola ? await sb.from('metas').delete().eq('id',m.id) : await sb.from('metas').update({plantilla:null,plantilla_frec:null,plantilla_inicio:null}).eq('id',m.id); if(error){ dbErr(error); return; }
+  toast(sola ? 'Plantilla borrada. Lo que ahorraste sigue en tus ahorros.' : 'Plantilla quitada. Lo ahorrado sigue en tu meta.'); go('ahorro'); cargar();
 }
 
 function recomendar(){
@@ -1821,7 +1844,7 @@ function renderProy(){
   const ritmo = variableDe(mes)>0 ? variableDe(mes)/Math.max(1,now.getDate())*nd : 0;
   const V = past.length ? past.reduce((a,b)=>a+b,0)/past.length : ritmo;
   const prog=k=>sumM(hormigaDe(k).filter(g=>new Date(g.fecha)>now));
-  const aporte=metas.filter(m=>ahorradoDe(m)<m.monto).reduce((s,m)=>s+m.aporte*2,0);
+  const aporte=todas().filter(m=>ahorradoDe(m)<m.monto).reduce((s,m)=>s+m.aporte*2,0);
   const pag={}; for(const a of abonos) pag[a.prestamo_id]=(pag[a.prestamo_id]||0)+a.monto;
   let deudaMes=0; for(const l of prestamos){ if(l.direccion!=='me_prestaron') continue; const sal=l.monto-(pag[l.id]||0); if(sal<=0) continue;
     const q=l.fecha_limite?Math.max(1,Math.ceil((new Date(l.fecha_limite+'T00:00:00')-now)/864e5/30)):2; deudaMes+=sal/q; }
@@ -1847,7 +1870,7 @@ function renderProy(){
     tr('Ingreso esperado', cols.map(c=>'+'+fmtM(c.ing)));
     tr('Gastos fijos', cols.map(()=>'−'+fmtM(F)));
     tr('Día a día', cols.map(c=>'−'+fmtM(c.varK)));
-    if(aporte) tr('Ahorro a metas', cols.map(()=>'−'+fmtM(aporte)));
+    if(aporte) tr('Ahorro', cols.map(()=>'−'+fmtM(aporte)));
     if(deudaMes>0) tr('Pago de deudas', cols.map(()=>'−'+fmtM(Math.round(deudaMes))));
     let acum=0; var acRow=cols.map(c=>acum+=c.neto);
     tr('Te quedaría', cols.map(c=>({t:fmtM(c.neto),c:c.neto<0?'neg':'pos'})),'tot');
@@ -2085,7 +2108,8 @@ async function cargar(){
   gastos=g.data.map(x=>({...x,monto:Number(x.monto)})); ahorros=a.data.map(x=>({...x,monto:Number(x.monto)}));
   prestamos=pr.data.map(x=>({...x,monto:Number(x.monto)})); abonos=ab.data.map(x=>({...x,monto:Number(x.monto)}));
   cuentas=cu.data.map(x=>({...x,saldo:Number(x.saldo)}));
-  metas=me.data.map(x=>({...x,monto:Number(x.monto),aporte:Number(x.aporte),plantilla:Array.isArray(x.plantilla)?x.plantilla.map(c=>({m:Number(c.m),a:c.a||null})):null}));
+  const mt=me.data.map(x=>({...x,monto:Number(x.monto),aporte:Number(x.aporte),plantilla:Array.isArray(x.plantilla)?x.plantilla.map(c=>({m:Number(c.m),a:c.a||null})):null}));
+  metas=mt.filter(x=>(x.clase||'meta')==='meta'); plants=mt.filter(x=>x.clase==='plantilla');
   invOK = !iv.error && !im.error;
   inversiones = invOK ? iv.data.map(x=>({...x,monto:Number(x.monto),tasa:Number(x.tasa),esperado:Number(x.esperado)})) : [];
   invMovs = invOK ? im.data.map(x=>({...x,monto:Number(x.monto)})) : [];
@@ -2491,7 +2515,7 @@ function mostrar(session){
   if(session){ if(idleExpired()){ lsSet('mp_last',''); sb.auth.signOut(); return; } $('lPass').value='';
     if(!antes){ go('inicio'); render(); bienvenida(session); } else { render(); cargar(); }
     touchIdle(true); }
-  else { clearTimeout(idleT); gastos=[]; ahorros=[]; prestamos=[]; abonos=[]; cuentas=[]; metas=[]; inversiones=[]; invMovs=[]; cfg={...DEF}; }
+  else { clearTimeout(idleT); gastos=[]; ahorros=[]; prestamos=[]; abonos=[]; cuentas=[]; metas=[]; plants=[]; inversiones=[]; invMovs=[]; cfg={...DEF}; }
 }
 if(sb){
   sb.auth.onAuthStateChange((evt,session)=>{ if(evt==='TOKEN_REFRESHED') return; mostrar(session); });

@@ -9,3 +9,6 @@ alter table public.metas
   add column if not exists plantilla jsonb,
   add column if not exists plantilla_frec text check (plantilla_frec in ('diario','semanal','quincenal')),
   add column if not exists plantilla_inicio date;
+
+-- Plantillas de ahorro independientes (ya aplicado en mi-plata)
+alter table public.metas add column if not exists clase text not null default 'meta' check (clase in ('meta','plantilla'));
