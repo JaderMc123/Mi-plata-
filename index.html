@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Mi plata del mes</title>
+<script>try{var t=localStorage.getItem("mp_tema");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
 <meta name="theme-color" content="#F2F3F7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0B0F1A" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -30,13 +31,20 @@
   --tabbar:64px;
   color-scheme:light;
 }
-@media (prefers-color-scheme:dark){:root{
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#0B0F1A; --surface:#151B2B; --surface-2:#1B2234; --ink:#EEF1F8; --muted:#97A0B8; --line:#262E44;
   --accent:#7C95FF; --accent-ink:#0B0F1A;
   --save:#35D19A; --ant:#FFB547; --fixed:#9AA8E6; --danger:#FF7B7F; --loan:#4FD1E8; --nequi:#FF6BBE; --cash:#5FD38A; --bank:#8E9CFF; --cat0:#FFB547; --cat1:#9AA8E6; --cat2:#35D19A; --cat3:#FF6BBE; --cat4:#4FD1E8; --cat5:#C47FFF; --cat6:#FF8C8F; --cat7:#5FD38A;
   --hero:#1B2440; --hero-ink:#F2F4FA; --hero-muted:#A9B1C9; --hero-track:#2E3858;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
   color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B0F1A; --surface:#151B2B; --surface-2:#1B2234; --ink:#EEF1F8; --muted:#97A0B8; --line:#262E44;
+  --accent:#7C95FF; --accent-ink:#0B0F1A;
+  --save:#35D19A; --ant:#FFB547; --fixed:#9AA8E6; --danger:#FF7B7F; --loan:#4FD1E8; --nequi:#FF6BBE; --cash:#5FD38A; --bank:#8E9CFF; --cat0:#FFB547; --cat1:#9AA8E6; --cat2:#35D19A; --cat3:#FF6BBE; --cat4:#4FD1E8; --cat5:#C47FFF; --cat6:#FF8C8F; --cat7:#5FD38A;
+  --hero:#1B2440; --hero-ink:#F2F4FA; --hero-muted:#A9B1C9; --hero-track:#2E3858;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.4}
 button{font:inherit;color:inherit;cursor:pointer}
@@ -423,6 +431,38 @@ input{font:inherit;font-size:16px}
 .pl-item .budget-bar{grid-column:1/-1;margin:2px 0}
 .pl-item .chev{color:var(--muted);font-size:1.3rem}
 .pick-meta{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.dlg-wrap{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:24px;background:rgba(8,12,24,.55);animation:fadein .15s ease}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.dlg{background:var(--surface);border-radius:22px;padding:22px 20px 18px;max-width:360px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);text-align:center;animation:pop .2s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{transform:scale(.94);opacity:0}to{transform:none;opacity:1}}
+.dlg-ico{width:48px;height:48px;border-radius:14px;margin:0 auto 12px;display:grid;place-items:center;background:color-mix(in srgb,var(--danger) 14%,transparent);color:var(--danger)}
+.dlg-ico svg{width:22px;height:22px}
+.dlg h3{font-family:var(--display);font-weight:700;font-size:1.2rem;margin:0 0 6px}
+.dlg p{margin:0 0 18px;color:var(--muted);font-size:.92rem;line-height:1.4}
+.dlg-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dlg-si{background:var(--danger);color:#fff}
+.bell{position:relative;width:44px;height:44px;border-radius:14px;border:0;background:var(--surface);box-shadow:var(--shadow);display:grid;place-items:center;color:var(--ink);flex:none}
+.bell svg{width:21px;height:21px}
+.bell .badge-n{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--danger);color:#fff;font-size:.72rem;font-weight:700;display:grid;place-items:center;border:2px solid var(--bg)}
+.alerta{display:grid;grid-template-columns:40px minmax(0,1fr);gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.alerta:last-child{border-bottom:0}
+.alerta b{display:block;font-weight:600;margin-bottom:2px}
+.alerta p{margin:0;color:var(--muted);font-size:.86rem;line-height:1.35}
+.alerta .mini{margin-top:8px}
+.al-ico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-family:var(--display)}
+.alerta.warn .al-ico{background:color-mix(in srgb,var(--danger) 14%,transparent);color:var(--danger)}
+.alerta.info .al-ico{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
+.alerta.good .al-ico{background:color-mix(in srgb,var(--save) 14%,transparent);color:var(--save)}
+.al-ok{display:flex;gap:10px;align-items:center;color:var(--save);font-weight:600;font-size:.92rem;padding:4px 0}
+.n-estado{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--surface-2);font-size:.88rem;line-height:1.35}
+.n-estado i{width:10px;height:10px;border-radius:50%;flex:none;background:var(--muted)}
+.n-estado.on i{background:var(--save)} .n-estado.off i{background:var(--danger)}
+.n-tipos{display:flex;flex-direction:column;gap:2px}
+.n-tipos .chk{margin:6px 0}
+.preload.static *{animation:none!important;opacity:1!important;transform:none!important}
+.preload.static .pl-mark .v{stroke-dashoffset:0}
+#temaSeg button{font-size:.84rem}
+.link{background:none;border:0;color:var(--accent);cursor:pointer}
 /* preloader */
 .preload{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:var(--hero);color:var(--hero-ink);transition:opacity .55s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
 .preload.out{opacity:0;transform:scale(1.08);pointer-events:none}
@@ -479,6 +519,7 @@ input{font:inherit;font-size:16px}
         <h1 id="title">Inicio</h1>
         <p id="mesTxt"></p>
       </div>
+      <button class="bell" type="button" id="bell" data-go="alertas" aria-label="Alertas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="badge-n" id="bellN" hidden></span></button>
     </header>
 
     <!-- Inicio -->
@@ -495,6 +536,11 @@ input{font:inherit;font-size:16px}
         <p class="hero-of" id="dPatrNote"></p>
         <div class="pbar" id="dPatrBar" aria-hidden="true"></div>
         <div class="plegend" id="dPatrLeg"></div>
+      </article>
+
+      <article class="card" id="dAlCard" hidden>
+        <div class="card-head"><h2>Alertas</h2><button class="link" type="button" data-go="alertas" style="font-size:.85rem;font-weight:600;padding:0" id="dAlMas">Ver todas</button></div>
+        <div id="dAl"></div>
       </article>
 
       <div class="kpis" id="kpis"></div>
@@ -707,9 +753,34 @@ input{font:inherit;font-size:16px}
     <!-- Más -->
     <section class="view" id="v-mas" hidden>
       <article class="card menu">
+        <div class="mgroup"><button class="mitem" type="button" data-go="alertas"><span class="mico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span><span class="mtxt"><b>Alertas y notificaciones</b><small id="masAl">Recordatorios de tu plata</small></span><span class="chev">›</span></button></div>
         <div class="mgroup"><button class="mitem" type="button" data-go="analisis"><span class="mico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="7" width="3" height="11"/><rect x="17" y="4" width="3" height="14"/></svg></span><span class="mtxt"><b>Análisis</b><small id="masAn">Gráficas y consejos de tus gastos</small></span><span class="chev">›</span></button></div>
         <div class="mgroup"><button class="mitem" type="button" data-go="prestamos"><span class="mico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h14l-4-4M20 16H6l4 4"/></svg></span><span class="mtxt"><b>Préstamos personales</b><small id="masPr">Lo que te deben y lo que debes</small></span><span class="chev">›</span></button></div>
         <div class="mgroup"><button class="mitem" type="button" data-go="ajustes"><span class="mico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></span><span class="mtxt"><b>Ajustes</b><small>Perfil, metas, cuentas y seguridad</small></span><span class="chev">›</span></button></div>
+      </article>
+    </section>
+
+    <!-- Alertas -->
+    <section class="view" id="v-alertas" hidden>
+      <article class="card">
+        <div class="card-head"><h2>Para revisar</h2><span class="label" id="alCnt"></span></div>
+        <div id="alList"></div>
+      </article>
+      <article class="card stack-gap" id="nCard">
+        <div class="card-head" style="margin:0"><h2>Notificaciones en tu celular</h2></div>
+        <p class="money-note" style="margin:0">Te avisamos una vez al día, aunque tengas la app cerrada: si llevas días sin registrar, si se vence una deuda, si no tachaste tu casilla de ahorro o si te toca el aporte de una meta.</p>
+        <div class="n-estado" id="nEstado"><i></i><span id="nEstadoTxt"></span></div>
+        <button class="btn" type="button" id="nActivar">Activar notificaciones</button>
+        <div class="field"><label for="nHora">¿A qué hora te avisamos?</label><select class="input select" id="nHora"></select></div>
+        <div class="field"><label>¿De qué te avisamos?</label>
+          <div class="n-tipos">
+            <label class="chk"><input type="checkbox" data-nt="registro"> Cuando llevo días sin registrar</label>
+            <label class="chk"><input type="checkbox" data-nt="deudas"> Deudas por vencer o vencidas</label>
+            <label class="chk"><input type="checkbox" data-nt="plantillas"> Mi casilla de ahorro del día</label>
+            <label class="chk"><input type="checkbox" data-nt="metas"> Aportes a mis metas</label>
+          </div>
+        </div>
+        <div class="row-btns" style="margin-top:0"><button class="btn ghost" type="button" id="nPrueba">Enviar una prueba</button><button class="btn ghost" type="button" id="nApagar">Desactivar</button></div>
       </article>
     </section>
 
@@ -876,6 +947,12 @@ input{font:inherit;font-size:16px}
             <div class="field"><label for="newPass">Nueva contraseña</label><input class="input" id="newPass" type="password" autocomplete="new-password" placeholder="Mínimo 8 caracteres" minlength="8"></div>
             <button class="btn ghost" id="passGuardar" type="button">Cambiar contraseña</button>
           </div></div>
+        <div class="mgroup"><button class="mitem" type="button" aria-expanded="false"><span class="mico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span><span class="mtxt"><b>Apariencia</b><small id="mTemaSub"></small></span><span class="chev">›</span></button>
+          <div class="mpanel" hidden>
+            <div class="seg three" id="temaSeg" style="margin:0"><button type="button" data-tema="sistema">Automático</button><button type="button" data-tema="light">Claro</button><button type="button" data-tema="dark">Oscuro</button></div>
+            <p class="money-note" style="margin:0">"Automático" sigue el modo de tu celular.</p>
+          </div></div>
+        <div class="mgroup"><button class="mitem" type="button" data-go="alertas"><span class="mico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span><span class="mtxt"><b>Notificaciones</b><small id="mNotifSub"></small></span><span class="chev">›</span></button></div>
         <div class="mgroup"><button class="mitem danger" type="button" id="logout"><span class="mico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></span><span class="mtxt"><b>Cerrar sesión</b></span><span></span></button></div>
       </article>
     </section>
@@ -935,6 +1012,14 @@ input{font:inherit;font-size:16px}
   </form>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="dlg-wrap" id="dlg" hidden>
+    <div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="dlgT" aria-describedby="dlgP">
+      <div class="dlg-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></div>
+      <h3 id="dlgT"></h3>
+      <p id="dlgP"></p>
+      <div class="dlg-btns"><button class="btn ghost" type="button" id="dlgNo">Cancelar</button><button class="btn dlg-si" type="button" id="dlgSi">Borrar</button></div>
+    </div>
+  </div>
 </div>
 <div class="preload" id="preload" hidden aria-live="polite">
   <div class="pl-inner">
@@ -954,10 +1039,10 @@ const $ = id => document.getElementById(id);
 const fmt = n => new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(Math.round(n||0)).replace(/\s/g,'');
 const dots = n => n ? new Intl.NumberFormat('es-CO').format(n) : '';
 const parse = s => Number(String(s||'').replace(/[^\d]/g,''))||0;
-const DEF = {ingreso_quincenal:0, ahorro_quincenal:0, meta_monto:0, meta_nombre:'Mi meta', nombre:'', modo_ingreso:'quincenal', ingreso_diario:0, dias_trabajo:'1,2,3,4,5', base_monto:0, base_cuenta:null, inversion_capital:0, ingreso_mensual:0, dia_pago:30, pago_monto:0, patron:'[[2]]', patron_inicio:null, pers_tipo:'fijo', pagos_montos:'[]', var_min:0, var_max:0, var_base:'floja'};
+const DEF = {ingreso_quincenal:0, ahorro_quincenal:0, meta_monto:0, meta_nombre:'Mi meta', nombre:'', modo_ingreso:'quincenal', ingreso_diario:0, dias_trabajo:'1,2,3,4,5', base_monto:0, base_cuenta:null, inversion_capital:0, ingreso_mensual:0, dia_pago:30, pago_monto:0, patron:'[[2]]', patron_inicio:null, pers_tipo:'fijo', pagos_montos:'[]', var_min:0, var_max:0, var_base:'floja', notif_activas:false, notif_hora:19, notif_tipos:'{"registro":true,"deudas":true,"plantillas":true,"metas":true}'};
 const QUICK = [['Tinto',2500],['Empanada',3000],['Gaseosa',3500],['Snack',4000],['Almuerzo',15000],['Domicilio',8000],['Uber',12000]];
-const TITLES = {ahorro:'Ahorro', plantilla:'Plantilla de ahorro', inicio:'Inicio', movs:'Movimientos', cartera:'Cartera', inversion:'Inversión', mas:'Más', prestamos:'Préstamos', analisis:'Análisis', ajustes:'Ajustes'};
-const VIEWS = ['ahorro','plantilla','inicio','movs','cartera','inversion','mas','prestamos','analisis','ajustes'];
+const TITLES = {alertas:'Alertas', ahorro:'Ahorro', plantilla:'Plantilla de ahorro', inicio:'Inicio', movs:'Movimientos', cartera:'Cartera', inversion:'Inversión', mas:'Más', prestamos:'Préstamos', analisis:'Análisis', ajustes:'Ajustes'};
+const VIEWS = ['alertas','ahorro','plantilla','inicio','movs','cartera','inversion','mas','prestamos','analisis','ajustes'];
 let inversiones = [], invMovs = [], invOK = true, modoUI = null, diasUI = null, patUI = null, persUI = null, vbUI = null, plMetaId = null;
 let cfg = {...DEF}, gastos = [], ahorros = [], prestamos = [], abonos = [], cuentas = [], cuentaSel = null, catSel = null, authMode = 'login', s2Mode = null, uid = null, seg = 'todo', sheetType = 'hormiga', sheetDir = 'preste', abonoLoan = null;
 
@@ -1083,7 +1168,7 @@ function render(){
   renderAnalisis();
   renderCuentasAjustes(); renderMetasAjustes();
   $('mPerfilSub').textContent = cfg.nombre||'Sin nombre';
-  renderCartera(); renderInversion(); renderPlantilla(); renderAhorro();
+  renderCartera(); renderInversion(); renderPlantilla(); renderAhorro(); renderAlertas(); renderTema();
   { const tIn=sumPrest('preste'), tOut=sumPrest('me_prestaron'); $('masPr').textContent = tIn||tOut ? 'Te deben '+fmt(tIn)+' · debes '+fmt(tOut) : 'Lo que te deben y lo que debes'; }
   $('mMetasSub').textContent = metas.length ? metas.length+' meta'+(metas.length>1?'s':'')+' · '+fmt(sumM(metas.map(m=>({monto:m.monto}))))+' en total' : 'Aún no tienes metas';
   $('mCuentasSub').textContent = cuentas.length ? cuentas.map(c=>c.nombre).join(', ') : 'Sin cuentas';
@@ -1124,11 +1209,14 @@ async function pagarProgramado(it,btn){
 }
 
 /* ---------- metas ---------- */
-function etaTxt(falta, aporte){
+const AF={semanal:{d:7,u:'semana',us:'semanas',por:'por semana',q:15/7},quincenal:{d:15,u:'quincena',us:'quincenas',por:'por quincena',q:1},mensual:{d:30.4,u:'mes',us:'meses',por:'al mes',q:.5}};
+const aporteQ=(monto,frec)=>Math.round((monto||0)*(AF[frec]||AF.quincenal).q);
+function etaTxt(falta, aporte, m){
   if(falta<=0) return '¡Cumplida!';
-  if(!(aporte>0)) return 'Te faltan '+fmt(falta)+'. Asígnale un aporte quincenal para calcular cuándo llegas.';
-  const q=Math.ceil(falta/aporte); const f=new Date(Date.now()+q*15*864e5);
-  return 'Te faltan '+fmt(falta)+' · '+fmt(aporte)+' por quincena → '+q+' quincena'+(q>1?'s':'')+' (aprox. '+f.toLocaleDateString('es-CO',{month:'short',year:'numeric'}).replace('.','')+')';
+  if(!(aporte>0)) return 'Te faltan '+fmt(falta)+'. Asígnale un aporte para calcular cuándo llegas.';
+  const f0=AF[m?.aporte_frec]||AF.quincenal, am=m?.aporte_monto||aporte;
+  const q=Math.ceil(falta/am); const f=new Date(Date.now()+q*f0.d*864e5);
+  return 'Te faltan '+fmt(falta)+' · '+fmt(am)+' '+f0.por+' → '+q+' '+(q>1?f0.us:f0.u)+' (aprox. '+f.toLocaleDateString('es-CO',{month:'short',year:'numeric'}).replace('.','')+')';
 }
 function renderMetas(total){
   const box=$('metasList'); box.textContent='';
@@ -1147,7 +1235,7 @@ function renderMetas(total){
     const ed=document.createElement('button'); ed.className='del'; ed.type='button'; ed.setAttribute('aria-label','Editar '+m.nombre); ed.innerHTML=PENCIL; ed.onclick=()=>openMeta(m.id);
     top.append(b,n,ed); div.appendChild(top);
     const bar=document.createElement('div'); bar.className='budget-bar save'; const i=document.createElement('i'); i.style.width=pc+'%'; bar.appendChild(i); div.appendChild(bar);
-    const sm=document.createElement('small'); sm.textContent=etaTxt(falta,m.aporte); if(falta<=0) sm.className='good'; div.appendChild(sm);
+    const sm=document.createElement('small'); sm.textContent=etaTxt(falta,m.aporte,m); if(falta<=0) sm.className='good'; div.appendChild(sm);
     const pb=document.createElement('button'); pb.type='button'; pb.className='mini meta-plan'+(m.plantilla?' primary':'');
     if(m.plantilla){ const st=plEstado(m); pb.textContent='Plantilla · '+st.on+'/'+st.n+' casillas'; pb.onclick=()=>verPlantilla(m.id); }
     else { pb.textContent=falta>0?'Crear plantilla de ahorro':'Meta cumplida'; pb.disabled=falta<=0; pb.onclick=()=>openPlantilla(m.id); }
@@ -1161,12 +1249,179 @@ function renderMetasAjustes(){
   if(!metas.length){ const p=document.createElement('p'); p.className='empty'; p.textContent='Todavía no tienes metas. Crea la primera.'; box.appendChild(p); return; }
   for(const m of metas){
     const r=document.createElement('div'); r.className='meta-ed';
-    const t=document.createElement('div'); const b=document.createElement('b'); b.textContent=m.nombre; const sm=document.createElement('small'); sm.textContent=fmt(m.monto)+(m.aporte? ' · aporte '+fmt(m.aporte)+'/quincena':' · sin aporte'); t.append(b,sm);
+    const t=document.createElement('div'); const b=document.createElement('b'); b.textContent=m.nombre; const sm=document.createElement('small'); sm.textContent=fmt(m.monto)+(m.aporte? ' · aporte '+fmt(m.aporte_monto??m.aporte)+' '+({semanal:'por semana',quincenal:'por quincena',mensual:'al mes'}[m.aporte_frec||'quincenal']):' · sin aporte'); t.append(b,sm);
     const ed=document.createElement('button'); ed.className='del'; ed.type='button'; ed.setAttribute('aria-label','Editar '+m.nombre); ed.innerHTML=PENCIL; ed.onclick=()=>openMeta(m.id);
     const d=document.createElement('button'); d.className='del'; d.type='button'; d.setAttribute('aria-label','Borrar '+m.nombre);
     d.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>'; d.onclick=()=>borrar('metas',m.id,d);
     r.append(t,ed,d); box.appendChild(r);
   }
+}
+
+/* ---------- tema ---------- */
+function temaActual(){ const t=lsGet('mp_tema'); return t==='light'||t==='dark' ? t : 'sistema'; }
+function aplicarTema(t){
+  lsSet('mp_tema', t==='sistema' ? '' : t);
+  if(t==='light'||t==='dark') document.documentElement.setAttribute('data-theme',t); else document.documentElement.removeAttribute('data-theme');
+  const oscuro = t==='dark' || (t==='sistema' && matchMedia('(prefers-color-scheme: dark)').matches);
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m=>{ if(t==='sistema') m.setAttribute('content', m.media.includes('dark')?'#0B0F1A':'#F2F3F7'); else m.setAttribute('content', oscuro?'#0B0F1A':'#F2F3F7'); });
+}
+function renderTema(){
+  const t=temaActual(); document.querySelectorAll('[data-tema]').forEach(b=>b.setAttribute('aria-selected', b.dataset.tema===t));
+  $('mTemaSub').textContent = {sistema:'Automático (como tu celular)', light:'Modo claro', dark:'Modo oscuro'}[t];
+}
+aplicarTema(temaActual());
+
+/* ---------- confirmación ---------- */
+let dlgRes=null;
+function confirmar({t,p,ok}){
+  $('dlgT').textContent=t||'¿Seguro?'; $('dlgP').textContent=p||''; $('dlgP').hidden=!p; $('dlgSi').textContent=ok||'Borrar';
+  $('dlg').hidden=false; setTimeout(()=>$('dlgNo').focus(),30);
+  return new Promise(res=>{ dlgRes=res; });
+}
+function cerrarDlg(v){ if($('dlg').hidden) return; $('dlg').hidden=true; const r=dlgRes; dlgRes=null; if(r) r(v); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('dlg').hidden){ e.stopImmediatePropagation(); cerrarDlg(false); } }, true);
+function descrBorrar(tabla,id){
+  const q=(arr)=>arr.find(x=>x.id===id)||{};
+  if(tabla==='gastos'){ const g=q(gastos);
+    if(g.tipo==='fijo') return {t:'¿Borrar el gasto fijo "'+(g.nombre||'')+'"?', p:'Deja de contarse cada mes. Los gastos que le asignaste quedan sin categoría.', ok:'Borrar'};
+    return {t:'¿Borrar este movimiento?', p:(g.nombre?g.nombre+' por '+fmt(g.monto)+'. ':'')+(g.cuenta_id && nombreCuenta(g.cuenta_id) && Number(g.efecto)? (g.tipo==='ingreso'?'Ese ingreso se resta de ':'La plata vuelve a ')+nombreCuenta(g.cuenta_id)+'.':''), ok:'Borrar'}; }
+  if(tabla==='ahorros'){ const a=q(ahorros), m=todas().find(x=>x.id===a.meta_id);
+    const enPl = m && m.plantilla && m.plantilla.some(c=>c.a===id);
+    return {t:'¿Quitar este ahorro?', p:fmt(a.monto||0)+(m?' de "'+m.nombre+'"':'')+'. '+(enPl?'También se desmarca su casilla en la plantilla. ':'')+(a.cuenta_id&&nombreCuenta(a.cuenta_id)?'La plata vuelve a '+nombreCuenta(a.cuenta_id)+'.':''), ok:'Quitar'}; }
+  if(tabla==='prestamos'){ const l=q(prestamos); return {t:'¿Borrar el préstamo '+(l.direccion==='preste'?'a ':'de ')+(l.persona||'')+'?', p:'Se borran también sus abonos y se devuelven los movimientos de tus cuentas.', ok:'Borrar'}; }
+  if(tabla==='prestamo_abonos'){ const a=q(abonos); return {t:'¿Deshacer este abono?', p:'Se quita el abono de '+fmt(a.monto||0)+' y vuelve a quedar pendiente.', ok:'Deshacer'}; }
+  if(tabla==='cuentas'){ const c=q(cuentas); return {t:'¿Borrar la cuenta "'+(c.nombre||'')+'"?', p:'Sus movimientos se conservan, pero ya no tendrán cuenta asignada.', ok:'Borrar'}; }
+  if(tabla==='metas'){ const m=q(metas); return {t:'¿Borrar la meta "'+(m.nombre||'')+'"?', p:'Lo que ya ahorraste para ella ('+fmt(ahorradoDe(m))+') se queda en tus ahorros, sin meta.', ok:'Borrar'}; }
+  if(tabla==='inversiones'){ const i=q(inversiones); return {t:'¿Borrar la inversión "'+(i.nombre||'')+'"?', p:'Se borran también las entradas que registraste.', ok:'Borrar'}; }
+  if(tabla==='inversion_movs'){ const m=q(invMovs); return {t:'¿Deshacer esta entrada?', p:'Se quita la entrada de '+fmt(m.monto||0)+'.', ok:'Deshacer'}; }
+  return {t:'¿Seguro que quieres borrar esto?', p:'', ok:'Borrar'};
+}
+
+/* ---------- alertas ---------- */
+const diaKey = d => isoDia(new Date(d));
+function calcAlertas(){
+  const al=[], hoy=new Date(); hoy.setHours(0,0,0,0); const ahora=new Date();
+  const dias=d=>Math.round((new Date(d+'T00:00:00')-hoy)/864e5);
+  // 1. sin registrar
+  const fechas=[...gastos.filter(g=>g.tipo!=='fijo').map(g=>g.fecha), ...ahorros.map(a=>a.fecha)].map(f=>new Date(f)).filter(f=>f<=ahora);
+  if(!fechas.length) al.push({k:'registro',t:'info',i:'+',titulo:'Registra tu primer movimiento',texto:'Anota un gasto o un ingreso para que la app empiece a ayudarte.',acc:['Registrar',()=>openSheet()]});
+  else { const ult=new Date(Math.max(...fechas)); const n=Math.floor((ahora-ult)/864e5);
+    if(n>=2) al.push({k:'registro',t:'warn',i:'!',titulo:'Llevas '+n+' días sin registrar',texto:'¿Gastaste algo? Anótalo para que tus cuentas y tu panel cuadren.',acc:['Registrar',()=>openSheet()]}); }
+  // 2. deudas y cobros
+  const pag={}; for(const a of abonos) pag[a.prestamo_id]=(pag[a.prestamo_id]||0)+a.monto;
+  for(const l of prestamos){ const sal=l.monto-(pag[l.id]||0); if(sal<=0 || !l.fecha_limite) continue; const d=dias(l.fecha_limite);
+    if(l.direccion==='me_prestaron'){
+      if(d<0) al.push({k:'deudas',t:'warn',i:'$',titulo:'Deuda vencida con '+l.persona,texto:'Debías pagar '+fmt(sal)+' hace '+(-d)+' día'+(d===-1?'':'s')+'.',acc:['Ver deuda',()=>go('prestamos')]});
+      else if(d<=3) al.push({k:'deudas',t:'warn',i:'$',titulo:'Tu deuda con '+l.persona+' vence '+(d===0?'hoy':d===1?'mañana':'en '+d+' días'),texto:'Te faltan '+fmt(sal)+' por pagar.',acc:['Ver deuda',()=>go('prestamos')]});
+    } else if(d<0) al.push({k:'deudas',t:'info',i:'$',titulo:l.persona+' te debe '+fmt(sal),texto:'Se venció hace '+(-d)+' día'+(d===-1?'':'s')+'. Recuérdale.',acc:['Ver',()=>go('prestamos')]});
+  }
+  for(const i of inversiones){ if(i.estado!=='activa' || i.tipo!=='prestamo' || !i.fecha_limite) continue; const d=dias(i.fecha_limite);
+    if(d<=2) al.push({k:'deudas',t:'info',i:'%',titulo:(d<0?'Ya puedes cobrarle a ':'Pronto le cobras a ')+(i.persona||i.nombre),texto:'Préstamo con interés: esperas '+fmt(invEsperado(i))+(d<0?' (venció hace '+(-d)+' días).':d===0?' hoy.':' en '+d+' días.'),acc:['Ver',()=>go('inversion')]}); }
+  // 3. programados
+  for(const g of gastos){ if(g.tipo==='fijo') continue; const f=new Date(g.fecha); if(f<=ahora) continue; const d=Math.round((new Date(f.getFullYear(),f.getMonth(),f.getDate())-hoy)/864e5);
+    if(d<=2) al.push({k:'registro',t:'info',i:'⏰',titulo:(g.tipo==='ingreso'?'Te llega ':'Se paga ')+g.nombre+' '+(d===0?'hoy':d===1?'mañana':'en '+d+' días'),texto:fmt(g.monto)+(g.tipo==='ingreso'?' programado.':' programado. Asegúrate de tener la plata.'),acc:['Ver',()=>{ mesSel=mesKey(f); go('movs'); render(); }]}); }
+  // 4. plantillas
+  for(const m of todas()){ if(!m.plantilla) continue; const st=plEstado(m); if(st.on>=st.n) continue; const fr=m.plantilla_frec||'diario';
+    if(fr==='diario'){ const hoyK=isoDia(new Date()); const yaHoy=ahorros.some(a=>a.meta_id===m.id && diaKey(a.fecha)===hoyK);
+      if(!yaHoy) al.push({k:'plantillas',t:'warn',i:'✓',titulo:'Hoy no has tachado tu casilla',texto:'Plantilla "'+m.nombre+'": llevas '+st.on+' de '+st.n+'. Tacha una aunque sea pequeña.',acc:['Tachar',()=>verPlantilla(m.id)]}); }
+    else { const ini=m.plantilla_inicio?new Date(m.plantilla_inicio+'T00:00:00'):hoy; const esp=Math.min(st.n,Math.floor((hoy-ini)/864e5/FREC[fr].dias)+1);
+      if(st.on<esp) al.push({k:'plantillas',t:'warn',i:'✓',titulo:'Vas atrasado en "'+m.nombre+'"',texto:'Te faltan '+(esp-st.on)+' casilla'+(esp-st.on>1?'s':'')+' para ir al día.',acc:['Tachar',()=>verPlantilla(m.id)]}); }
+  }
+  // 5. aportes a metas
+  for(const m of metas){ if(!(m.aporte>0) || m.plantilla || ahorradoDe(m)>=m.monto) continue;
+    const fr=m.aporte_frec||'quincenal', ventana=fr==='semanal'?7:fr==='quincenal'?15:31, creada=m.creada?new Date(m.creada):new Date(0);
+    if((ahora-creada)/864e5 < Math.min(ventana,7)) continue;
+    let desde; if(fr==='mensual'){ desde=new Date(hoy.getFullYear(),hoy.getMonth(),1); if(hoy.getDate()<20) continue; } else desde=new Date(ahora-ventana*864e5);
+    const hizo=ahorros.some(a=>a.meta_id===m.id && new Date(a.fecha)>=desde);
+    if(!hizo) al.push({k:'metas',t:'warn',i:'★',titulo:'Te toca tu aporte para "'+m.nombre+'"',texto:fmt(m.aporte_monto||m.aporte)+' '+(AF[fr]||AF.quincenal).por+'. '+(fr==='mensual'?'Este mes aún no aportas.':'No has aportado en '+(fr==='semanal'?'esta semana':'esta quincena')+'.'),acc:['Ahorrar',()=>{ openSheet('ahorro'); metaSel=m.id; if(m.aporte_monto||m.aporte) $('shMonto').value='$'+dots(m.aporte_monto||m.aporte); renderMetaPicks(); }]});
+  }
+  // 6. presupuestos y base
+  const mes=mesKey(), hm=hormigaDe(mes);
+  for(const f of gastos.filter(g=>g.tipo==='fijo')){ const sp=spentOf(f,hm,mes); if(f.monto>0 && sp>f.monto) al.push({k:'info',t:'warn',i:'!',titulo:'Te pasaste en '+f.nombre,texto:'Gastaste '+fmt(sp)+' de '+fmt(f.monto)+' este mes.',acc:['Ver',()=>go('cartera')]}); }
+  const b=baseInfo(); if(b && b.dias!==null && b.dias<15) al.push({k:'info',t:'warn',i:'⌛',titulo:'Tu base alcanza para '+b.dias+' días',texto:'Te quedan '+fmt(b.queda)+'. Baja gastos o busca un ingreso extra.',acc:['Ver',()=>go('cartera')]});
+  return al.sort((x,y)=>({warn:0,info:1,good:2}[x.t]-{warn:0,info:1,good:2}[y.t]));
+}
+function alertaEl(a){
+  const d=document.createElement('div'); d.className='alerta '+a.t;
+  const ic=document.createElement('span'); ic.className='al-ico'; ic.textContent=a.i;
+  const body=document.createElement('div'); const b=document.createElement('b'); b.textContent=a.titulo; const p=document.createElement('p'); p.textContent=a.texto; body.append(b,p);
+  if(a.acc){ const x=document.createElement('button'); x.type='button'; x.className='mini primary'; x.textContent=a.acc[0]; x.onclick=a.acc[1]; body.appendChild(x); }
+  d.append(ic,body); return d;
+}
+function renderAlertas(){
+  const al=calcAlertas(), n=al.filter(a=>a.t==='warn').length;
+  $('bellN').hidden=!al.length; $('bellN').textContent=al.length>9?'9+':String(al.length); $('bell').setAttribute('aria-label', al.length? al.length+' alertas' : 'Alertas');
+  $('bellN').style.background = n ? 'var(--danger)' : 'var(--accent)';
+  // dashboard
+  $('dAlCard').hidden=!al.length; const d=$('dAl'); d.textContent=''; al.slice(0,3).forEach(a=>d.appendChild(alertaEl(a)));
+  $('dAlMas').textContent = al.length>3 ? 'Ver las '+al.length : 'Ver todas';
+  // vista
+  $('alCnt').textContent = al.length ? al.length+' pendiente'+(al.length>1?'s':'') : '';
+  const l=$('alList'); l.textContent='';
+  if(!al.length){ const ok=document.createElement('div'); ok.className='al-ok'; ok.textContent='✓ Todo al día. No tienes nada pendiente.'; l.appendChild(ok); }
+  al.forEach(a=>l.appendChild(alertaEl(a)));
+  $('masAl').textContent = al.length ? al.length+' por revisar' : 'Todo al día';
+  renderNotif();
+}
+
+/* ---------- notificaciones push ---------- */
+const VAPID_PUBLIC='BLZQTzjfgY-2m1Y108QW3a1cnRZ22IuCPm9BfYbG_0j5LoguK-e1o9c64XNPpN0xQ6fqmZeCnGy1E0bQS4vE_k4';
+const esIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+const enInicio=()=>matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
+const pushSoportado=()=>'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+function notifTipos(){ try{ return {registro:true,deudas:true,plantillas:true,metas:true,...JSON.parse(cfg.notif_tipos||'{}')}; }catch(e){ return {registro:true,deudas:true,plantillas:true,metas:true}; } }
+function b64u(s){ const p='='.repeat((4-s.length%4)%4), b=(s+p).replace(/-/g,'+').replace(/_/g,'/'), r=atob(b), u=new Uint8Array(r.length); for(let i=0;i<r.length;i++) u[i]=r.charCodeAt(i); return u; }
+let subLocal=null;
+async function revisarSub(){ try{ const reg=await navigator.serviceWorker?.getRegistration(); subLocal=await reg?.pushManager?.getSubscription()||null; }catch(e){ subLocal=null; } renderNotif(); }
+function renderNotif(){
+  const hora=cfg.notif_hora??19, horaTxt=(hora%12||12)+':00 '+(hora<12?'a. m.':'p. m.'), est=$('nEstado'), txt=$('nEstadoTxt');
+  if(document.activeElement?.id!=='nHora') $('nHora').value=String(hora);
+  const t=notifTipos(); document.querySelectorAll('[data-nt]').forEach(c=>c.checked=!!t[c.dataset.nt]);
+  let on=false;
+  if(!pushSoportado()){ est.className='n-estado off'; txt.textContent = esIOS && !enInicio() ? 'En iPhone las notificaciones solo funcionan si abres la app desde el ícono de tu pantalla de inicio (iOS 16.4 o más reciente).' : 'Este navegador no permite notificaciones.'; }
+  else if(Notification.permission==='denied'){ est.className='n-estado off'; txt.textContent='Bloqueaste las notificaciones. Actívalas en Ajustes del celular → Notificaciones → Mi plata.'; }
+  else if(cfg.notif_activas && subLocal && Notification.permission==='granted'){ on=true; est.className='n-estado on'; txt.textContent='Activas en este celular. Te avisamos todos los días a las '+horaTxt+' si hay algo pendiente.'; }
+  else { est.className='n-estado'; txt.textContent='Desactivadas. Actívalas para que te recordemos aunque no abras la app.'; }
+  $('nActivar').hidden=on; $('nApagar').hidden=!on; $('nPrueba').hidden=!(pushSoportado() && Notification.permission==='granted');
+  $('mNotifSub').textContent = on ? 'Activas · '+horaTxt : 'Desactivadas';
+}
+async function activarNotif(){
+  if(!pushSoportado()){ toast(esIOS && !enInicio() ? 'Abre la app desde el ícono de tu pantalla de inicio para activarlas.' : 'Este navegador no permite notificaciones.',true); return; }
+  const btn=$('nActivar'); btn.disabled=true;
+  try{
+    const perm=await Notification.requestPermission();
+    if(perm!=='granted'){ toast('No diste permiso. Puedes activarlo en Ajustes del celular → Notificaciones → Mi plata.',true); return; }
+    const reg=await navigator.serviceWorker.ready;
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub) sub=await reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:b64u(VAPID_PUBLIC)});
+    const j=sub.toJSON();
+    const r=await sb.from('push_subs').upsert({user_id:uid,endpoint:j.endpoint,p256dh:j.keys.p256dh,auth:j.keys.auth,agente:navigator.userAgent.slice(0,180)},{onConflict:'user_id,endpoint'});
+    if(r.error){ dbErr(r.error); return; }
+    const a=await sb.from('ajustes').upsert({user_id:uid, notif_activas:true}); if(a.error){ dbErr(a.error); return; }
+    subLocal=sub; cfg.notif_activas=true; toast('¡Listo! Te avisaremos cuando haya algo pendiente.');
+    cargar();
+  }catch(e){ toast('No se pudieron activar. Intenta de nuevo.',true); }
+  finally{ btn.disabled=false; renderNotif(); }
+}
+async function desactivarNotif(){
+  if(!await confirmar({t:'¿Desactivar notificaciones?', p:'Dejaremos de recordarte en este celular. Las alertas seguirán apareciendo dentro de la app.', ok:'Desactivar'})) return;
+  try{ const reg=await navigator.serviceWorker.ready; const sub=await reg.pushManager.getSubscription();
+    if(sub){ await sb.from('push_subs').delete().eq('endpoint',sub.endpoint); await sub.unsubscribe(); }
+    const rest=await sb.from('push_subs').select('id').limit(1);
+    if(!rest.data?.length) await sb.from('ajustes').upsert({user_id:uid, notif_activas:false});
+  }catch(e){}
+  subLocal=null; toast('Notificaciones desactivadas en este celular'); cargar();
+}
+async function notifPrueba(){
+  try{ const reg=await navigator.serviceWorker.ready; const al=calcAlertas();
+    await reg.showNotification('Mi plata', {body: al.length ? al[0].titulo+(al.length>1?' · y '+(al.length-1)+' más':'') : '¡Así te llegarán los recordatorios!', icon:'icons/icon-192.png', badge:'icons/icon-192.png', tag:'prueba', data:{url:'./#alertas'}});
+    toast('Te enviamos una notificación de prueba');
+  }catch(e){ toast('No se pudo mostrar la prueba.',true); }
+}
+async function guardarNotif(upd){
+  Object.assign(cfg, upd); renderNotif();
+  const {error}=await sb.from('ajustes').upsert({user_id:uid, ...upd}); if(error){ dbErr(error); return; }
+  toast('Guardado');
 }
 
 /* ---------- pestaña Ahorro ---------- */
@@ -1312,7 +1567,7 @@ async function guardarPlantilla(){
   if(!c.m.id){ if(!c.m.nombre){ toast('Ponle un nombre a tu ahorro.',true); return false; }
     const r=await sb.from('metas').insert({nombre:c.m.nombre, monto:c.total, aporte, clase:'plantilla', orden:plants.length, plantilla:arr.map(m=>({m,a:null})), plantilla_frec:frec, plantilla_inicio:isoDia(new Date())}).select('id').single();
     if(r.error){ dbErr(r.error); return false; } $('sheet2').dataset.pmid=r.data.id; toast('Plantilla creada: '+arr.length+' casillas'); return true; }
-  const {error}=await sb.from('metas').update({monto:c.total, plantilla:arr.map(m=>({m,a:null})), plantilla_frec:frec, plantilla_inicio:isoDia(new Date()), aporte}).eq('id',c.m.id);
+  const {error}=await sb.from('metas').update({monto:c.total, plantilla:arr.map(m=>({m,a:null})), plantilla_frec:frec, plantilla_inicio:isoDia(new Date()), aporte, aporte_monto:aporte, aporte_frec:'quincenal'}).eq('id',c.m.id);
   if(error){ dbErr(error); return false; }
   toast('Plantilla creada: '+arr.length+' casillas'); return true;
 }
@@ -1345,8 +1600,9 @@ function renderPlantilla(){
 let plBusy=false;
 async function togglePl(mid, i, btn){
   if(plBusy) return; const m=todas().find(x=>x.id===mid); if(!m) return;
-  plBusy=true; btn.disabled=true;
   const ids=new Set(ahorros.map(a=>a.id)), plant=m.plantilla.map(c=>({...c})), c=plant[i];
+  if(c.a && ids.has(c.a) && !await confirmar({t:'¿Quitar este ahorro?', p:'Se desmarca la casilla de '+fmt(c.m)+' en "'+m.nombre+'" y la plata vuelve a tu cuenta.', ok:'Quitar'})) return;
+  plBusy=true; btn.disabled=true;
   try{
     if(c.a && ids.has(c.a)){ const {error}=await sb.from('ahorros').delete().eq('id',c.a); if(error) throw error; plant[i].a=null; }
     else { const r=await sb.from('ahorros').insert({monto:c.m, cuenta_id:cuentaDefault(), meta_id:m.id}).select('id').single(); if(r.error) throw r.error; plant[i].a=r.data.id; }
@@ -1358,8 +1614,7 @@ async function togglePl(mid, i, btn){
 }
 async function quitarPlantilla(btn){
   const m=todas().find(x=>x.id===plMetaId); if(!m) return; const sola=m.clase==='plantilla', lbl=sola?'Borrar plantilla':'Quitar plantilla';
-  if(pendingDel!=='pl'+m.id){ pendingDel='pl'+m.id; btn.textContent='Toca para confirmar'; setTimeout(()=>{ if(pendingDel==='pl'+m.id){ pendingDel=null; btn.textContent=lbl; } },2500); return; }
-  pendingDel=null; btn.textContent=lbl;
+  if(!await confirmar({t: sola?'¿Borrar la plantilla "'+m.nombre+'"?':'¿Quitar la plantilla de "'+m.nombre+'"?', p: sola?'Se borran sus casillas. Lo que ya ahorraste se queda en tus ahorros.':'Se borran las casillas. Lo que ya ahorraste sigue sumando a tu meta.', ok: sola?'Borrar':'Quitar'})) return;
   const {error}= sola ? await sb.from('metas').delete().eq('id',m.id) : await sb.from('metas').update({plantilla:null,plantilla_frec:null,plantilla_inicio:null}).eq('id',m.id); if(error){ dbErr(error); return; }
   toast(sola ? 'Plantilla borrada. Lo que ahorraste sigue en tus ahorros.' : 'Plantilla quitada. Lo ahorrado sigue en tu meta.'); go('ahorro'); cargar();
 }
@@ -1418,7 +1673,12 @@ function openMeta(id){
     const l=document.createElement('label'); l.htmlFor=idn; l.textContent=lbl; const i=document.createElement('input'); i.className='input'; i.id=idn; i.placeholder=ph||'';
     if(money){ i.inputMode='numeric'; i.value=val?'$'+dots(val):''; moneyInput(i); } else { i.maxLength=40; i.value=val; }
     w.append(l,i); body.appendChild(w); return i; };
-  mk('¿Para qué es?','mtNombre',m?m.nombre:'',false,'iPhone, moto, viaje…'); mk('¿Cuánto cuesta?','mtMonto',m?m.monto:0,true,'$0'); mk('¿Cuánto aportas por quincena?','mtAporte',m?m.aporte:0,true,'$0');
+  mk('¿Para qué es?','mtNombre',m?m.nombre:'',false,'iPhone, moto, viaje…'); mk('¿Cuánto cuesta?','mtMonto',m?m.monto:0,true,'$0'); mk('¿Cuánto aportas?','mtAporte',m?(m.aporte_monto??m.aporte):0,true,'$0');
+  { const w=document.createElement('div'); w.className='field'; w.style.marginBottom='14px'; const l=document.createElement('label'); l.textContent='¿Cada cuánto aportas? (te recordamos)';
+    const sg=document.createElement('div'); sg.className='seg three'; sg.style.margin='0'; const fr=m?.aporte_frec||'quincenal'; $('sheet2').dataset.af=fr;
+    for(const [k,t] of [['semanal','Semanal'],['quincenal','Quincenal'],['mensual','Mensual']]){ const b=document.createElement('button'); b.type='button'; b.textContent=t; b.dataset.af=k; b.setAttribute('aria-selected',k===fr);
+      b.onclick=()=>{ $('sheet2').dataset.af=k; sg.querySelectorAll('button').forEach(x=>x.setAttribute('aria-selected',x===b)); }; sg.appendChild(b); }
+    w.append(l,sg); body.appendChild(w); }
   const p=document.createElement('p'); p.className='money-note'; p.textContent='¿No sabes cuánto aportar? Usa "Recomendación", o crea una plantilla de ahorro y la app arma las casillas según tus ingresos.'; body.appendChild(p);
   if(!m){ const lb=document.createElement('label'); lb.className='chk'; const cb=document.createElement('input'); cb.type='checkbox'; cb.id='mtPlant'; cb.checked=true; lb.append(cb,' Crear una plantilla de ahorro con casillas'); body.appendChild(lb); }
   $('sheet2').dataset.mid=id||''; openSheet2(); setTimeout(()=>$('mtNombre').focus(),250);
@@ -2110,12 +2370,12 @@ async function cargar(){
   gastos=g.data.map(x=>({...x,monto:Number(x.monto)})); ahorros=a.data.map(x=>({...x,monto:Number(x.monto)}));
   prestamos=pr.data.map(x=>({...x,monto:Number(x.monto)})); abonos=ab.data.map(x=>({...x,monto:Number(x.monto)}));
   cuentas=cu.data.map(x=>({...x,saldo:Number(x.saldo)}));
-  const mt=me.data.map(x=>({...x,monto:Number(x.monto),aporte:Number(x.aporte),plantilla:Array.isArray(x.plantilla)?x.plantilla.map(c=>({m:Number(c.m),a:c.a||null})):null}));
+  const mt=me.data.map(x=>({...x,monto:Number(x.monto),aporte:Number(x.aporte),aporte_monto:x.aporte_monto==null?null:Number(x.aporte_monto),aporte_frec:x.aporte_frec||'quincenal',plantilla:Array.isArray(x.plantilla)?x.plantilla.map(c=>({m:Number(c.m),a:c.a||null})):null}));
   metas=mt.filter(x=>(x.clase||'meta')==='meta'); plants=mt.filter(x=>x.clase==='plantilla');
   invOK = !iv.error && !im.error;
   inversiones = invOK ? iv.data.map(x=>({...x,monto:Number(x.monto),tasa:Number(x.tasa),esperado:Number(x.esperado)})) : [];
   invMovs = invOK ? im.data.map(x=>({...x,monto:Number(x.monto)})) : [];
-  cfg = c.data ? {...DEF,...c.data,ingreso_quincenal:Number(c.data.ingreso_quincenal),ahorro_quincenal:Number(c.data.ahorro_quincenal),meta_monto:Number(c.data.meta_monto),ingreso_diario:Number(c.data.ingreso_diario||0),base_monto:Number(c.data.base_monto||0),inversion_capital:Number(c.data.inversion_capital||0),modo_ingreso:c.data.modo_ingreso||'quincenal',dias_trabajo:c.data.dias_trabajo??'1,2,3,4,5',ingreso_mensual:Number(c.data.ingreso_mensual||0),pago_monto:Number(c.data.pago_monto||0),dia_pago:Number(c.data.dia_pago||30),patron:c.data.patron||'[[2]]',patron_inicio:c.data.patron_inicio||null,pers_tipo:c.data.pers_tipo||'fijo',pagos_montos:c.data.pagos_montos||'[]',var_min:Number(c.data.var_min||0),var_max:Number(c.data.var_max||0),var_base:c.data.var_base||'floja'} : {...DEF};
+  cfg = c.data ? {...DEF,...c.data,ingreso_quincenal:Number(c.data.ingreso_quincenal),ahorro_quincenal:Number(c.data.ahorro_quincenal),meta_monto:Number(c.data.meta_monto),ingreso_diario:Number(c.data.ingreso_diario||0),base_monto:Number(c.data.base_monto||0),inversion_capital:Number(c.data.inversion_capital||0),modo_ingreso:c.data.modo_ingreso||'quincenal',dias_trabajo:c.data.dias_trabajo??'1,2,3,4,5',ingreso_mensual:Number(c.data.ingreso_mensual||0),pago_monto:Number(c.data.pago_monto||0),dia_pago:Number(c.data.dia_pago||30),patron:c.data.patron||'[[2]]',patron_inicio:c.data.patron_inicio||null,pers_tipo:c.data.pers_tipo||'fijo',pagos_montos:c.data.pagos_montos||'[]',var_min:Number(c.data.var_min||0),var_max:Number(c.data.var_max||0),var_base:c.data.var_base||'floja',notif_activas:!!c.data.notif_activas,notif_hora:c.data.notif_hora??19,notif_tipos:c.data.notif_tipos||'{"registro":true,"deudas":true,"plantillas":true,"metas":true}'} : {...DEF};
   lsSet('mp_nombre', cfg.nombre||'');
   render();
 }
@@ -2144,8 +2404,7 @@ async function guardar(tipo, nombre, monto){
 }
 let pendingDel=null;
 async function borrar(tabla,id,btn){
-  if(pendingDel!==id){ pendingDel=id; btn.style.color='var(--danger)'; btn.style.background='var(--surface-2)'; toast('Toca otra vez para borrar'); setTimeout(()=>{ if(pendingDel===id){pendingDel=null; btn.style.color=''; btn.style.background='';} },2500); return; }
-  pendingDel=null;
+  if(!await confirmar(descrBorrar(tabla,id))) return;
   const {error}=await sb.from(tabla).delete().eq('id',id);
   if(error){ toast('No se pudo borrar.',true); return; }
   toast('Borrado'); cargar();
@@ -2154,10 +2413,10 @@ async function borrar(tabla,id,btn){
 /* ---------- navegación ---------- */
 function go(view){
   for(const v of VIEWS) $('v-'+v).hidden = v!==view;
-  const tabOf = ['prestamos','analisis','ajustes'].includes(view) ? 'mas' : view==='plantilla' ? 'ahorro' : view;
+  const tabOf = ['prestamos','analisis','ajustes','alertas'].includes(view) ? 'mas' : view==='plantilla' ? 'ahorro' : view;
   document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', t.dataset.go===tabOf));
   $('title').textContent = view==='inicio' ? (cfg.nombre ? 'Hola, '+cfg.nombre : 'Hola') : TITLES[view];
-  $('fab').hidden = view==='ajustes' || view==='mas' || view==='plantilla';
+  $('fab').hidden = view==='ajustes' || view==='mas' || view==='plantilla' || view==='alertas';
   $('fab').setAttribute('aria-label', view==='inversion' ? 'Nueva inversión' : view==='ahorro' ? 'Guardar ahorro' : 'Agregar movimiento');
   window.scrollTo({top:0});
 }
@@ -2236,7 +2495,7 @@ function openSheet(t){
   $('scrim').classList.add('open'); $('sheet').classList.add('open');
   setTimeout(()=>$('shMonto').focus(),250);
 }
-function closeSheet(){ $('scrim').classList.remove('open'); $('sheet').classList.remove('open'); $('sheet2').classList.remove('open'); document.activeElement?.blur(); if(recargaPendiente) setTimeout(()=>location.reload(),300); }
+function closeSheet(){ $('scrim').classList.remove('open'); $('sheet').classList.remove('open'); $('sheet2').classList.remove('open'); document.activeElement?.blur(); if(recargaPendiente){ try{ sessionStorage.setItem('mp_pre','1'); }catch(e){} setTimeout(()=>location.reload(),300); } }
 
 /* ---------- ajustar saldos / pasar plata ---------- */
 function openSheet2(){ $('s2Btn').disabled=false; $('scrim').classList.add('open'); $('sheet2').classList.add('open'); }
@@ -2316,9 +2575,10 @@ $('sheet2').addEventListener('submit',async e=>{
       const {error}=await sb.from('inversion_movs').insert({inversion_id:id,monto:m,nota:$('rtNota').value.trim()||null}); if(error){ dbErr(error); btn.disabled=false; return; }
       toast('Entrada de '+fmt(m)+' registrada');
     } else if(s2Mode==='meta'){
-      const nombre=$('mtNombre').value.trim(), monto=parse($('mtMonto').value), aporte=parse($('mtAporte').value), mid=$('sheet2').dataset.mid;
+      const nombre=$('mtNombre').value.trim(), monto=parse($('mtMonto').value), aporte_monto=parse($('mtAporte').value), mid=$('sheet2').dataset.mid, aporte_frec=$('sheet2').dataset.af||'quincenal';
+      const aporte=aporteQ(aporte_monto,aporte_frec);
       if(!nombre||!monto){ toast('Pon el nombre y cuánto cuesta.',true); btn.disabled=false; return; }
-      const r = mid ? await sb.from('metas').update({nombre,monto,aporte}).eq('id',mid) : await sb.from('metas').insert({nombre,monto,aporte,orden:metas.length}).select('id').single();
+      const r = mid ? await sb.from('metas').update({nombre,monto,aporte,aporte_monto,aporte_frec}).eq('id',mid) : await sb.from('metas').insert({nombre,monto,aporte,aporte_monto,aporte_frec,orden:metas.length}).select('id').single();
       if(r.error) throw r.error; toast(mid?'Meta actualizada':'Meta creada');
       if(!mid && $('mtPlant')?.checked){ closeSheet(); await cargar(); btn.disabled=false; setTimeout(()=>openPlantilla(r.data.id),350); return; }
     } else if(s2Mode==='plant'){
@@ -2326,7 +2586,7 @@ $('sheet2').addEventListener('submit',async e=>{
       closeSheet(); await cargar(); btn.disabled=false; verPlantilla($('sheet2').dataset.pmid); return;
     } else if(s2Mode==='reco'){
       const plan=$('sheet2')._reco; if(!plan){ btn.disabled=false; return; }
-      for(const x of plan){ const r=await sb.from('metas').update({aporte:x.aporte}).eq('id',x.m.id); if(r.error) throw r.error; }
+      for(const x of plan){ const r=await sb.from('metas').update({aporte:x.aporte,aporte_monto:x.aporte,aporte_frec:'quincenal'}).eq('id',x.m.id); if(r.error) throw r.error; }
       toast('Aportes aplicados a tus metas');
     } else if(s2Mode==='editfijo'){
       const id=$('sheet2').dataset.fid; const f=gastos.find(x=>x.id===id);
@@ -2423,6 +2683,14 @@ $('iCapEdit').addEventListener('click',openCapital);
 $('iSetupBtn').addEventListener('click',openCapital);
 $('iNueva').addEventListener('click',()=>openInv());
 $('ahPlNueva').addEventListener('click',nuevaPlantilla);
+document.querySelectorAll('[data-tema]').forEach(b=>b.addEventListener('click',()=>{ aplicarTema(b.dataset.tema); renderTema(); }));
+$('nActivar').addEventListener('click',activarNotif);
+$('nApagar').addEventListener('click',desactivarNotif);
+$('nPrueba').addEventListener('click',notifPrueba);
+{ const sel=$('nHora'); for(let h=5;h<=23;h++){ const o=document.createElement('option'); o.value=String(h); o.textContent=(h%12||12)+':00 '+(h<12?'a. m.':'p. m.'); sel.appendChild(o); } sel.addEventListener('change',()=>guardarNotif({notif_hora:Number(sel.value)})); }
+document.querySelectorAll('[data-nt]').forEach(c=>c.addEventListener('change',()=>{ const t=notifTipos(); t[c.dataset.nt]=c.checked; guardarNotif({notif_tipos:JSON.stringify(t)}); }));
+$('dlgNo').addEventListener('click',()=>cerrarDlg(false)); $('dlgSi').addEventListener('click',()=>cerrarDlg(true));
+$('dlg').addEventListener('click',e=>{ if(e.target===$('dlg')) cerrarDlg(false); });
 $('ahNuevaMeta').addEventListener('click',()=>openMeta());
 $('plRehacer').addEventListener('click',()=>{ if(plMetaId) openPlantilla(plMetaId); });
 $('plQuitar').addEventListener('click',e=>quitarPlantilla(e.currentTarget));
@@ -2449,7 +2717,7 @@ $('passGuardar').addEventListener('click',async()=>{
   if(error){ toast('No se pudo cambiar la contraseña.',true); return; }
   $('newPass').value=''; toast('Contraseña actualizada');
 });
-$('logout').addEventListener('click',()=>sb.auth.signOut());
+$('logout').addEventListener('click',async()=>{ try{ const reg=await navigator.serviceWorker?.getRegistration(); const sub=await reg?.pushManager?.getSubscription(); if(sub) await sb.from('push_subs').delete().eq('endpoint',sub.endpoint); }catch(e){} sb.auth.signOut(); });
 $('idleSel').addEventListener('change',()=>{ lsSet('mp_idle',$('idleSel').value); touchIdle(true); render(); toast('Listo'); });
 
 /* ---------- cierre por inactividad ---------- */
@@ -2503,10 +2771,14 @@ async function bienvenida(session){
   const nombre = (lsGet('mp_nombre') || session.user?.user_metadata?.nombre || '').trim();
   $('plName').textContent = nombre ? nombre.split(/\s+/)[0] : 'de nuevo';
   const h=new Date().getHours(); $('plSub').textContent=(h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches')+' · preparando tu panel…';
-  pl.classList.remove('out'); pl.hidden=false;
-  const t0=Date.now(); await cargar();
+  let rapida=false; try{ rapida=sessionStorage.getItem('mp_pre')==='1'; sessionStorage.removeItem('mp_pre'); }catch(e){}
+  pl.classList.toggle('static', rapida); pl.classList.remove('out'); pl.hidden=false; preActiva=true;
+  const t0=Date.now(); const [,hayNueva]=await Promise.all([cargar(), buscarActualizacion()]);
+  if(hayNueva){ try{ sessionStorage.setItem('mp_pre','1'); }catch(e){} location.reload(); return; }
   if(!nombre && cfg.nombre) $('plName').textContent=cfg.nombre.split(/\s+/)[0];
-  await new Promise(r=>setTimeout(r, Math.max(0, 2000-(Date.now()-t0))));
+  await new Promise(r=>setTimeout(r, rapida ? 150 : Math.max(0, 2000-(Date.now()-t0))));
+  preActiva=false; revisarSub();
+  if(location.hash==='#alertas'){ go('alertas'); try{ history.replaceState(null,'',location.pathname+location.search); }catch(e){} }
   window.scrollTo({top:0}); app.classList.remove('enter'); void app.offsetWidth; app.classList.add('enter');
   pl.classList.add('out'); setTimeout(()=>{ pl.hidden=true; app.classList.remove('enter'); },1000);
 }
@@ -2527,10 +2799,20 @@ document.addEventListener('visibilitychange',()=>{ if(!document.hidden && uid){ 
 
 /* ---------- actualización automática ---------- */
 let recargaPendiente=false;
-function recargarApp(){ if(document.querySelector('.sheet.open')){ recargaPendiente=true; return; } location.reload(); }
+let preActiva=false;
+function recargarApp(){ if(document.querySelector('.sheet.open')){ recargaPendiente=true; return; } try{ sessionStorage.setItem('mp_pre','1'); }catch(e){} location.reload(); }
+async function buscarActualizacion(maxMs=4000){
+  if(!('serviceWorker' in navigator) || !navigator.serviceWorker.controller) return false;
+  try{
+    const reg=await navigator.serviceWorker.getRegistration(); if(!reg) return false;
+    await Promise.race([reg.update(), new Promise(r=>setTimeout(r,2500))]);
+    if(!reg.installing && !reg.waiting) return false;
+    return await new Promise(res=>{ const t=setTimeout(()=>res(false),maxMs); navigator.serviceWorker.addEventListener('controllerchange',()=>{ clearTimeout(t); res(true); },{once:true}); });
+  }catch(e){ return false; }
+}
 if('serviceWorker' in navigator){
   const habiaControl = !!navigator.serviceWorker.controller; let recargando=false;
-  navigator.serviceWorker.addEventListener('controllerchange',()=>{ if(!habiaControl || recargando) return; recargando=true; recargarApp(); });
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{ if(!habiaControl || recargando || preActiva) return; recargando=true; recargarApp(); });
   window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(reg=>{
     const buscar=()=>reg.update().catch(()=>{});
     document.addEventListener('visibilitychange',()=>{ if(!document.hidden) buscar(); });
