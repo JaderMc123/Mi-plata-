@@ -258,9 +258,9 @@ input{font:inherit;font-size:16px}
 
 /* ---------- Tab bar ---------- */
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--surface) 86%,transparent);backdrop-filter:saturate(1.6) blur(18px);-webkit-backdrop-filter:saturate(1.6) blur(18px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
-.tabbar nav{max-width:560px;margin:0 auto;height:var(--tabbar);display:grid;grid-template-columns:repeat(5,1fr)}
+.tabbar nav{max-width:560px;margin:0 auto;height:var(--tabbar);display:grid;grid-template-columns:repeat(6,1fr)}
 .tab{border:none;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--muted);font-size:.7rem;font-weight:600}
-.tab{font-size:.66rem;padding:0 2px}
+.tab{font-size:.62rem;padding:0 1px;letter-spacing:-.01em;white-space:nowrap}
 .tab svg{width:22px;height:22px}
 .tab[aria-selected="true"]{color:var(--accent)}
 .fab{position:fixed;z-index:21;right:max(16px,calc(50% - 264px));bottom:calc(var(--tabbar) + env(safe-area-inset-bottom,0px) + 16px);width:60px;height:60px;border-radius:20px;border:none;background:var(--accent);color:var(--accent-ink);box-shadow:0 10px 28px color-mix(in srgb,var(--accent) 45%,transparent);display:grid;place-items:center;transition:transform .15s}
@@ -414,6 +414,15 @@ input{font:inherit;font-size:16px}
 .pcell.on{background:var(--save);border-color:var(--save);color:#fff;text-decoration:line-through;text-decoration-thickness:2px}
 .pcell[disabled]{opacity:.5}
 .meta-plan{margin-top:8px}
+.aho-mini{gap:4px}
+.aho-row{display:flex;justify-content:space-between;align-items:center}
+.aho-row .chev{font-size:1.4rem;color:var(--muted)}
+.pl-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;width:100%;text-align:left;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px;color:var(--ink)}
+.pl-item b{font-weight:600}
+.pl-item small{grid-column:1/-1;color:var(--muted);font-size:.8rem}
+.pl-item .budget-bar{grid-column:1/-1;margin:2px 0}
+.pl-item .chev{color:var(--muted);font-size:1.3rem}
+.pick-meta{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
 /* preloader */
 .preload{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:var(--hero);color:var(--hero-ink);transition:opacity .55s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
 .preload.out{opacity:0;transform:scale(1.08);pointer-events:none}
@@ -517,12 +526,12 @@ input{font:inherit;font-size:16px}
         <div id="budgets"></div>
       </article>
 
-      <article class="card" id="metasCard">
-        <div class="card-head"><h2>Mis metas</h2><span class="num" id="metasTot"></span></div>
-        <div id="metasList"></div>
-        <p class="money-note" id="proxima" style="margin:10px 0 0"></p>
-        <div class="row-btns"><button class="btn-save" id="btnAhorro" type="button">Guardar ahorro</button><button class="btn ghost" id="btnReco" type="button">Recomendación</button></div>
-      </article>
+      <button class="card mini-card aho-mini" type="button" data-go="ahorro">
+        <span class="label">Ahorro</span>
+        <span class="aho-row"><span class="num mini-big" id="dAho">$0</span><span class="chev">›</span></span>
+        <small id="dAhoNote">Crea tu primera meta</small>
+        <span class="budget-bar save" style="margin:4px 0 0"><i id="dAhoBar" style="width:0"></i></span>
+      </button>
 
       <div class="duo">
         <button class="card mini-card" type="button" data-go="inversion">
@@ -704,9 +713,47 @@ input{font:inherit;font-size:16px}
       </article>
     </section>
 
+    <!-- Ahorro -->
+    <section class="view" id="v-ahorro" hidden>
+      <article class="hero dash">
+        <span class="label">Total ahorrado</span>
+        <div class="hero-amount big num" id="ahTot">$0</div>
+        <p class="hero-of" id="ahNote"></p>
+        <div class="pbar" aria-hidden="true" id="ahBarMetas"></div>
+        <div class="inv-stats">
+          <div><small>Este mes</small><b id="ahMes">$0</b></div>
+          <div><small id="ahPrevL">Mes anterior</small><b id="ahPrev">$0</b></div>
+          <div><small>Metas activas</small><b id="ahMetas">0</b></div>
+          <div><small>Aporte por quincena</small><b id="ahAporte">$0</b></div>
+        </div>
+      </article>
+      <article class="card" id="ahPlantCard">
+        <div class="card-head"><h2>Plantillas de ahorro</h2><span class="label" id="ahPlCnt"></span></div>
+        <p class="money-note">Ahorra un poquito cada día tachando casillas, como la plantilla de papel. Te la armamos según tus ingresos para que llegues a tu meta.</p>
+        <div id="ahPlList"></div>
+        <button class="btn" type="button" id="ahPlNueva">Crear plantilla de ahorro diario</button>
+      </article>
+      <article class="card" id="metasCard">
+        <div class="card-head"><h2>Mis metas</h2><span class="num" id="metasTot"></span></div>
+        <div id="metasList"></div>
+        <p class="money-note" id="proxima" style="margin:10px 0 0"></p>
+        <div class="row-btns"><button class="btn-save" id="btnAhorro" type="button">Guardar ahorro</button><button class="btn ghost" id="btnReco" type="button">Recomendación</button></div>
+        <button class="more" type="button" id="ahNuevaMeta">+ Nueva meta</button>
+      </article>
+      <article class="card">
+        <div class="card-head"><h2>Tu ahorro mes a mes</h2><span class="label">últimos 6 meses</span></div>
+        <div class="bars" id="ahBars"></div>
+        <p class="trend" id="ahTrend" hidden></p>
+      </article>
+      <article class="card">
+        <div class="card-head"><h2>Últimos ahorros</h2></div>
+        <ul class="list" id="ahList"></ul>
+      </article>
+    </section>
+
     <!-- Plantilla de ahorro -->
     <section class="view" id="v-plantilla" hidden>
-      <button class="back" type="button" data-go="inicio">‹ Volver al inicio</button>
+      <button class="back" type="button" data-go="ahorro">‹ Volver a Ahorro</button>
       <article class="hero dash">
         <span class="label" id="plLbl">Plantilla de ahorro</span>
         <h2 class="pl-title" id="plTitle"></h2>
@@ -843,6 +890,8 @@ input{font:inherit;font-size:16px}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
     <button class="tab" role="tab" data-go="movs" aria-selected="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/></svg>Movimientos</button>
+    <button class="tab" role="tab" data-go="ahorro" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg>Ahorro</button>
     <button class="tab" role="tab" data-go="cartera" aria-selected="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 15h2"/></svg>Cartera</button>
     <button class="tab" role="tab" data-go="inversion" aria-selected="false">
@@ -907,8 +956,8 @@ const dots = n => n ? new Intl.NumberFormat('es-CO').format(n) : '';
 const parse = s => Number(String(s||'').replace(/[^\d]/g,''))||0;
 const DEF = {ingreso_quincenal:0, ahorro_quincenal:0, meta_monto:0, meta_nombre:'Mi meta', nombre:'', modo_ingreso:'quincenal', ingreso_diario:0, dias_trabajo:'1,2,3,4,5', base_monto:0, base_cuenta:null, inversion_capital:0, ingreso_mensual:0, dia_pago:30, pago_monto:0, patron:'[[2]]', patron_inicio:null, pers_tipo:'fijo', pagos_montos:'[]', var_min:0, var_max:0, var_base:'floja'};
 const QUICK = [['Tinto',2500],['Empanada',3000],['Gaseosa',3500],['Snack',4000],['Almuerzo',15000],['Domicilio',8000],['Uber',12000]];
-const TITLES = {plantilla:'Plantilla de ahorro', inicio:'Inicio', movs:'Movimientos', cartera:'Cartera', inversion:'Inversión', mas:'Más', prestamos:'Préstamos', analisis:'Análisis', ajustes:'Ajustes'};
-const VIEWS = ['plantilla','inicio','movs','cartera','inversion','mas','prestamos','analisis','ajustes'];
+const TITLES = {ahorro:'Ahorro', plantilla:'Plantilla de ahorro', inicio:'Inicio', movs:'Movimientos', cartera:'Cartera', inversion:'Inversión', mas:'Más', prestamos:'Préstamos', analisis:'Análisis', ajustes:'Ajustes'};
+const VIEWS = ['ahorro','plantilla','inicio','movs','cartera','inversion','mas','prestamos','analisis','ajustes'];
 let inversiones = [], invMovs = [], invOK = true, modoUI = null, diasUI = null, patUI = null, persUI = null, vbUI = null, plMetaId = null;
 let cfg = {...DEF}, gastos = [], ahorros = [], prestamos = [], abonos = [], cuentas = [], cuentaSel = null, catSel = null, authMode = 'login', s2Mode = null, uid = null, seg = 'todo', sheetType = 'hormiga', sheetDir = 'preste', abonoLoan = null;
 
@@ -1033,7 +1082,7 @@ function render(){
   renderAnalisis();
   renderCuentasAjustes(); renderMetasAjustes();
   $('mPerfilSub').textContent = cfg.nombre||'Sin nombre';
-  renderCartera(); renderInversion(); renderPlantilla();
+  renderCartera(); renderInversion(); renderPlantilla(); renderAhorro();
   { const tIn=sumPrest('preste'), tOut=sumPrest('me_prestaron'); $('masPr').textContent = tIn||tOut ? 'Te deben '+fmt(tIn)+' · debes '+fmt(tOut) : 'Lo que te deben y lo que debes'; }
   $('mMetasSub').textContent = metas.length ? metas.length+' meta'+(metas.length>1?'s':'')+' · '+fmt(sumM(metas.map(m=>({monto:m.monto}))))+' en total' : 'Aún no tienes metas';
   $('mCuentasSub').textContent = cuentas.length ? cuentas.map(c=>c.nombre).join(', ') : 'Sin cuentas';
@@ -1117,6 +1166,56 @@ function renderMetasAjustes(){
     r.append(t,ed,d); box.appendChild(r);
   }
 }
+
+/* ---------- pestaña Ahorro ---------- */
+function renderAhorro(){
+  const mes=mesKey(), prev=mesOffset(mes,-1), total=sumM(ahorros);
+  const ahM=sumM(ahorros.filter(a=>localMes(a.fecha)===mes)), ahP=sumM(ahorros.filter(a=>localMes(a.fecha)===prev));
+  const activas=metas.filter(m=>ahorradoDe(m)<m.monto), metaTot=sumM(metas.map(m=>({monto:m.monto})));
+  $('ahTot').textContent=fmt(total);
+  $('ahNote').textContent = metas.length ? 'de '+fmt(metaTot)+' entre tus '+metas.length+' meta'+(metas.length>1?'s':'')+(metaTot?' · '+Math.min(100,Math.round(total/metaTot*100))+'%':'') : 'Crea una meta para empezar a ahorrar.';
+  const bar=$('ahBarMetas'); bar.textContent=''; bar.hidden=!metas.length;
+  metas.forEach((m,i)=>{ const v=ahorradoDe(m); if(!v||!metaTot) return; const e=document.createElement('i'); e.style.width=(v/metaTot*100)+'%'; e.style.background=catColor(i); e.title=m.nombre+' '+fmt(v); bar.appendChild(e); });
+  $('ahMes').textContent=fmt(ahM); $('ahPrev').textContent=fmt(ahP); $('ahPrevL').textContent=mesCorto(prev).charAt(0).toUpperCase()+mesCorto(prev).slice(1);
+  $('ahMetas').textContent=String(activas.length); $('ahAporte').textContent=fmt(sumM(activas.map(m=>({monto:m.aporte}))));
+  // plantillas
+  const conPl=metas.filter(m=>m.plantilla), box=$('ahPlList'); box.textContent='';
+  $('ahPlCnt').textContent = conPl.length ? conPl.length+' activa'+(conPl.length>1?'s':'') : '';
+  for(const m of conPl){ const st=plEstado(m), fr=FREC[m.plantilla_frec||'diario'];
+    const b=document.createElement('button'); b.type='button'; b.className='pl-item';
+    const n=document.createElement('b'); n.textContent=m.nombre; const ch=document.createElement('span'); ch.className='chev'; ch.textContent='›';
+    const br=document.createElement('span'); br.className='budget-bar save'; const i=document.createElement('i'); i.style.width=(st.n?st.on/st.n*100:0)+'%'; br.appendChild(i);
+    const sm=document.createElement('small'); sm.textContent=fr.txt+' · '+st.on+' de '+st.n+' casillas · '+fmt(st.hecho)+' de '+fmt(st.tot);
+    b.append(n,ch,br,sm); b.onclick=()=>verPlantilla(m.id); box.appendChild(b); }
+  $('ahPlNueva').textContent = conPl.length ? 'Crear otra plantilla de ahorro diario' : 'Crear plantilla de ahorro diario';
+  // barras 6 meses
+  const bars=$('ahBars'); bars.textContent=''; const ms=[];
+  for(let i=5;i>=0;i--){ const k=mesOffset(mes,-i); ms.push({k,t:sumM(ahorros.filter(a=>localMes(a.fecha)===k))}); }
+  const mx=Math.max(1,...ms.map(x=>x.t));
+  for(const x of ms){ const col=document.createElement('div'); col.className='bar-col'+(x.k===mes?' now':''); const a=document.createElement('span'); a.className='bar-amt'; a.style.fontSize='.62rem'; a.textContent=x.t?fmtM(x.t):'—';
+    const i=document.createElement('i'); i.style.height=Math.max(3,x.t/mx*85)+'%'; i.style.background='var(--save)'; if(x.k!==mes) i.style.opacity='.55';
+    const l=document.createElement('small'); l.textContent=mesDate(x.k).toLocaleDateString('es-CO',{month:'short'}).replace('.',''); col.append(a,i,l); bars.appendChild(col); }
+  const tr=$('ahTrend'); if(ahP>0){ tr.hidden=false; const d=ahM-ahP; tr.className='trend'+(d>=0?' down':' up');
+    tr.textContent = d>=0 ? 'Este mes llevas '+fmt(ahM)+(d>0?', '+fmt(d)+' más que en '+mesCorto(prev)+'. ¡Bien!':', igual que en '+mesCorto(prev)+'.') : 'Te faltan '+fmt(-d)+' para igualar lo que ahorraste en '+mesCorto(prev)+'.'; } else tr.hidden=true;
+  fillList($('ahList'), movsAll().filter(m=>m._t==='ahorro').slice(0,10), 'Aún no tienes ahorros. Toca "Guardar ahorro" o tacha una casilla de tu plantilla.');
+  // mini de inicio
+  $('dAho').textContent=fmt(total);
+  $('dAhoNote').textContent = metas.length ? (ahM?fmt(ahM)+' este mes · ':'')+metas.length+' meta'+(metas.length>1?'s':'')+(conPl.length?' · '+conPl.length+' plantilla'+(conPl.length>1?'s':''):'') : 'Toca para crear tu primera meta';
+  $('dAhoBar').style.width=(metaTot?Math.min(100,total/metaTot*100):0)+'%';
+}
+function nuevaPlantilla(){
+  const libres=metas.filter(m=>!m.plantilla && ahorradoDe(m)<m.monto);
+  if(!metas.length || !libres.length){ openMeta(); if(!metas.length) toast('Primero dale nombre y precio a tu meta.'); return; }
+  if(libres.length===1){ openPlantilla(libres[0].id); return; }
+  s2Mode='pickmeta'; $('s2Title').textContent='¿Para cuál meta?'; $('s2Btn').hidden=true;
+  const body=$('s2Body'); body.textContent=''; const w=document.createElement('div'); w.className='pick-meta';
+  for(const m of libres){ const b=document.createElement('button'); b.type='button'; b.className='pl-item';
+    const n=document.createElement('b'); n.textContent=m.nombre; const ch=document.createElement('span'); ch.className='chev'; ch.textContent='›';
+    const sm=document.createElement('small'); sm.textContent='Te faltan '+fmt(Math.max(0,m.monto-ahorradoDe(m)))+' de '+fmt(m.monto); b.append(n,ch,sm);
+    b.onclick=()=>openPlantilla(m.id); w.appendChild(b); }
+  const nb=document.createElement('button'); nb.type='button'; nb.className='btn ghost'; nb.textContent='+ Crear una meta nueva'; nb.onclick=()=>openMeta();
+  body.append(w,nb); openSheet2();
+}
 /* ---------- plantilla de ahorro ---------- */
 const FREC = {diario:{dias:1,txt:'Diario',uno:'día',porMes:30.4}, semanal:{dias:7,txt:'Semanal',uno:'semana',porMes:4.35}, quincenal:{dias:15,txt:'Quincenal',uno:'quincena',porMes:2}};
 function plEstado(m){
@@ -1197,7 +1296,7 @@ async function guardarPlantilla(){
 function verPlantilla(mid){ plMetaId=mid; go('plantilla'); renderPlantilla(); }
 function renderPlantilla(){
   const m=metas.find(x=>x.id===plMetaId);
-  if(!m || !m.plantilla){ if(!$('v-plantilla').hidden) go('inicio'); return; }
+  if(!m || !m.plantilla){ if(!$('v-plantilla').hidden) go('ahorro'); return; }
   const st=plEstado(m), fr=FREC[m.plantilla_frec||'diario'], ah=ahorradoDe(m);
   $('plTitle').textContent=m.nombre; $('plAh').textContent=fmt(ah); $('plDe').textContent='ahorrados de '+fmt(m.monto)+(m.monto?' · '+Math.min(100,Math.round(ah/m.monto*100))+'%':'');
   $('plBar').style.width=Math.min(100,m.monto?ah/m.monto*100:0)+'%';
@@ -1237,7 +1336,7 @@ async function quitarPlantilla(btn){
   if(pendingDel!=='pl'+m.id){ pendingDel='pl'+m.id; btn.textContent='Toca para confirmar'; setTimeout(()=>{ if(pendingDel==='pl'+m.id){ pendingDel=null; btn.textContent='Quitar plantilla'; } },2500); return; }
   pendingDel=null; btn.textContent='Quitar plantilla';
   const {error}=await sb.from('metas').update({plantilla:null,plantilla_frec:null,plantilla_inicio:null}).eq('id',m.id); if(error){ dbErr(error); return; }
-  toast('Plantilla quitada. Lo ahorrado sigue en tu meta.'); go('inicio'); cargar();
+  toast('Plantilla quitada. Lo ahorrado sigue en tu meta.'); go('ahorro'); cargar();
 }
 
 function recomendar(){
@@ -2029,11 +2128,11 @@ async function borrar(tabla,id,btn){
 /* ---------- navegación ---------- */
 function go(view){
   for(const v of VIEWS) $('v-'+v).hidden = v!==view;
-  const tabOf = ['prestamos','analisis','ajustes'].includes(view) ? 'mas' : view==='plantilla' ? 'inicio' : view;
+  const tabOf = ['prestamos','analisis','ajustes'].includes(view) ? 'mas' : view==='plantilla' ? 'ahorro' : view;
   document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', t.dataset.go===tabOf));
   $('title').textContent = view==='inicio' ? (cfg.nombre ? 'Hola, '+cfg.nombre : 'Hola') : TITLES[view];
   $('fab').hidden = view==='ajustes' || view==='mas' || view==='plantilla';
-  $('fab').setAttribute('aria-label', view==='inversion' ? 'Nueva inversión' : 'Agregar movimiento');
+  $('fab').setAttribute('aria-label', view==='inversion' ? 'Nueva inversión' : view==='ahorro' ? 'Guardar ahorro' : 'Agregar movimiento');
   window.scrollTo({top:0});
 }
 document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
@@ -2228,7 +2327,7 @@ $('sheet2').addEventListener('submit',async e=>{
   }catch(err){ toast('No se pudo guardar. Intenta de nuevo.',true); }
   btn.disabled=false;
 });
-$('fab').addEventListener('click',()=>{ if(!$('v-inversion').hidden) openInv(); else if(!$('v-cartera').hidden) openSheet('hormiga'); else openSheet(); });
+$('fab').addEventListener('click',()=>{ if(!$('v-inversion').hidden) openInv(); else if(!$('v-ahorro').hidden){ if(metas.length) openSheet('ahorro'); else openMeta(); } else if(!$('v-cartera').hidden) openSheet('hormiga'); else openSheet(); });
 $('btnAhorro').addEventListener('click',()=>{ if(!metas.length){ openMeta(); toast('Primero crea una meta.'); } else openSheet('ahorro'); });
 $('btnReco').addEventListener('click',openReco); $('btnReco2').addEventListener('click',openReco); $('btnNuevaMeta').addEventListener('click',()=>openMeta());
 document.querySelectorAll('[data-mn]').forEach(b=>b.addEventListener('click',()=>{ const d=mesDate(mesSel); d.setMonth(d.getMonth()+Number(b.dataset.mn)); mesSel=mesKey(d); render(); }));
@@ -2297,6 +2396,8 @@ $('cAddFijo').addEventListener('click',()=>openSheet('fijo'));
 $('iCapEdit').addEventListener('click',openCapital);
 $('iSetupBtn').addEventListener('click',openCapital);
 $('iNueva').addEventListener('click',()=>openInv());
+$('ahPlNueva').addEventListener('click',nuevaPlantilla);
+$('ahNuevaMeta').addEventListener('click',()=>openMeta());
 $('plRehacer').addEventListener('click',()=>{ if(plMetaId) openPlantilla(plMetaId); });
 $('plQuitar').addEventListener('click',e=>quitarPlantilla(e.currentTarget));
 function dbErr(e){ const m=(e&&e.message||'').toLowerCase();
