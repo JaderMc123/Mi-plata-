@@ -394,6 +394,26 @@ input{font:inherit;font-size:16px}
 .inv .loan-actions{margin:10px 0 0}
 .budget-top{grid-template-columns:minmax(0,1fr) auto auto auto}
 .proy th{text-transform:none}
+.chk{display:flex;align-items:center;gap:10px;font-weight:600;font-size:.92rem;margin:4px 0 14px}
+.chk input{width:20px;height:20px;accent-color:var(--save)}
+.pat-row .pat-monto{grid-column:2;margin-top:2px}
+.pat-row .pat-monto input{padding:9px 12px}
+#cfPersTipo button,#cfVbase button{font-size:.8rem;padding:9px 4px}
+.vs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:8px 0}
+.vs div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 10px;min-width:0}
+.vs small{display:block;font-size:.72rem;color:var(--muted)} .vs b{font-family:var(--num);font-weight:600;font-size:.76rem;color:var(--ink);white-space:nowrap;letter-spacing:-.04em;display:block;overflow:hidden;text-overflow:ellipsis}
+.wk{display:flex;align-items:flex-end;gap:4px;height:48px;margin:8px 0 2px}
+.wk i{flex:1;background:var(--accent);border-radius:4px 4px 0 0;min-height:3px;opacity:.85}
+.wk i.min{background:var(--danger)} .wk i.max{background:var(--save)}
+.back{align-self:flex-start;background:none;border:0;color:var(--accent);font-weight:700;padding:0;font-size:.95rem}
+.pl-title{font-family:var(--display);font-weight:800;font-size:1.5rem;margin:4px 0 0;letter-spacing:-.02em}
+.pgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+@media (min-width:440px){.pgrid{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.pcell{border:1.5px solid var(--line);background:var(--surface-2);border-radius:10px;padding:11px 2px;font-family:var(--num);font-size:.74rem;font-weight:600;color:var(--ink);letter-spacing:-.03em;transition:transform .12s,background .15s;min-width:0}
+.pcell:active{transform:scale(.94)}
+.pcell.on{background:var(--save);border-color:var(--save);color:#fff;text-decoration:line-through;text-decoration-thickness:2px}
+.pcell[disabled]{opacity:.5}
+.meta-plan{margin-top:8px}
 /* preloader */
 .preload{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:var(--hero);color:var(--hero-ink);transition:opacity .55s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
 .preload.out{opacity:0;transform:scale(1.08);pointer-events:none}
@@ -585,12 +605,23 @@ input{font:inherit;font-size:16px}
           </div>
         </div>
         <div id="mdPers" class="stack-gap" hidden>
-          <p class="money-note" style="margin:0">Para quien cobra en días que cambian. Ejemplo: una semana te pagan el martes y la siguiente el jueves. Arma tu ciclo y se repite solo.</p>
-          <div class="field"><label for="cfP">¿Cuánto recibes en cada pago?</label><input class="input num" id="cfP" inputmode="numeric" placeholder="$0"></div>
-          <div class="field"><label>¿Cada cuántas semanas se repite tu ciclo?</label><div class="seg four" id="cfCiclo"><button type="button" data-ciclo="1">1 sem</button><button type="button" data-ciclo="2">2 sem</button><button type="button" data-ciclo="3">3 sem</button><button type="button" data-ciclo="4">4 sem</button></div></div>
-          <div id="cfPat" class="stack-gap"></div>
-          <div class="field" id="cfEstaWrap"><label>¿En cuál semana del ciclo estás hoy?</label><div class="seg four" id="cfEsta"></div></div>
-          <div class="pagos" id="cfPagos"></div>
+          <div class="seg two" id="cfPersTipo" style="margin:0"><button type="button" data-pt="fijo">Pagos fijos por semana</button><button type="button" data-pt="variable">Ingreso variable</button></div>
+          <div id="pFijo" class="stack-gap">
+            <p class="money-note" style="margin:0">Para quien cobra en días que cambian y sabe cuánto le pagan. Ejemplo: semana 1 el martes $400.000 y semana 2 el jueves $250.000. Arma tu ciclo y se repite solo.</p>
+            <div class="field"><label>¿Cada cuántas semanas se repite tu ciclo?</label><div class="seg four" id="cfCiclo"><button type="button" data-ciclo="1">1 sem</button><button type="button" data-ciclo="2">2 sem</button><button type="button" data-ciclo="3">3 sem</button><button type="button" data-ciclo="4">4 sem</button></div></div>
+            <div id="cfPat" class="stack-gap"></div>
+            <div class="field" id="cfEstaWrap"><label>¿En cuál semana del ciclo estás hoy?</label><div class="seg four" id="cfEsta"></div></div>
+            <div class="pagos" id="cfPagos"></div>
+          </div>
+          <div id="pVar" class="stack-gap" hidden>
+            <p class="money-note" style="margin:0">Para ingresos que suben y bajan: streams, ventas, comisiones, propinas. Registra cada ingreso con + y la app aprende cuánto te entra de verdad.</p>
+            <div class="grid2">
+              <div class="field"><label for="cfVmin">En una semana floja te entra</label><input class="input num" id="cfVmin" inputmode="numeric" placeholder="$0"></div>
+              <div class="field"><label for="cfVmax">En una semana buena</label><input class="input num" id="cfVmax" inputmode="numeric" placeholder="$0"></div>
+            </div>
+            <div class="field"><label>Planear el mes con</label><div class="seg two" id="cfVbase" style="margin:0"><button type="button" data-vb="floja">Semana floja (recomendado)</button><button type="button" data-vb="promedio">El promedio</button></div></div>
+            <div class="pagos" id="cfVstats"></div>
+          </div>
         </div>
         <div id="mdDia" class="stack-gap" hidden>
           <p class="money-note" style="margin:0">Para quien gana por día trabajado: domicilios, ventas, oficios, turnos.</p>
@@ -671,6 +702,31 @@ input{font:inherit;font-size:16px}
         <div class="mgroup"><button class="mitem" type="button" data-go="prestamos"><span class="mico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h14l-4-4M20 16H6l4 4"/></svg></span><span class="mtxt"><b>Préstamos personales</b><small id="masPr">Lo que te deben y lo que debes</small></span><span class="chev">›</span></button></div>
         <div class="mgroup"><button class="mitem" type="button" data-go="ajustes"><span class="mico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></span><span class="mtxt"><b>Ajustes</b><small>Perfil, metas, cuentas y seguridad</small></span><span class="chev">›</span></button></div>
       </article>
+    </section>
+
+    <!-- Plantilla de ahorro -->
+    <section class="view" id="v-plantilla" hidden>
+      <button class="back" type="button" data-go="inicio">‹ Volver al inicio</button>
+      <article class="hero dash">
+        <span class="label" id="plLbl">Plantilla de ahorro</span>
+        <h2 class="pl-title" id="plTitle"></h2>
+        <div class="hero-amount big num" id="plAh">$0</div>
+        <p class="hero-of" id="plDe"></p>
+        <div class="pbar" aria-hidden="true"><i id="plBar" style="background:var(--save);width:0"></i></div>
+        <div class="inv-stats">
+          <div><small>Casillas</small><b id="plCas">0 / 0</b></div>
+          <div><small>Frecuencia</small><b id="plFrec">—</b></div>
+          <div><small>Te falta</small><b id="plFalta">$0</b></div>
+          <div><small>Terminas aprox.</small><b id="plFin">—</b></div>
+        </div>
+      </article>
+      <p class="trend" id="plRitmo" style="margin:0"></p>
+      <article class="card">
+        <div class="card-head"><h2>Tacha cada ahorro</h2><span class="label" id="plCnt"></span></div>
+        <p class="money-note" id="plHint"></p>
+        <div class="pgrid" id="plGrid"></div>
+      </article>
+      <div class="row-btns" style="margin-top:0"><button class="btn ghost" type="button" id="plRehacer">Rehacer plantilla</button><button class="btn danger" type="button" id="plQuitar">Quitar plantilla</button></div>
     </section>
 
     <!-- Préstamos -->
@@ -849,11 +905,11 @@ const $ = id => document.getElementById(id);
 const fmt = n => new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(Math.round(n||0)).replace(/\s/g,'');
 const dots = n => n ? new Intl.NumberFormat('es-CO').format(n) : '';
 const parse = s => Number(String(s||'').replace(/[^\d]/g,''))||0;
-const DEF = {ingreso_quincenal:0, ahorro_quincenal:0, meta_monto:0, meta_nombre:'Mi meta', nombre:'', modo_ingreso:'quincenal', ingreso_diario:0, dias_trabajo:'1,2,3,4,5', base_monto:0, base_cuenta:null, inversion_capital:0, ingreso_mensual:0, dia_pago:30, pago_monto:0, patron:'[[2]]', patron_inicio:null};
+const DEF = {ingreso_quincenal:0, ahorro_quincenal:0, meta_monto:0, meta_nombre:'Mi meta', nombre:'', modo_ingreso:'quincenal', ingreso_diario:0, dias_trabajo:'1,2,3,4,5', base_monto:0, base_cuenta:null, inversion_capital:0, ingreso_mensual:0, dia_pago:30, pago_monto:0, patron:'[[2]]', patron_inicio:null, pers_tipo:'fijo', pagos_montos:'[]', var_min:0, var_max:0, var_base:'floja'};
 const QUICK = [['Tinto',2500],['Empanada',3000],['Gaseosa',3500],['Snack',4000],['Almuerzo',15000],['Domicilio',8000],['Uber',12000]];
-const TITLES = {inicio:'Inicio', movs:'Movimientos', cartera:'Cartera', inversion:'Inversión', mas:'Más', prestamos:'Préstamos', analisis:'Análisis', ajustes:'Ajustes'};
-const VIEWS = ['inicio','movs','cartera','inversion','mas','prestamos','analisis','ajustes'];
-let inversiones = [], invMovs = [], invOK = true, modoUI = null, diasUI = null, patUI = null;
+const TITLES = {plantilla:'Plantilla de ahorro', inicio:'Inicio', movs:'Movimientos', cartera:'Cartera', inversion:'Inversión', mas:'Más', prestamos:'Préstamos', analisis:'Análisis', ajustes:'Ajustes'};
+const VIEWS = ['plantilla','inicio','movs','cartera','inversion','mas','prestamos','analisis','ajustes'];
+let inversiones = [], invMovs = [], invOK = true, modoUI = null, diasUI = null, patUI = null, persUI = null, vbUI = null, plMetaId = null;
 let cfg = {...DEF}, gastos = [], ahorros = [], prestamos = [], abonos = [], cuentas = [], cuentaSel = null, catSel = null, authMode = 'login', s2Mode = null, uid = null, seg = 'todo', sheetType = 'hormiga', sheetDir = 'preste', abonoLoan = null;
 
 const sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {auth:{persistSession:true,autoRefreshToken:true}}) : null;
@@ -977,7 +1033,7 @@ function render(){
   renderAnalisis();
   renderCuentasAjustes(); renderMetasAjustes();
   $('mPerfilSub').textContent = cfg.nombre||'Sin nombre';
-  renderCartera(); renderInversion();
+  renderCartera(); renderInversion(); renderPlantilla();
   { const tIn=sumPrest('preste'), tOut=sumPrest('me_prestaron'); $('masPr').textContent = tIn||tOut ? 'Te deben '+fmt(tIn)+' · debes '+fmt(tOut) : 'Lo que te deben y lo que debes'; }
   $('mMetasSub').textContent = metas.length ? metas.length+' meta'+(metas.length>1?'s':'')+' · '+fmt(sumM(metas.map(m=>({monto:m.monto}))))+' en total' : 'Aún no tienes metas';
   $('mCuentasSub').textContent = cuentas.length ? cuentas.map(c=>c.nombre).join(', ') : 'Sin cuentas';
@@ -1041,6 +1097,10 @@ function renderMetas(total){
     top.append(b,n,ed); div.appendChild(top);
     const bar=document.createElement('div'); bar.className='budget-bar save'; const i=document.createElement('i'); i.style.width=pc+'%'; bar.appendChild(i); div.appendChild(bar);
     const sm=document.createElement('small'); sm.textContent=etaTxt(falta,m.aporte); if(falta<=0) sm.className='good'; div.appendChild(sm);
+    const pb=document.createElement('button'); pb.type='button'; pb.className='mini meta-plan'+(m.plantilla?' primary':'');
+    if(m.plantilla){ const st=plEstado(m); pb.textContent='Plantilla · '+st.on+'/'+st.n+' casillas'; pb.onclick=()=>verPlantilla(m.id); }
+    else { pb.textContent=falta>0?'Crear plantilla de ahorro':'Meta cumplida'; pb.disabled=falta<=0; pb.onclick=()=>openPlantilla(m.id); }
+    div.appendChild(pb);
     box.appendChild(div);
   }
   $('proxima').textContent = metas.length ? 'Próximo ahorro: '+proximaFecha().toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short'}) : '';
@@ -1057,6 +1117,129 @@ function renderMetasAjustes(){
     r.append(t,ed,d); box.appendChild(r);
   }
 }
+/* ---------- plantilla de ahorro ---------- */
+const FREC = {diario:{dias:1,txt:'Diario',uno:'día',porMes:30.4}, semanal:{dias:7,txt:'Semanal',uno:'semana',porMes:4.35}, quincenal:{dias:15,txt:'Quincenal',uno:'quincena',porMes:2}};
+function plEstado(m){
+  const ids=new Set(ahorros.map(a=>a.id)), cel=m.plantilla||[];
+  const on=cel.filter(c=>c.a && ids.has(c.a)), tot=cel.reduce((s,c)=>s+c.m,0);
+  return {n:cel.length, on:on.length, hecho:on.reduce((s,c)=>s+c.m,0), tot, ids};
+}
+function capacidadDia(){
+  const r=recomendar(); if(r.err) return null;
+  const activas=Math.max(1, metas.filter(m=>ahorradoDe(m)<m.monto).length);
+  return r.sug/15/activas;
+}
+function genCasillas(T, N){
+  N=Math.max(1,Math.round(N)); const avg=T/N;
+  const unit = avg>=200000 ? 10000 : avg>=20000 ? 5000 : 1000;
+  if(T < N*unit) N=Math.max(1,Math.floor(T/unit));
+  const a2=T/N, mult=[0.25,0.5,0.5,0.75,1,1,1,1,1.5,1.5,2];
+  const maxV=Math.max(unit, Math.ceil(a2*3/unit)*unit);
+  const arr=[]; for(let i=0;i<N;i++) arr.push(Math.min(maxV, Math.max(unit, Math.round(a2*mult[Math.floor(Math.random()*mult.length)]/unit)*unit)));
+  let diff=T-arr.reduce((s,v)=>s+v,0), guard=0;
+  while(Math.abs(diff)>=unit && guard<200000){ const i=Math.floor(Math.random()*N);
+    if(diff>0 && arr[i]+unit<=maxV){ arr[i]+=unit; diff-=unit; } else if(diff<0 && arr[i]-unit>=unit){ arr[i]-=unit; diff+=unit; } guard++; }
+  if(diff){ let i=arr.indexOf(Math.min(...arr)); if(diff<0) i=arr.indexOf(Math.max(...arr)); arr[i]+=diff; }
+  return arr;
+}
+function plCalc(){
+  const mid=$('sheet2').dataset.pmid, m=metas.find(x=>x.id===mid); if(!m) return null;
+  const total=parse($('plMonto').value)||m.monto, falta=Math.max(0,total-ahorradoDe(m));
+  const fr=FREC[$('sheet2').dataset.pf||'diario'], plazo=$('plPlazo').value, cap=capacidadDia();
+  let N, avg;
+  if(plazo==='auto'){ const porCasilla = cap ? cap*fr.dias : null;
+    if(porCasilla && porCasilla>=500){ N=Math.ceil(falta/porCasilla); } else N=Math.round(6*fr.porMes); }
+  else N=Math.round(Number(plazo)*fr.porMes);
+  const maxN={diario:730,semanal:156,quincenal:72}[$('sheet2').dataset.pf||'diario'];
+  N=Math.max(1,Math.min(maxN,N)); avg=falta/N;
+  return {m,total,falta,fr,N,avg,cap};
+}
+function plPreview(){
+  const c=plCalc(), el=$('plPrev'); if(!c) return;
+  document.querySelectorAll('[data-pf]').forEach(b=>b.setAttribute('aria-selected', b.dataset.pf===($('sheet2').dataset.pf||'diario')));
+  $('plCap').textContent = c.cap ? 'Según tus ingresos, para esta meta puedes guardar unos '+fmt(Math.round(c.cap*c.fr.dias/1000)*1000)+' por '+c.fr.uno+' sin quedarte corto.' : 'Configura tus ingresos en Cartera para calcular el plazo según lo que ganas. Mientras tanto, elige un plazo.';
+  if(c.falta<=0){ el.className='trend down'; el.textContent='Esta meta ya está cumplida.'; $('s2Btn').disabled=true; return; }
+  $('s2Btn').disabled=false;
+  const fin=new Date(Date.now()+(c.N-1)*c.fr.dias*864e5);
+  const over = c.cap && c.avg > c.cap*c.fr.dias*1.1;
+  el.className='trend'+(over?' up':' down');
+  el.textContent=c.N+' casillas de unos '+fmt(Math.round(c.avg))+' (montos variados, como la plantilla de papel). Cubren '+fmt(c.falta)+' y terminas aprox. el '+fin.toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'})+'.'+(over?' Ojo: es más de lo que te alcanza según tus ingresos; elige más tiempo.':'');
+}
+function openPlantilla(mid){
+  const m=metas.find(x=>x.id===mid); if(!m) return;
+  s2Mode='plant'; $('s2Title').textContent='Plantilla para '+m.nombre; $('s2Btn').textContent=m.plantilla?'Crear plantilla nueva':'Crear plantilla'; $('s2Btn').hidden=false;
+  const body=$('s2Body'); body.textContent='';
+  const p=document.createElement('p'); p.className='money-note'; p.textContent='Te armamos casillas con montos variados. Cada vez que ahorras, tachas una. Cuando las tachas todas, cumpliste la meta.'+(m.plantilla?' Lo que ya tachaste sigue contando como ahorro; la nueva plantilla cubre lo que falta.':''); body.appendChild(p);
+  s2Field('Meta total','plMonto',m.monto,true,'$0');
+  const ya=ahorradoDe(m); if(ya){ const n=document.createElement('p'); n.className='money-note'; n.style.marginTop='-8px'; n.textContent='Ya llevas '+fmt(ya)+' ahorrados para esta meta.'; body.appendChild(n); }
+  const fw=document.createElement('div'); fw.className='field'; fw.style.marginBottom='14px'; const fl=document.createElement('label'); fl.textContent='¿Cada cuánto quieres ahorrar?';
+  const seg=document.createElement('div'); seg.className='seg three'; seg.style.margin='0';
+  for(const [k,v] of Object.entries(FREC)){ const b=document.createElement('button'); b.type='button'; b.dataset.pf=k; b.textContent=v.txt; b.onclick=()=>{ $('sheet2').dataset.pf=k; plPreview(); }; seg.appendChild(b); }
+  fw.append(fl,seg); body.appendChild(fw);
+  const pw=document.createElement('div'); pw.className='field'; pw.style.marginBottom='8px'; const pl=document.createElement('label'); pl.htmlFor='plPlazo'; pl.textContent='¿En cuánto tiempo?';
+  const sel=document.createElement('select'); sel.className='input select'; sel.id='plPlazo';
+  for(const [v,t] of [['auto','Según mis ingresos (recomendado)'],['1','1 mes'],['2','2 meses'],['3','3 meses'],['4','4 meses'],['6','6 meses'],['9','9 meses'],['12','1 año'],['18','18 meses'],['24','2 años']]){ const o=document.createElement('option'); o.value=v; o.textContent=t; sel.appendChild(o); }
+  pw.append(pl,sel); body.appendChild(pw);
+  const cap=document.createElement('p'); cap.className='money-note'; cap.id='plCap'; body.appendChild(cap);
+  const prev=document.createElement('p'); prev.id='plPrev'; prev.className='trend'; prev.style.margin='0 0 14px'; body.appendChild(prev);
+  $('sheet2').dataset.pmid=mid; $('sheet2').dataset.pf=m.plantilla_frec||'diario';
+  sel.addEventListener('change',plPreview); $('plMonto').addEventListener('input',plPreview);
+  openSheet2(); plPreview();
+}
+async function guardarPlantilla(){
+  const c=plCalc(); if(!c || c.falta<=0){ toast('Esta meta ya está cumplida.',true); return false; }
+  const arr=genCasillas(c.falta,c.N), frec=$('sheet2').dataset.pf||'diario';
+  const aporte=Math.round(c.avg*15/c.fr.dias/1000)*1000;
+  const {error}=await sb.from('metas').update({monto:c.total, plantilla:arr.map(m=>({m,a:null})), plantilla_frec:frec, plantilla_inicio:isoDia(new Date()), aporte}).eq('id',c.m.id);
+  if(error){ dbErr(error); return false; }
+  toast('Plantilla creada: '+arr.length+' casillas'); return true;
+}
+function verPlantilla(mid){ plMetaId=mid; go('plantilla'); renderPlantilla(); }
+function renderPlantilla(){
+  const m=metas.find(x=>x.id===plMetaId);
+  if(!m || !m.plantilla){ if(!$('v-plantilla').hidden) go('inicio'); return; }
+  const st=plEstado(m), fr=FREC[m.plantilla_frec||'diario'], ah=ahorradoDe(m);
+  $('plTitle').textContent=m.nombre; $('plAh').textContent=fmt(ah); $('plDe').textContent='ahorrados de '+fmt(m.monto)+(m.monto?' · '+Math.min(100,Math.round(ah/m.monto*100))+'%':'');
+  $('plBar').style.width=Math.min(100,m.monto?ah/m.monto*100:0)+'%';
+  $('plCas').textContent=st.on+' / '+st.n; $('plFrec').textContent=fr.txt; $('plFalta').textContent=fmt(Math.max(0,m.monto-ah));
+  const quedan=st.n-st.on, fin=new Date(Date.now()+Math.max(0,quedan-1)*fr.dias*864e5);
+  $('plFin').textContent = quedan ? fin.toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric'}).replace(/\./g,'') : '¡Listo!';
+  // ritmo
+  const ini=m.plantilla_inicio ? new Date(m.plantilla_inicio+'T00:00:00') : new Date(), hoy=new Date(); hoy.setHours(0,0,0,0);
+  const esperadas=Math.min(st.n, Math.floor((hoy-ini)/864e5/fr.dias)+1), dif=st.on-esperadas, r=$('plRitmo');
+  if(!quedan){ r.className='trend down'; r.textContent='¡Tachaste todas las casillas! Cumpliste tu meta.'; }
+  else if(dif>=0){ r.className='trend down'; r.textContent = dif>0 ? 'Vas adelantado '+dif+' casilla'+(dif>1?'s':'')+'. ¡Bien!' : 'Vas al día. Te toca '+(fr.uno==='día'?'mañana':'la próxima '+fr.uno)+' otra casilla.'; }
+  else { r.className='trend up'; r.textContent='Te atrasaste '+(-dif)+' casilla'+(dif<-1?'s':'')+'. Puedes ponerte al día tachando las más pequeñas.'; }
+  const cta=nombreCuenta(cuentaDefault());
+  $('plHint').textContent='Toca una casilla cuando guardes ese monto: se registra el ahorro'+(cta?' y se descuenta de '+cta:'')+'. Tócala otra vez para deshacer. Puedes tacharlas en cualquier orden.';
+  $('plCnt').textContent=quedan? quedan+' por tachar':'';
+  const g=$('plGrid'); g.textContent='';
+  m.plantilla.forEach((c,i)=>{ const b=document.createElement('button'); b.type='button'; const on=!!(c.a && st.ids.has(c.a));
+    b.className='pcell'+(on?' on':''); b.textContent=dots(c.m); b.setAttribute('aria-pressed',on); b.setAttribute('aria-label',fmt(c.m)+(on?', ya ahorrado':''));
+    b.onclick=()=>togglePl(m.id,i,b); g.appendChild(b); });
+}
+let plBusy=false;
+async function togglePl(mid, i, btn){
+  if(plBusy) return; const m=metas.find(x=>x.id===mid); if(!m) return;
+  plBusy=true; btn.disabled=true;
+  const ids=new Set(ahorros.map(a=>a.id)), plant=m.plantilla.map(c=>({...c})), c=plant[i];
+  try{
+    if(c.a && ids.has(c.a)){ const {error}=await sb.from('ahorros').delete().eq('id',c.a); if(error) throw error; plant[i].a=null; }
+    else { const r=await sb.from('ahorros').insert({monto:c.m, cuenta_id:cuentaDefault(), meta_id:m.id}).select('id').single(); if(r.error) throw r.error; plant[i].a=r.data.id; }
+    const u=await sb.from('metas').update({plantilla:plant}).eq('id',m.id); if(u.error) throw u.error;
+    if(navigator.vibrate) navigator.vibrate(10);
+    toast(plant[i].a ? '¡'+fmt(c.m)+' ahorrados! Casilla tachada' : 'Casilla desmarcada');
+  }catch(e){ toast('No se pudo guardar. Intenta de nuevo.',true); }
+  plBusy=false; await cargar();
+}
+async function quitarPlantilla(btn){
+  const m=metas.find(x=>x.id===plMetaId); if(!m) return;
+  if(pendingDel!=='pl'+m.id){ pendingDel='pl'+m.id; btn.textContent='Toca para confirmar'; setTimeout(()=>{ if(pendingDel==='pl'+m.id){ pendingDel=null; btn.textContent='Quitar plantilla'; } },2500); return; }
+  pendingDel=null; btn.textContent='Quitar plantilla';
+  const {error}=await sb.from('metas').update({plantilla:null,plantilla_frec:null,plantilla_inicio:null}).eq('id',m.id); if(error){ dbErr(error); return; }
+  toast('Plantilla quitada. Lo ahorrado sigue en tu meta.'); go('inicio'); cargar();
+}
+
 function recomendar(){
   if(cfg.modo_ingreso==='base') return {err:'Con base fija no hay un ingreso que repartir: lo importante es que tu base te dure. En Cartera ves cuántos días te alcanza al ritmo actual.'};
   const Q=Math.round(ingresoMes(mesKey())/2);
@@ -1112,7 +1295,8 @@ function openMeta(id){
     if(money){ i.inputMode='numeric'; i.value=val?'$'+dots(val):''; moneyInput(i); } else { i.maxLength=40; i.value=val; }
     w.append(l,i); body.appendChild(w); return i; };
   mk('¿Para qué es?','mtNombre',m?m.nombre:'',false,'iPhone, moto, viaje…'); mk('¿Cuánto cuesta?','mtMonto',m?m.monto:0,true,'$0'); mk('¿Cuánto aportas por quincena?','mtAporte',m?m.aporte:0,true,'$0');
-  const p=document.createElement('p'); p.className='money-note'; p.textContent='¿No sabes cuánto aportar? Usa "Recomendación" y la app lo calcula con tu sueldo y tus gastos.'; body.appendChild(p);
+  const p=document.createElement('p'); p.className='money-note'; p.textContent='¿No sabes cuánto aportar? Usa "Recomendación", o crea una plantilla de ahorro y la app arma las casillas según tus ingresos.'; body.appendChild(p);
+  if(!m){ const lb=document.createElement('label'); lb.className='chk'; const cb=document.createElement('input'); cb.type='checkbox'; cb.id='mtPlant'; cb.checked=true; lb.append(cb,' Crear una plantilla de ahorro con casillas'); body.appendChild(lb); }
   $('sheet2').dataset.mid=id||''; openSheet2(); setTimeout(()=>$('mtNombre').focus(),250);
 }
 
@@ -1273,9 +1457,23 @@ function semIdx(date, n, ini){ const w=Math.round((lunes(date)-ini)/(7*864e5)); 
 const esPago = (date, pat, ini) => pat[semIdx(date,pat.length,ini)].includes(date.getDay());
 function pagosEn(k, pat=patronCfg(), ini=inicioCfg()){ const d=mesDate(k), y=d.getFullYear(), m=d.getMonth(); let n=0; for(let i=1;i<=lastDay(y,m);i++) if(esPago(new Date(y,m,i),pat,ini)) n++; return n; }
 function proximosPagos(cant, pat=patronCfg(), ini=inicioCfg()){ const out=[], d=new Date(); d.setHours(0,0,0,0); for(let i=0;i<120 && out.length<cant;i++){ if(esPago(d,pat,ini)) out.push(new Date(d)); d.setDate(d.getDate()+1); } return out; }
+const diasDelMes = k => { const d=mesDate(k); return lastDay(d.getFullYear(),d.getMonth()); };
+function montosCfg(n=patronCfg().length){ let a; try{ a=JSON.parse(cfg.pagos_montos||'[]'); }catch(e){ a=[]; } if(!Array.isArray(a)) a=[]; const out=[]; for(let i=0;i<n;i++) out.push(Number(a[i]??cfg.pago_monto??0)||0); return out; }
+function pagosValorEn(k, pat=patronCfg(), ini=inicioCfg(), montos=montosCfg(pat.length)){ const d=mesDate(k), y=d.getFullYear(), m=d.getMonth(); let t=0;
+  for(let i=1;i<=lastDay(y,m);i++){ const f=new Date(y,m,i), w=semIdx(f,pat.length,ini); if(pat[w].includes(f.getDay())) t+=montos[w]||0; } return t; }
+function varStats(minIn, maxIn){
+  const hoy=new Date(), ing=gastos.filter(g=>g.tipo==='ingreso' && new Date(g.fecha)<=hoy), lh=lunes(hoy);
+  const primera = ing.length ? lunes(new Date(Math.min(...ing.map(g=>new Date(g.fecha).getTime())))) : null;
+  const sem=[]; for(let i=8;i>=1;i--){ const a=new Date(lh.getTime()-i*7*864e5); if(!primera || a<primera) continue; const b=new Date(a.getTime()+7*864e5);
+    sem.push(sumM(ing.filter(g=>{ const d=new Date(g.fecha); return d>=a && d<b; }))); }
+  if(sem.length>=3) return {real:true, sem, prom:Math.round(sem.reduce((x,y)=>x+y,0)/sem.length), min:Math.min(...sem), max:Math.max(...sem)};
+  const mn=minIn??cfg.var_min, mx=Math.max(maxIn??cfg.var_max, mn);
+  return {real:false, sem, prom:Math.round((mn+mx)/2), min:mn, max:mx};
+}
+function varSemanal(base=cfg.var_base, st=varStats()){ return base==='promedio' ? st.prom : st.min; }
 function ingresoMes(k=mesKey()){
   if(cfg.modo_ingreso==='mensual') return cfg.ingreso_mensual;
-  if(cfg.modo_ingreso==='personalizado') return cfg.pago_monto*pagosEn(k);
+  if(cfg.modo_ingreso==='personalizado') return cfg.pers_tipo==='variable' ? Math.round(varSemanal()*diasDelMes(k)/7) : pagosValorEn(k);
   if(cfg.modo_ingreso==='diario') return cfg.ingreso_diario*diasTrabajoEn(k);
   if(cfg.modo_ingreso==='base') return 0;
   return cfg.ingreso_quincenal*2;
@@ -1407,7 +1605,7 @@ function renderChart(){
 /* ---------- cartera ---------- */
 function patEstado(){
   if(patUI) return patUI;
-  const pat=patronCfg(); return {sem:pat.map(w=>new Set(w)), esta:semIdx(new Date(),pat.length,inicioCfg())};
+  const pat=patronCfg(); return {sem:pat.map(w=>new Set(w)), montos:montosCfg(pat.length), esta:semIdx(new Date(),pat.length,inicioCfg())};
 }
 function renderPatron(){
   const st=patEstado(), n=st.sem.length;
@@ -1419,22 +1617,47 @@ function renderPatron(){
     const wd=document.createElement('div'); wd.className='wd';
     for(const [d,l,nm] of L){ const b=document.createElement('button'); b.type='button'; b.textContent=l; b.setAttribute('aria-label',nm+(n>1?' de la semana '+(i+1):'')); b.setAttribute('aria-pressed',set.has(d));
       b.onclick=()=>{ const s2=patEstado(); patUI=s2; s2.sem[i].has(d)?s2.sem[i].delete(d):s2.sem[i].add(d); renderPatron(); }; wd.appendChild(b); }
-    r.appendChild(wd); box.appendChild(r); });
+    r.appendChild(wd);
+    const mw=document.createElement('div'); mw.className='pat-monto'; const inp=document.createElement('input'); inp.className='input num'; inp.inputMode='numeric';
+    inp.placeholder='$ por cada pago de esta semana'; inp.setAttribute('aria-label','Monto de cada pago en la semana '+(i+1)); inp.value=st.montos[i]?dots(st.montos[i]):''; moneyInput(inp);
+    inp.addEventListener('input',()=>{ const s2=patEstado(); patUI=s2; s2.montos[i]=parse(inp.value); renderPagosPrev(); });
+    mw.appendChild(inp); r.appendChild(mw); box.appendChild(r); });
   $('cfEstaWrap').hidden = n===1;
   const es=$('cfEsta'); es.textContent='';
-  for(let i=0;i<4;i++){ const b=document.createElement('button'); b.type='button'; b.textContent=i<n?'Sem '+(i+1):''; b.hidden=i>=n; b.setAttribute('aria-selected',i===st.esta);
+  for(let i=0;i<n;i++){ const b=document.createElement('button'); b.type='button'; b.textContent='Sem '+(i+1); b.setAttribute('aria-selected',i===st.esta);
     b.onclick=()=>{ const s2=patEstado(); patUI=s2; s2.esta=i; renderPatron(); }; es.appendChild(b); }
   es.style.gridTemplateColumns='repeat('+n+',1fr)';
-  // vista previa
-  const pat=st.sem.map(s=>[...s]), ini=new Date(lunes(new Date()).getTime()-st.esta*7*864e5);
-  const monto=parse($('cfP').value)||cfg.pago_monto, prox=proximosPagos(6,pat,ini), mes=mesKey(), sig=mesOffset(mes,1);
-  const p1=pagosEn(mes,pat,ini), p2=pagosEn(sig,pat,ini), pg=$('cfPagos'); pg.textContent='';
+  renderPagosPrev();
+}
+function renderPagosPrev(){
+  const st=patEstado(), pat=st.sem.map(s=>[...s]), ini=new Date(lunes(new Date()).getTime()-st.esta*7*864e5), montos=st.montos;
+  const mes=mesKey(), sig=mesOffset(mes,1), pg=$('cfPagos'); pg.textContent='';
   if(!pat.some(w=>w.length)){ pg.textContent='Marca al menos un día de pago.'; return; }
-  const t=document.createElement('div'); t.innerHTML='';
-  const b1=document.createElement('b'); b1.textContent=p1+' pago'+(p1===1?'':'s'); t.append('Este mes recibes ',b1,monto?' → '+fmt(monto*p1):'','. En '+mesCorto(sig)+': '+p2+' pago'+(p2===1?'':'s')+(monto?' → '+fmt(monto*p2):'')+'.');
-  const ul=document.createElement('ul'); for(const d of prox){ const li=document.createElement('li'); li.textContent=d.toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short'}).replace(/\./g,''); ul.appendChild(li); }
+  const v1=pagosValorEn(mes,pat,ini,montos), v2=pagosValorEn(sig,pat,ini,montos), p1=pagosEn(mes,pat,ini), p2=pagosEn(sig,pat,ini);
+  const t=document.createElement('div'); const b1=document.createElement('b'); b1.textContent=fmt(v1);
+  t.append('Este mes: '+p1+' pago'+(p1===1?'':'s')+' → ',b1,'. En '+mesCorto(sig)+': '+p2+' pago'+(p2===1?'':'s')+' → '+fmt(v2)+'.');
   const lb=document.createElement('div'); lb.style.marginTop='8px'; lb.textContent='Tus próximos pagos:';
+  const ul=document.createElement('ul'); for(const d of proximosPagos(6,pat,ini)){ const w=semIdx(d,pat.length,ini); const li=document.createElement('li');
+    li.textContent=d.toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short'}).replace(/\./g,'')+(montos[w]?' · '+fmt(montos[w]):''); ul.appendChild(li); }
   pg.append(t,lb,ul);
+}
+function renderVar(){
+  const vb=vbUI||cfg.var_base||'floja';
+  document.querySelectorAll('[data-vb]').forEach(b=>b.setAttribute('aria-selected', b.dataset.vb===vb));
+  const mn=parse($('cfVmin').value), mx=parse($('cfVmax').value), st=varStats(mn, mx), box=$('cfVstats'); box.textContent='';
+  const head=document.createElement('div');
+  head.textContent = st.real ? 'Con tus ingresos reales de las últimas '+st.sem.length+' semanas:' : 'Aún no hay suficientes semanas registradas ('+st.sem.length+' de 3). Mientras tanto usamos lo que escribiste:';
+  box.appendChild(head);
+  const vs=document.createElement('div'); vs.className='vs';
+  for(const [l,v] of [['Semana floja',st.min],['Promedio',st.prom],['Semana buena',st.max]]){ const d=document.createElement('div'); const sm=document.createElement('small'); sm.textContent=l; const b=document.createElement('b'); b.textContent=fmt(v); d.append(sm,b); vs.appendChild(d); }
+  box.appendChild(vs);
+  if(st.real){ const wk=document.createElement('div'); wk.className='wk'; const mxs=Math.max(1,...st.sem);
+    st.sem.forEach(v=>{ const i=document.createElement('i'); i.style.height=Math.max(4,v/mxs*100)+'%'; if(v===st.min) i.className='min'; else if(v===st.max) i.className='max'; i.title=fmt(v); wk.appendChild(i); }); box.appendChild(wk); }
+  const sem=varSemanal(vb,st), mes=mesKey();
+  const r=document.createElement('div'); r.style.marginTop='6px'; const b=document.createElement('b'); b.textContent=fmt(Math.round(sem*diasDelMes(mes)/7));
+  r.append('Planeamos con '+fmt(sem)+' por semana → este mes ≈ ',b,'.'); box.appendChild(r);
+  if(st.max>0 && st.min>=0 && (st.max-st.min)/st.max>=0.2){ const t=document.createElement('div'); t.style.marginTop='6px';
+    t.textContent='Tus semanas cambian bastante (de '+fmt(st.min)+' a '+fmt(st.max)+'). Te sugiero un "fondo de semanas flojas" de al menos '+fmt(st.min)+': así una semana mala no te descuadra.'; box.appendChild(t); }
 }
 function renderDiaNote(){
   const d=parse($('cfD').value)||cfg.ingreso_diario, set=diasUI||diasSet(), mes=mesKey(), sig=mesOffset(mes,1);
@@ -1461,7 +1684,12 @@ function renderCartera(){
   if(foc!=='cfQ') $('cfQ').value = cfg.ingreso_quincenal ? dots(cfg.ingreso_quincenal) : '';
   if(foc!=='cfM') $('cfM').value = cfg.ingreso_mensual ? dots(cfg.ingreso_mensual) : '';
   if(foc!=='cfMd') $('cfMd').value = String(cfg.dia_pago||30);
-  if(foc!=='cfP') $('cfP').value = cfg.pago_monto ? dots(cfg.pago_monto) : '';
+  const pt=persUI||cfg.pers_tipo||'fijo';
+  document.querySelectorAll('[data-pt]').forEach(b=>b.setAttribute('aria-selected', b.dataset.pt===pt));
+  $('pFijo').hidden = pt!=='fijo'; $('pVar').hidden = pt!=='variable';
+  if(foc!=='cfVmin') $('cfVmin').value = cfg.var_min ? dots(cfg.var_min) : '';
+  if(foc!=='cfVmax') $('cfVmax').value = cfg.var_max ? dots(cfg.var_max) : '';
+  renderVar();
   if(foc!=='cfD') $('cfD').value = cfg.ingreso_diario ? dots(cfg.ingreso_diario) : '';
   if(foc!=='cfB') $('cfB').value = cfg.base_monto ? dots(cfg.base_monto) : '';
   $('mdBase').querySelector('label').textContent = baseCuenta() ? 'Tu base (si cambias el monto, el saldo de "Base" se reinicia)' : '¿Cuánto tienes de base?';
@@ -1516,7 +1744,7 @@ function renderProy(){
     var acRow=fin;
   } else {
     if(modo==='diario') tr('Días de trabajo', cols.map(c=>String(c.dias)));
-    if(modo==='personalizado') tr('Pagos en el mes', cols.map(c=>String(pagosEn(c.k))));
+    if(modo==='personalizado' && cfg.pers_tipo!=='variable') tr('Pagos en el mes', cols.map(c=>String(pagosEn(c.k))));
     tr('Ingreso esperado', cols.map(c=>'+'+fmtM(c.ing)));
     tr('Gastos fijos', cols.map(()=>'−'+fmtM(F)));
     tr('Día a día', cols.map(c=>'−'+fmtM(c.varK)));
@@ -1525,6 +1753,7 @@ function renderProy(){
     let acum=0; var acRow=cols.map(c=>acum+=c.neto);
     tr('Te quedaría', cols.map(c=>({t:fmtM(c.neto),c:c.neto<0?'neg':'pos'})),'tot');
     tr('Acumulado', acRow.map(v=>({t:fmtM(v),c:v<0?'neg':''})));
+    if(modo==='personalizado' && cfg.pers_tipo==='variable'){ const st=varStats(); if(st.max>varSemanal()) tr('Si te va bien', cols.map(c=>({t:fmtM(c.neto + Math.round((st.max-varSemanal())*diasDelMes(c.k)/7)),c:'pos'}))); }
   }
   const note=$('cProyNote');
   if(base){ note.className='trend'+(acRow.some(v=>v<0)?' up':''); note.textContent = acRow.some(v=>v<0) ? 'A este ritmo tu base se acaba antes de '+mesCorto(cols[acRow.findIndex(v=>v<0)].k)+'. Baja gastos o busca un ingreso extra.' : 'A este ritmo tu base alcanza estos 3 meses.'; }
@@ -1757,11 +1986,11 @@ async function cargar(){
   gastos=g.data.map(x=>({...x,monto:Number(x.monto)})); ahorros=a.data.map(x=>({...x,monto:Number(x.monto)}));
   prestamos=pr.data.map(x=>({...x,monto:Number(x.monto)})); abonos=ab.data.map(x=>({...x,monto:Number(x.monto)}));
   cuentas=cu.data.map(x=>({...x,saldo:Number(x.saldo)}));
-  metas=me.data.map(x=>({...x,monto:Number(x.monto),aporte:Number(x.aporte)}));
+  metas=me.data.map(x=>({...x,monto:Number(x.monto),aporte:Number(x.aporte),plantilla:Array.isArray(x.plantilla)?x.plantilla.map(c=>({m:Number(c.m),a:c.a||null})):null}));
   invOK = !iv.error && !im.error;
   inversiones = invOK ? iv.data.map(x=>({...x,monto:Number(x.monto),tasa:Number(x.tasa),esperado:Number(x.esperado)})) : [];
   invMovs = invOK ? im.data.map(x=>({...x,monto:Number(x.monto)})) : [];
-  cfg = c.data ? {...DEF,...c.data,ingreso_quincenal:Number(c.data.ingreso_quincenal),ahorro_quincenal:Number(c.data.ahorro_quincenal),meta_monto:Number(c.data.meta_monto),ingreso_diario:Number(c.data.ingreso_diario||0),base_monto:Number(c.data.base_monto||0),inversion_capital:Number(c.data.inversion_capital||0),modo_ingreso:c.data.modo_ingreso||'quincenal',dias_trabajo:c.data.dias_trabajo??'1,2,3,4,5',ingreso_mensual:Number(c.data.ingreso_mensual||0),pago_monto:Number(c.data.pago_monto||0),dia_pago:Number(c.data.dia_pago||30),patron:c.data.patron||'[[2]]',patron_inicio:c.data.patron_inicio||null} : {...DEF};
+  cfg = c.data ? {...DEF,...c.data,ingreso_quincenal:Number(c.data.ingreso_quincenal),ahorro_quincenal:Number(c.data.ahorro_quincenal),meta_monto:Number(c.data.meta_monto),ingreso_diario:Number(c.data.ingreso_diario||0),base_monto:Number(c.data.base_monto||0),inversion_capital:Number(c.data.inversion_capital||0),modo_ingreso:c.data.modo_ingreso||'quincenal',dias_trabajo:c.data.dias_trabajo??'1,2,3,4,5',ingreso_mensual:Number(c.data.ingreso_mensual||0),pago_monto:Number(c.data.pago_monto||0),dia_pago:Number(c.data.dia_pago||30),patron:c.data.patron||'[[2]]',patron_inicio:c.data.patron_inicio||null,pers_tipo:c.data.pers_tipo||'fijo',pagos_montos:c.data.pagos_montos||'[]',var_min:Number(c.data.var_min||0),var_max:Number(c.data.var_max||0),var_base:c.data.var_base||'floja'} : {...DEF};
   lsSet('mp_nombre', cfg.nombre||'');
   render();
 }
@@ -1800,10 +2029,10 @@ async function borrar(tabla,id,btn){
 /* ---------- navegación ---------- */
 function go(view){
   for(const v of VIEWS) $('v-'+v).hidden = v!==view;
-  const tabOf = ['prestamos','analisis','ajustes'].includes(view) ? 'mas' : view;
+  const tabOf = ['prestamos','analisis','ajustes'].includes(view) ? 'mas' : view==='plantilla' ? 'inicio' : view;
   document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected', t.dataset.go===tabOf));
   $('title').textContent = view==='inicio' ? (cfg.nombre ? 'Hola, '+cfg.nombre : 'Hola') : TITLES[view];
-  $('fab').hidden = view==='ajustes' || view==='mas';
+  $('fab').hidden = view==='ajustes' || view==='mas' || view==='plantilla';
   $('fab').setAttribute('aria-label', view==='inversion' ? 'Nueva inversión' : 'Agregar movimiento');
   window.scrollTo({top:0});
 }
@@ -1877,7 +2106,7 @@ function openSheet(t){
   $('shMonto').value = sheetType==='ahorro' && mm0 && mm0.aporte ? '$'+dots(mm0.aporte) : '';
   $('shNombre').value = sheetType==='ingreso' ? ({diario:'Pago del día',mensual:'Sueldo del mes',personalizado:'Pago'}[cfg.modo_ingreso]||'Quincena') : ''; $('shFecha').value='';
   catSel = null;
-  if(sheetType==='ingreso'){ const v = {diario:cfg.ingreso_diario, quincenal:cfg.ingreso_quincenal, mensual:cfg.ingreso_mensual, personalizado:cfg.pago_monto}[cfg.modo_ingreso]||0; $('shMonto').value = v ? '$'+dots(v) : ''; }
+  if(sheetType==='ingreso'){ const v = {diario:cfg.ingreso_diario, quincenal:cfg.ingreso_quincenal, mensual:cfg.ingreso_mensual, personalizado:cfg.pers_tipo==='variable'?0:cfg.pago_monto}[cfg.modo_ingreso]||0; $('shMonto').value = v ? '$'+dots(v) : ''; }
   renderMetaPicks();
   $('scrim').classList.add('open'); $('sheet').classList.add('open');
   setTimeout(()=>$('shMonto').focus(),250);
@@ -1885,7 +2114,7 @@ function openSheet(t){
 function closeSheet(){ $('scrim').classList.remove('open'); $('sheet').classList.remove('open'); $('sheet2').classList.remove('open'); document.activeElement?.blur(); if(recargaPendiente) setTimeout(()=>location.reload(),300); }
 
 /* ---------- ajustar saldos / pasar plata ---------- */
-function openSheet2(){ $('scrim').classList.add('open'); $('sheet2').classList.add('open'); }
+function openSheet2(){ $('s2Btn').disabled=false; $('scrim').classList.add('open'); $('sheet2').classList.add('open'); }
 function openAjustar(focusId){
   if(!cuentas.length){ go('ajustes'); toast('Primero agrega una cuenta.'); return; }
   s2Mode='ajustar'; $('s2Btn').hidden=false; $('s2Title').textContent='¿Cuánto tienes hoy?'; $('s2Btn').textContent='Guardar saldos';
@@ -1964,8 +2193,12 @@ $('sheet2').addEventListener('submit',async e=>{
     } else if(s2Mode==='meta'){
       const nombre=$('mtNombre').value.trim(), monto=parse($('mtMonto').value), aporte=parse($('mtAporte').value), mid=$('sheet2').dataset.mid;
       if(!nombre||!monto){ toast('Pon el nombre y cuánto cuesta.',true); btn.disabled=false; return; }
-      const r = mid ? await sb.from('metas').update({nombre,monto,aporte}).eq('id',mid) : await sb.from('metas').insert({nombre,monto,aporte,orden:metas.length});
+      const r = mid ? await sb.from('metas').update({nombre,monto,aporte}).eq('id',mid) : await sb.from('metas').insert({nombre,monto,aporte,orden:metas.length}).select('id').single();
       if(r.error) throw r.error; toast(mid?'Meta actualizada':'Meta creada');
+      if(!mid && $('mtPlant')?.checked){ closeSheet(); await cargar(); btn.disabled=false; setTimeout(()=>openPlantilla(r.data.id),350); return; }
+    } else if(s2Mode==='plant'){
+      const ok=await guardarPlantilla(); if(!ok){ btn.disabled=false; return; }
+      closeSheet(); await cargar(); btn.disabled=false; verPlantilla($('sheet2').dataset.pmid); return;
     } else if(s2Mode==='reco'){
       const plan=$('sheet2')._reco; if(!plan){ btn.disabled=false; return; }
       for(const x of plan){ const r=await sb.from('metas').update({aporte:x.aporte}).eq('id',x.m.id); if(r.error) throw r.error; }
@@ -2021,7 +2254,7 @@ $('sheet').addEventListener('submit',async e=>{
   const ok = await guardar(sheetType, $('shNombre').value.trim(), parse($('shMonto').value));
   btn.disabled=false; if(ok) closeSheet();
 });
-['shMonto','cfQ','cfD','cfB','cfM','cfP'].forEach(id=>moneyInput($(id)));
+['shMonto','cfQ','cfD','cfB','cfM','cfVmin','cfVmax'].forEach(id=>moneyInput($(id)));
 
 QUICK.forEach(([n,v])=>{ const b=document.createElement('button'); b.type='button'; b.className='chip';
   const t=document.createElement('b'); t.textContent=n; const s=document.createElement('span'); s.textContent=fmt(v);
@@ -2030,8 +2263,10 @@ QUICK.forEach(([n,v])=>{ const b=document.createElement('button'); b.type='butto
 /* ---------- cartera: handlers ---------- */
 document.querySelectorAll('[data-modo]').forEach(b=>b.addEventListener('click',()=>{ modoUI=b.dataset.modo; render(); }));
 document.querySelectorAll('[data-ciclo]').forEach(b=>b.addEventListener('click',()=>{ const st=patEstado(); patUI=st; const n=Number(b.dataset.ciclo);
-  while(st.sem.length<n) st.sem.push(new Set(st.sem[st.sem.length-1]||[])); st.sem.length=n; if(st.esta>=n) st.esta=0; renderPatron(); }));
-$('cfP').addEventListener('input',()=>renderPatron());
+  while(st.sem.length<n){ st.sem.push(new Set(st.sem[st.sem.length-1]||[])); st.montos.push(st.montos[st.montos.length-1]||0); } st.sem.length=n; st.montos.length=n; if(st.esta>=n) st.esta=0; renderPatron(); }));
+document.querySelectorAll('[data-pt]').forEach(b=>b.addEventListener('click',()=>{ persUI=b.dataset.pt; render(); }));
+document.querySelectorAll('[data-vb]').forEach(b=>b.addEventListener('click',()=>{ vbUI=b.dataset.vb; renderVar(); }));
+['cfVmin','cfVmax'].forEach(id=>$(id).addEventListener('input',()=>renderVar()));
 { const sel=$('cfMd'); for(let i=1;i<=31;i++){ const o=document.createElement('option'); o.value=String(i); o.textContent=i===31?'31 (o último día)':'El '+i; sel.appendChild(o); } }
 document.querySelectorAll('[data-wd]').forEach(b=>b.addEventListener('click',()=>{ const set=diasUI||new Set(diasSet()); const d=Number(b.dataset.wd); set.has(d)?set.delete(d):set.add(d); diasUI=set; render(); }));
 $('cfD').addEventListener('input',()=>renderDiaNote());
@@ -2039,9 +2274,14 @@ $('cfGuardar').addEventListener('click',async()=>{
   const md = modoUI||cfg.modo_ingreso||'quincenal'; const upd={user_id:uid, modo_ingreso:md};
   if(md==='quincenal'){ const q=parse($('cfQ').value); if(!q){ toast('Escribe tu sueldo por quincena.',true); return; } upd.ingreso_quincenal=q; }
   if(md==='mensual'){ const m=parse($('cfM').value); if(!m){ toast('Escribe tu sueldo mensual.',true); return; } upd.ingreso_mensual=m; upd.dia_pago=Number($('cfMd').value)||30; }
-  if(md==='personalizado'){ const m=parse($('cfP').value), st=patEstado(); const pat=st.sem.map(s=>[...s].sort((a,b)=>a-b));
-    if(!m){ toast('Escribe cuánto recibes en cada pago.',true); return; } if(!pat.some(w=>w.length)){ toast('Marca al menos un día de pago.',true); return; }
-    upd.pago_monto=m; upd.patron=JSON.stringify(pat); upd.patron_inicio=isoDia(new Date(lunes(new Date()).getTime()-st.esta*7*864e5)); }
+  if(md==='personalizado'){ const pt=persUI||cfg.pers_tipo||'fijo'; upd.pers_tipo=pt;
+    if(pt==='fijo'){ const st=patEstado(), pat=st.sem.map(s=>[...s].sort((a,b)=>a-b)), montos=pat.map((w,i)=>st.montos[i]||0);
+      if(!pat.some(w=>w.length)){ toast('Marca al menos un día de pago.',true); return; }
+      if(pat.some((w,i)=>w.length && !montos[i])){ toast('Escribe cuánto recibes en cada semana que tiene pagos.',true); return; }
+      upd.patron=JSON.stringify(pat); upd.pagos_montos=JSON.stringify(montos); upd.pago_monto=Math.max(...montos); upd.patron_inicio=isoDia(new Date(lunes(new Date()).getTime()-st.esta*7*864e5)); }
+    else { const mn=parse($('cfVmin').value), mx=parse($('cfVmax').value);
+      if(!mn && !varStats().real){ toast('Escribe cuánto te entra en una semana floja.',true); return; }
+      upd.var_min=mn; upd.var_max=Math.max(mx,mn); upd.var_base=vbUI||cfg.var_base||'floja'; } }
   if(md==='diario'){ const d=parse($('cfD').value), dias=[...(diasUI||diasSet())]; if(!d||!dias.length){ toast('Escribe cuánto te haces al día y elige tus días.',true); return; } upd.ingreso_diario=d; upd.dias_trabajo=dias.sort((a,b)=>a-b).join(','); }
   if(md==='base'){ const v=parse($('cfB').value); if(!v){ toast('Escribe cuánto tienes de base.',true); return; }
     let c=baseCuenta();
@@ -2049,7 +2289,7 @@ $('cfGuardar').addEventListener('click',async()=>{
     else if(v!==cfg.base_monto){ const r=await sb.from('cuentas').update({saldo:v}).eq('id',c.id); if(r.error){ dbErr(r.error); return; } }
     upd.base_monto=v; upd.base_cuenta=c.id; cuentaSel=c.id; lsSet('mp_cuenta',c.id); }
   const {error}=await sb.from('ajustes').upsert(upd); if(error){ dbErr(error); return; }
-  modoUI=null; diasUI=null; patUI=null; document.activeElement?.blur(); toast('Listo, quedó guardado'); cargar();
+  modoUI=null; diasUI=null; patUI=null; persUI=null; vbUI=null; document.activeElement?.blur(); toast('Listo, quedó guardado'); cargar();
 });
 $('cAjustar').addEventListener('click',()=>openAjustar());
 $('cPasar').addEventListener('click',openPasar);
@@ -2057,6 +2297,8 @@ $('cAddFijo').addEventListener('click',()=>openSheet('fijo'));
 $('iCapEdit').addEventListener('click',openCapital);
 $('iSetupBtn').addEventListener('click',openCapital);
 $('iNueva').addEventListener('click',()=>openInv());
+$('plRehacer').addEventListener('click',()=>{ if(plMetaId) openPlantilla(plMetaId); });
+$('plQuitar').addEventListener('click',e=>quitarPlantilla(e.currentTarget));
 function dbErr(e){ const m=(e&&e.message||'').toLowerCase();
   toast(/column|relation|schema cache|check constraint|does not exist/.test(m) ? 'Falta actualizar la base de datos con el SQL nuevo.' : 'No se pudo guardar. Intenta de nuevo.', true); }
 
