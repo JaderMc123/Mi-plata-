@@ -1,6 +1,6 @@
 // Cachea la carcasa de la app para que abra rápido y sin conexión.
 // Los datos siempre se piden a Supabase; nunca se cachean.
-const CACHE = 'mi-plata-v8';
+const CACHE = 'mi-plata-v9';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
