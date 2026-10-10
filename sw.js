@@ -1,10 +1,10 @@
 // Cachea la carcasa de la app para que abra rápido y sin conexión.
 // Los datos siempre se piden a Supabase; nunca se cachean.
-const CACHE = 'mi-plata-v9';
+const CACHE = 'mi-plata-v10';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL.map(u => new Request(u, {cache: 'reload'})))).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
@@ -14,8 +14,10 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.hostname.endsWith('supabase.co')) return; // datos y login: siempre en vivo
+  // la app (HTML) siempre se pide fresca, saltándose la caché del navegador
+  const fresco = url.origin === location.origin ? fetch(req.mode === 'navigate' ? new Request(url.href, {cache: 'no-cache', credentials: 'same-origin'}) : req, req.mode === 'navigate' ? undefined : {cache: 'no-cache'}) : fetch(req);
   e.respondWith(
-    fetch(req).then(res => {
+    fresco.then(res => {
       if (res.ok && (url.origin === location.origin || url.hostname === 'cdn.jsdelivr.net' || url.hostname.includes('gstatic') || url.hostname.includes('googleapis'))) {
         const copy = res.clone();
         caches.open(CACHE).then(c => c.put(req, copy));

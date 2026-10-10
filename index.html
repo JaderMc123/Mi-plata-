@@ -1882,7 +1882,7 @@ function openSheet(t){
   $('scrim').classList.add('open'); $('sheet').classList.add('open');
   setTimeout(()=>$('shMonto').focus(),250);
 }
-function closeSheet(){ $('scrim').classList.remove('open'); $('sheet').classList.remove('open'); $('sheet2').classList.remove('open'); document.activeElement?.blur(); }
+function closeSheet(){ $('scrim').classList.remove('open'); $('sheet').classList.remove('open'); $('sheet2').classList.remove('open'); document.activeElement?.blur(); if(recargaPendiente) setTimeout(()=>location.reload(),300); }
 
 /* ---------- ajustar saldos / pasar plata ---------- */
 function openSheet2(){ $('scrim').classList.add('open'); $('sheet2').classList.add('open'); }
@@ -2156,7 +2156,18 @@ if(sb){
 } else { $('loginView').hidden=false; $('lStatus').textContent='No se pudo cargar. Revisa tu conexión y recarga.'; }
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden && uid){ if(idleExpired()) idleOut(); else { cargar(); touchIdle(); } } });
 
-if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+/* ---------- actualización automática ---------- */
+let recargaPendiente=false;
+function recargarApp(){ if(document.querySelector('.sheet.open')){ recargaPendiente=true; return; } location.reload(); }
+if('serviceWorker' in navigator){
+  const habiaControl = !!navigator.serviceWorker.controller; let recargando=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{ if(!habiaControl || recargando) return; recargando=true; recargarApp(); });
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(reg=>{
+    const buscar=()=>reg.update().catch(()=>{});
+    document.addEventListener('visibilitychange',()=>{ if(!document.hidden) buscar(); });
+    setInterval(buscar, 30*60*1000);
+  }).catch(()=>{}));
+}
 </script>
 </body>
 </html>
