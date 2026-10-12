@@ -306,6 +306,9 @@ input{font:inherit;font-size:16px}
 .brand img{width:64px;height:64px;border-radius:16px;box-shadow:var(--shadow)}
 .brand h1{font-family:var(--display);font-weight:800;font-size:2.2rem;letter-spacing:-.02em;margin:0;line-height:1.05}
 .brand p{margin:0;color:var(--muted)}
+.olvido{background:none;border:0;color:var(--accent);font-weight:600;font-size:.9rem;padding:4px;align-self:center}
+.auth-h{font-family:var(--display);font-weight:700;font-size:1.25rem;margin:0}
+.auth-ok{margin:0;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--save) 12%,transparent);color:var(--save);font-size:.9rem;line-height:1.4}
 .login-err{color:var(--danger);font-size:.9rem;min-height:1.2em;margin:0;text-align:center}
 
 @media (max-width:360px){.hero{grid-template-columns:1fr;justify-items:center;text-align:center}.hero-info{align-items:center}.ring{width:120px;height:120px}}
@@ -581,7 +584,24 @@ body{-webkit-font-smoothing:antialiased}
     <div class="field"><label for="lEmail">Correo</label><input class="input" id="lEmail" type="email" autocomplete="username" inputmode="email" required></div>
     <div class="field"><label for="lPass">Contraseña</label><input class="input" id="lPass" type="password" autocomplete="current-password" required></div>
     <button class="btn" id="lBtn" type="submit">Entrar</button>
+    <button class="olvido" type="button" id="lOlvido">¿Olvidaste tu contraseña?</button>
     <p class="login-err" id="lStatus" role="alert"></p>
+  </form>
+  <form id="fOlvido" class="card stack-gap" hidden novalidate>
+    <div><h2 class="auth-h">Recupera tu contraseña</h2><p class="money-note" style="margin:4px 0 0">Escribe el correo con el que te registraste. Te enviamos un enlace para crear una contraseña nueva.</p></div>
+    <div class="field"><label for="oEmail">Correo</label><input class="input" id="oEmail" type="email" autocomplete="username" inputmode="email" required></div>
+    <button class="btn" id="oBtn" type="submit">Enviarme el enlace</button>
+    <p class="auth-ok" id="oOk" role="status" hidden></p>
+    <p class="login-err" id="oStatus" role="alert"></p>
+    <button class="olvido" type="button" id="oVolver">‹ Volver a entrar</button>
+  </form>
+  <form id="fReset" class="card stack-gap" hidden novalidate>
+    <div><h2 class="auth-h">Crea tu contraseña nueva</h2><p class="money-note" style="margin:4px 0 0" id="rInfo">Escríbela dos veces. Mínimo 8 caracteres.</p></div>
+    <div class="field"><label for="rPass">Contraseña nueva</label><input class="input" id="rPass" type="password" autocomplete="new-password" minlength="8" required></div>
+    <div class="field"><label for="rPass2">Repítela</label><input class="input" id="rPass2" type="password" autocomplete="new-password" minlength="8" required></div>
+    <label class="chk" style="margin:0"><input type="checkbox" id="rVer"> Mostrar contraseña</label>
+    <button class="btn" id="rBtn" type="submit">Guardar y entrar</button>
+    <p class="login-err" id="rStatus" role="alert"></p>
   </form>
 </main>
 
@@ -1129,6 +1149,8 @@ const VIEWS = ['alertas','ahorro','plantilla','inicio','movs','cartera','inversi
 let inversiones = [], invMovs = [], invOK = true, modoUI = null, diasUI = null, patUI = null, persUI = null, vbUI = null, plMetaId = null;
 let cfg = {...DEF}, gastos = [], ahorros = [], prestamos = [], abonos = [], cuentas = [], cuentaSel = null, catSel = null, authMode = 'login', s2Mode = null, uid = null, seg = 'todo', sheetType = 'hormiga', sheetDir = 'preste', abonoLoan = null;
 
+let RECUPERANDO = /type=recovery/.test(location.hash) || /type=recovery/.test(location.search);
+const ERR_ENLACE = /error_code=otp_expired|error_description=/.test(location.hash) ? decodeURIComponent((location.hash.match(/error_description=([^&]+)/)||[])[1]||'').replace(/\+/g,' ') : '';
 const sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {auth:{persistSession:true,autoRefreshToken:true}}) : null;
 
 /* ---------- utilidades ---------- */
@@ -2840,13 +2862,46 @@ async function idleOut(){
 function idleExpired(){ const m=idleMin(); const last=Number(lsGet('mp_last')||0); return m>0 && last>0 && Date.now()-last>m*60000; }
 ['pointerdown','keydown','touchstart','scroll'].forEach(ev=>document.addEventListener(ev,()=>touchIdle(),{passive:true,capture:true}));
 
+/* ---------- recuperar contraseña ---------- */
+function verForm(id){ ['fLogin','fOlvido','fReset'].forEach(f=>$(f).hidden = f!==id); }
+function verOlvido(){ $('loginView').hidden=false; $('appView').hidden=true; verForm('fOlvido'); $('oOk').hidden=true; $('oStatus').textContent=''; $('oEmail').value=$('lEmail').value||$('oEmail').value; setTimeout(()=>$('oEmail').focus(),50); }
+function verReset(session){ $('loginView').hidden=false; $('appView').hidden=true; $('preload').hidden=true; verForm('fReset'); $('rStatus').textContent='';
+  $('rInfo').textContent = 'Para '+(session?.user?.email||'tu cuenta')+'. Escríbela dos veces, mínimo 8 caracteres.'; setTimeout(()=>$('rPass').focus(),50); }
+$('lOlvido').addEventListener('click',verOlvido);
+$('oVolver').addEventListener('click',()=>{ verForm('fLogin'); $('lStatus').textContent=''; });
+$('rVer').addEventListener('change',()=>{ const t=$('rVer').checked?'text':'password'; $('rPass').type=t; $('rPass2').type=t; });
+$('fOlvido').addEventListener('submit',async e=>{
+  e.preventDefault(); const email=$('oEmail').value.trim(), st=$('oStatus'), ok=$('oOk'), btn=$('oBtn'); st.textContent=''; ok.hidden=true;
+  if(!/^\S+@\S+\.\S+$/.test(email)){ st.textContent='Escribe un correo válido.'; return; }
+  btn.disabled=true; btn.textContent='Enviando…';
+  const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo: location.origin+location.pathname});
+  btn.disabled=false; btn.textContent='Enviarme el enlace';
+  if(error){ const m=(error.message||'').toLowerCase();
+    st.textContent = m.includes('rate')||error.status===429 ? 'Ya pediste varios enlaces. Espera unos minutos e intenta de nuevo.' : 'No pudimos enviar el correo. Intenta de nuevo en un momento.'; return; }
+  ok.hidden=false; ok.textContent='Listo. Si '+email+' tiene cuenta, te llegará un correo con el enlace. Ábrelo desde este celular. Si no lo ves en unos minutos, revisa la carpeta de spam.';
+});
+$('fReset').addEventListener('submit',async e=>{
+  e.preventDefault(); const p1=$('rPass').value, p2=$('rPass2').value, st=$('rStatus'), btn=$('rBtn'); st.textContent='';
+  if(p1.length<8){ st.textContent='La contraseña debe tener mínimo 8 caracteres.'; return; }
+  if(p1!==p2){ st.textContent='Las dos contraseñas no coinciden.'; return; }
+  btn.disabled=true; btn.textContent='Guardando…';
+  const {data,error}=await sb.auth.updateUser({password:p1});
+  btn.disabled=false; btn.textContent='Guardar y entrar';
+  if(error){ const m=(error.message||'').toLowerCase();
+    st.textContent = m.includes('different')||m.includes('same') ? 'Usa una contraseña distinta a la anterior.' : m.includes('weak')||m.includes('password') ? 'Esa contraseña es muy débil. Usa una más larga.' : 'No se pudo guardar. Pide un enlace nuevo e intenta otra vez.'; return; }
+  RECUPERANDO=false; $('rPass').value=''; $('rPass2').value='';
+  try{ history.replaceState(null,'',location.pathname); }catch(e){}
+  lsSet('mp_last',String(Date.now())); verForm('fLogin');
+  const {data:{session}}=await sb.auth.getSession(); toast('¡Contraseña actualizada!'); mostrar(session);
+});
+
 /* ---------- sesión ---------- */
 function setAuth(m){
   authMode=m; document.querySelectorAll('[data-auth]').forEach(b=>b.setAttribute('aria-selected', b.dataset.auth===m));
   $('lNombreWrap').hidden = m!=='signup'; $('lNombre').required = m==='signup';
   $('lPass').autocomplete = m==='signup' ? 'new-password' : 'current-password';
   $('lPass').placeholder = m==='signup' ? 'Mínimo 8 caracteres' : '';
-  $('lBtn').textContent = m==='signup' ? 'Crear mi cuenta' : 'Entrar'; $('lStatus').textContent='';
+  $('lBtn').textContent = m==='signup' ? 'Crear mi cuenta' : 'Entrar'; $('lStatus').textContent=''; $('lOlvido').hidden = m==='signup';
 }
 document.querySelectorAll('[data-auth]').forEach(b=>b.addEventListener('click',()=>setAuth(b.dataset.auth)));
 $('fLogin').addEventListener('submit',async e=>{
@@ -2897,7 +2952,13 @@ function mostrar(session){
   else { clearTimeout(idleT); gastos=[]; ahorros=[]; prestamos=[]; abonos=[]; cuentas=[]; metas=[]; plants=[]; inversiones=[]; invMovs=[]; cfg={...DEF}; }
 }
 if(sb){
-  sb.auth.onAuthStateChange((evt,session)=>{ if(evt==='TOKEN_REFRESHED') return; mostrar(session); });
+  sb.auth.onAuthStateChange((evt,session)=>{
+    if(evt==='PASSWORD_RECOVERY'){ RECUPERANDO=true; }
+    if(evt==='TOKEN_REFRESHED') return;
+    if(RECUPERANDO){ if(session) verReset(session); return; }
+    mostrar(session);
+  });
+  if(ERR_ENLACE){ setTimeout(()=>{ verOlvido(); $('oStatus').textContent='Ese enlace ya venció o ya se usó. Pide uno nuevo aquí.'; try{ history.replaceState(null,'',location.pathname); }catch(e){} },0); }
   sb.auth.getSession().then(({data})=>{ if(!data.session) mostrar(null); });
 } else { $('loginView').hidden=false; $('lStatus').textContent='No se pudo cargar. Revisa tu conexión y recarga.'; }
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden && uid){ if(idleExpired()) idleOut(); else { cargar(); touchIdle(); } } });
