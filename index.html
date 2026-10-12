@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Mi plata del mes</title>
-<script>try{var t=localStorage.getItem("mp_tema");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t);var p=localStorage.getItem("mp_paleta");if(p)document.documentElement.setAttribute("data-paleta",p);}catch(e){}</script>
+<script>try{var t=localStorage.getItem("mp_tema");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t);var d=document.documentElement,c=localStorage.getItem("mp_card"),s=localStorage.getItem("mp_sec");if(c)d.setAttribute("data-card",c);if(s)d.setAttribute("data-sec",s);}catch(e){}</script>
 <meta name="theme-color" content="#F2F3F7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0B0F1A" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -556,45 +556,52 @@ body{-webkit-font-smoothing:antialiased}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tabbar nav{border:1px solid #2C2C32}}
 :root[data-theme="dark"] .tabbar nav{border:1px solid #2C2C32}
 .fab{border-radius:50%;width:58px;height:58px;background:var(--accent);color:var(--fab-ink,#fff);box-shadow:0 10px 24px var(--glow,rgba(123,63,242,.4));bottom:calc(var(--tabbar) + env(safe-area-inset-bottom,0px) + 14px)}
-/* ---------- paletas de color (Configuración → Apariencia) ---------- */
-:root[data-paleta="amarillo"]{--p1:#FFEB99;--p2:#FFD966;--p3:#FFCBB3;--p-ink:#2B2306;--p-acc:#9A6B00}
-:root[data-paleta="rosa"]{--p1:#FFD0E2;--p2:#FFB3CF;--p3:#FFEB99;--p-ink:#3A0E22;--p-acc:#B8336A}
-:root[data-paleta="menta"]{--p1:#C4F1DC;--p2:#A3E6C6;--p3:#FFEB99;--p-ink:#0B3324;--p-acc:#1D7A52}
-:root[data-paleta="celeste"]{--p1:#CDE8FF;--p2:#A9D4FF;--p3:#FFD0E2;--p-ink:#0A2540;--p-acc:#2B64A6}
-:root[data-paleta="lavanda"]{--p1:#E2D4FF;--p2:#CBB6FF;--p3:#C4F1DC;--p-ink:#23124A;--p-acc:#6A43C9}
-:root[data-paleta="durazno"]{--p1:#FFDCC4;--p2:#FFC3A1;--p3:#CDE8FF;--p-ink:#3A1A08;--p-acc:#B4561C}
-:root[data-paleta]{
-  --violet:var(--p1); --violet-2:var(--p2); --sun:var(--p3);
-  --main-ink:var(--p-ink); --main-chip:rgba(0,0,0,.07); --main-neg:#B3261E;
-  --glow:color-mix(in srgb,var(--p2) 55%,transparent);
-  --accent:var(--p-acc); --accent-ink:#FFFFFF; --fab-ink:#FFFFFF;
-  --bg:color-mix(in srgb,var(--p1) 30%,#F6F6F8);
-  --surface:color-mix(in srgb,var(--p1) 12%,#FFFFFF);
-  --surface-2:color-mix(in srgb,var(--p1) 32%,#FFFFFF);
-  --line:color-mix(in srgb,var(--p2) 30%,#E6E6EB);
+/* ---------- personalización de colores (Configuración → Apariencia) ---------- */
+:root[data-card="amarillo"]{--ca:#FFEB99;--cb:#FFD966;--ci:#2B2306}
+:root[data-sec="amarillo"]{--sa:#FFEB99;--sb:#FFD966;--sacc:#9A6B00}
+:root[data-card="rosa"]{--ca:#FFD0E2;--cb:#FFB3CF;--ci:#3A0E22}
+:root[data-sec="rosa"]{--sa:#FFD0E2;--sb:#FFB3CF;--sacc:#B8336A}
+:root[data-card="menta"]{--ca:#C4F1DC;--cb:#A3E6C6;--ci:#0B3324}
+:root[data-sec="menta"]{--sa:#C4F1DC;--sb:#A3E6C6;--sacc:#1D7A52}
+:root[data-card="celeste"]{--ca:#CDE8FF;--cb:#A9D4FF;--ci:#0A2540}
+:root[data-sec="celeste"]{--sa:#CDE8FF;--sb:#A9D4FF;--sacc:#2B64A6}
+:root[data-card="lavanda"]{--ca:#E2D4FF;--cb:#CBB6FF;--ci:#23124A}
+:root[data-sec="lavanda"]{--sa:#E2D4FF;--sb:#CBB6FF;--sacc:#6A43C9}
+:root[data-card="durazno"]{--ca:#FFDCC4;--cb:#FFC3A1;--ci:#3A1A08}
+:root[data-sec="durazno"]{--sa:#FFDCC4;--sb:#FFC3A1;--sacc:#B4561C}
+:root[data-card="coral"]{--ca:#FFCFCB;--cb:#FFB0A8;--ci:#3D0F0F}
+:root[data-sec="coral"]{--sa:#FFCFCB;--sb:#FFB0A8;--sacc:#B23A33}
+/* tarjetas: la principal, el avatar y el tono de todas las tarjetas */
+:root[data-card]{
+  --violet:var(--ca); --violet-2:var(--cb); --main-ink:var(--ci); --main-chip:rgba(0,0,0,.07); --main-neg:#B3261E;
+  --glow:color-mix(in srgb,var(--cb) 55%,transparent);
+  --surface:color-mix(in srgb,var(--ca) 12%,#FFFFFF); --surface-2:color-mix(in srgb,var(--ca) 32%,#FFFFFF);
 }
-@media (prefers-color-scheme:dark){:root[data-paleta]:not([data-theme="light"]){
-  --accent:var(--p1); --accent-ink:#0B0B0D; --fab-ink:var(--p-ink);
-  --bg:color-mix(in srgb,var(--p1) 5%,#000000);
-  --surface:color-mix(in srgb,var(--p1) 9%,#141416);
-  --surface-2:color-mix(in srgb,var(--p1) 13%,#1D1D21);
-  --line:color-mix(in srgb,var(--p1) 14%,#26262B);
-  --glow:rgba(0,0,0,.35);
-}}
-:root[data-paleta][data-theme="dark"]{
-  --accent:var(--p1); --accent-ink:#0B0B0D; --fab-ink:var(--p-ink);
-  --bg:color-mix(in srgb,var(--p1) 5%,#000000);
-  --surface:color-mix(in srgb,var(--p1) 9%,#141416);
-  --surface-2:color-mix(in srgb,var(--p1) 13%,#1D1D21);
-  --line:color-mix(in srgb,var(--p1) 14%,#26262B);
-  --glow:rgba(0,0,0,.35);
+/* secundario: tarjeta de atrás, botones, enlaces y fondo */
+:root[data-sec]{
+  --sun:var(--sa); --accent:var(--sacc); --accent-ink:#FFFFFF; --fab-ink:#FFFFFF;
+  --bg:color-mix(in srgb,var(--sa) 28%,#F6F6F8); --line:color-mix(in srgb,var(--sb) 30%,#E6E6EB);
 }
+@media (prefers-color-scheme:dark){
+  :root[data-card]:not([data-theme="light"]){--surface:color-mix(in srgb,var(--ca) 9%,#141416); --surface-2:color-mix(in srgb,var(--ca) 13%,#1D1D21); --glow:rgba(0,0,0,.35);}
+  :root[data-sec]:not([data-theme="light"]){--accent:var(--sa); --accent-ink:#0B0B0D; --fab-ink:#1A1A1A; --bg:color-mix(in srgb,var(--sa) 5%,#000000); --line:color-mix(in srgb,var(--sa) 14%,#26262B);}
+}
+:root[data-card][data-theme="dark"]{--surface:color-mix(in srgb,var(--ca) 9%,#141416); --surface-2:color-mix(in srgb,var(--ca) 13%,#1D1D21); --glow:rgba(0,0,0,.35);}
+:root[data-sec][data-theme="dark"]{--accent:var(--sa); --accent-ink:#0B0B0D; --fab-ink:#1A1A1A; --bg:color-mix(in srgb,var(--sa) 5%,#000000); --line:color-mix(in srgb,var(--sa) 14%,#26262B);}
 .pal{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 6px;margin:4px 0 2px}
 .pal button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:6px;font:inherit;font-size:.74rem;font-weight:500;color:var(--ink);cursor:pointer;padding:0;text-align:center;line-height:1.2}
-.pal i{width:46px;height:46px;border-radius:50%;display:block;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);transition:transform .12s}
+.pal i{width:44px;height:44px;border-radius:50%;display:block;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);transition:transform .12s}
 .pal button:active i{transform:scale(.92)}
 .pal button[aria-pressed="true"] i{box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--ink)}
 .pal button[aria-pressed="true"]{font-weight:700}
+.pv{position:relative;padding-top:30px;margin:2px 0 4px}
+.pv-back{position:absolute;inset:0 0 auto 0;height:62px;border-radius:18px;background:var(--sun);color:#1A1405;font-size:.72rem;font-weight:600;padding:9px 14px}
+.pv-main{position:relative;border-radius:18px;background:linear-gradient(140deg,var(--violet),var(--violet-2));color:var(--main-ink,#fff);padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-end;box-shadow:0 8px 20px var(--glow,rgba(123,63,242,.28))}
+.pv-main small{display:block;font-size:.72rem;opacity:.85}
+.pv-main b{font-family:var(--display);font-size:1.3rem;font-weight:600;letter-spacing:-.02em}
+.pv-btn{background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:6px 12px;font-size:.72rem;font-weight:700}
+.pal-h{display:flex;justify-content:space-between;align-items:baseline}
+.pal-h button{background:none;border:0;color:var(--accent);font:inherit;font-size:.8rem;font-weight:600;padding:0;cursor:pointer}
 /* eliminar */
 .del.trash:hover,.del.trash:focus-visible{color:var(--danger)}
 .btn-del{margin-bottom:12px!important;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:4px;padding:12px;border-radius:999px;border:1.5px solid color-mix(in srgb,var(--danger) 40%,transparent);background:color-mix(in srgb,var(--danger) 8%,transparent);color:var(--danger);font-weight:600}
@@ -1100,10 +1107,12 @@ body{-webkit-font-smoothing:antialiased}
           <div class="mpanel" hidden>
             <div class="seg three" id="temaSeg" style="margin:0"><button type="button" data-tema="sistema">Automático</button><button type="button" data-tema="light">Claro</button><button type="button" data-tema="dark">Oscuro</button></div>
             <p class="money-note" style="margin:0">"Automático" sigue el modo de tu celular.</p>
-            <div class="field" style="margin:6px 0 0"><label>Color de la app</label>
-              <div class="pal" id="palSel" role="group" aria-label="Color de la app"></div>
-            </div>
-            <p class="money-note" style="margin:0">Cambia las tarjetas, los botones y el fondo. Se guarda en este celular.</p>
+            <div class="pv" aria-hidden="true"><div class="pv-back">Ahorrado</div><div class="pv-main"><div><small>Tu dinero hoy</small><b>$1.250.000</b></div><span class="pv-btn">Botón</span></div></div>
+            <div class="field" style="margin:4px 0 0"><div class="pal-h"><label>Color de las tarjetas</label><button type="button" id="colReset">Restablecer</button></div>
+              <div class="pal" id="palCard" role="group" aria-label="Color de las tarjetas"></div></div>
+            <div class="field" style="margin:4px 0 0"><label>Color secundario</label>
+              <div class="pal" id="palSec" role="group" aria-label="Color secundario"></div></div>
+            <p class="money-note" style="margin:0">Las tarjetas cambian la tarjeta principal y el tono de todas. El secundario cambia la tarjeta de atrás, los botones y el fondo. Se guarda en tu perfil.</p>
           </div></div>
         <div class="mgroup"><button class="mitem" type="button" data-go="alertas"><span class="mico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span><span class="mtxt"><b>Notificaciones</b><small id="mNotifSub"></small></span><span class="chev">›</span></button></div>
         <div class="mgroup"><button class="mitem danger" type="button" id="logout"><span class="mico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></span><span class="mtxt"><b>Cerrar sesión</b></span><span></span></button></div>
@@ -1423,41 +1432,67 @@ function aplicarTema(t){
 }
 function renderTema(){
   const t=temaActual(); document.querySelectorAll('[data-tema]').forEach(b=>b.setAttribute('aria-selected', b.dataset.tema===t));
-  const pal=(PALETAS.find(x=>x.id===paletaActual())||PALETAS[0]).n;
-  $('mTemaSub').textContent = {sistema:'Automático', light:'Modo claro', dark:'Modo oscuro'}[t]+' · '+pal;
-  renderPaleta();
+  const nc=id=>(COLORES.find(x=>x.id===id)||COLORES[0]).n;
+  const cc=colActual('card'), cs=colActual('sec');
+  $('mTemaSub').textContent = {sistema:'Automático', light:'Modo claro', dark:'Modo oscuro'}[t]+' · '+(cc||cs ? nc(cc)+(cs!==cc?' + '+nc(cs):'') : 'Colores originales');
+  renderColores();
 }
 aplicarTema(temaActual());
 
-/* ---------- paleta de color ---------- */
-const PALETAS=[
-  {id:'',         n:'Original',        a:'#8B3DFF', b:'#A45CFF'},
+/* ---------- colores de la app ---------- */
+const COLORES=[
+  {id:'', n:'Original'},
   {id:'amarillo', n:'Amarillo pastel', a:'#FFEB99', b:'#FFD966'},
-  {id:'rosa',     n:'Rosa',            a:'#FFD0E2', b:'#FFB3CF'},
-  {id:'menta',    n:'Menta',           a:'#C4F1DC', b:'#A3E6C6'},
-  {id:'celeste',  n:'Celeste',         a:'#CDE8FF', b:'#A9D4FF'},
-  {id:'lavanda',  n:'Lavanda',         a:'#E2D4FF', b:'#CBB6FF'},
-  {id:'durazno',  n:'Durazno',         a:'#FFDCC4', b:'#FFC3A1'},
+  {id:'rosa', n:'Rosa', a:'#FFD0E2', b:'#FFB3CF'},
+  {id:'menta', n:'Menta', a:'#C4F1DC', b:'#A3E6C6'},
+  {id:'celeste', n:'Celeste', a:'#CDE8FF', b:'#A9D4FF'},
+  {id:'lavanda', n:'Lavanda', a:'#E2D4FF', b:'#CBB6FF'},
+  {id:'durazno', n:'Durazno', a:'#FFDCC4', b:'#FFC3A1'},
+  {id:'coral', n:'Coral', a:'#FFCFCB', b:'#FFB0A8'},
 ];
-function paletaActual(){ const p=lsGet('mp_paleta')||''; return PALETAS.some(x=>x.id===p)?p:''; }
-function aplicarPaleta(p){
-  lsSet('mp_paleta', p);
-  if(p) document.documentElement.setAttribute('data-paleta',p); else document.documentElement.removeAttribute('data-paleta');
+const COL_ORIG={card:['#8B3DFF','#A45CFF'], sec:['#FFD25E','#FFC23A']};
+const colValido=v=>COLORES.some(x=>x.id===(v||''))?(v||''):'';
+function colActual(rol){ return colValido(lsGet(rol==='card'?'mp_card':'mp_sec')); }
+function aplicarColor(rol,v){
+  v=colValido(v); lsSet(rol==='card'?'mp_card':'mp_sec', v);
+  const at=rol==='card'?'data-card':'data-sec';
+  if(v) document.documentElement.setAttribute(at,v); else document.documentElement.removeAttribute(at);
 }
-function renderPaleta(){
-  const box=$('palSel'); if(!box) return; const cur=paletaActual();
-  if(!box.children.length){
-    for(const x of PALETAS){
-      const b=document.createElement('button'); b.type='button'; b.dataset.paleta=x.id;
-      const i=document.createElement('i'); i.style.background='linear-gradient(135deg,'+x.a+','+x.b+')';
-      const t=document.createElement('span'); t.textContent=x.n; b.append(i,t);
-      b.onclick=()=>{ aplicarPaleta(x.id); renderPaleta(); renderTema(); };
-      box.appendChild(b);
+let colTimer=null;
+function guardarApariencia(){
+  clearTimeout(colTimer);
+  colTimer=setTimeout(async()=>{
+    if(!uid) return;
+    const {error}=await sb.from('ajustes').upsert({user_id:uid, tema:temaActual(), color_card:colActual('card'), color_sec:colActual('sec')});
+    if(error) dbErr(error); else { cfg.tema=temaActual(); cfg.color_card=colActual('card'); cfg.color_sec=colActual('sec'); }
+  },500);
+}
+/* al cargar el perfil: usar lo que el usuario guardó (si la base ya tiene las columnas) */
+function aparienciaDePerfil(c){
+  if(!c) return;
+  if(c.tema) aplicarTema(c.tema);            // null = nunca lo eligió: se respeta lo de este celular
+  if(c.color_card!=null) aplicarColor('card', c.color_card);
+  if(c.color_sec!=null) aplicarColor('sec', c.color_sec);
+}
+function renderColores(){
+  for(const [rol,id] of [['card','palCard'],['sec','palSec']]){
+    const box=$(id); if(!box) continue;
+    if(!box.children.length){
+      for(const x of COLORES){
+        const b=document.createElement('button'); b.type='button'; b.dataset.col=x.id;
+        const [a,bb]=x.id?[x.a,x.b]:COL_ORIG[rol];
+        const i=document.createElement('i'); i.style.background='linear-gradient(135deg,'+a+','+bb+')';
+        const t=document.createElement('span'); t.textContent=x.n; b.append(i,t);
+        b.onclick=()=>{ aplicarColor(rol,x.id); renderTema(); guardarApariencia(); };
+        box.appendChild(b);
+      }
     }
+    const cur=colActual(rol);
+    box.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.col===cur));
   }
-  box.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.paleta===cur));
 }
-aplicarPaleta(paletaActual());
+{ const old=lsGet('mp_paleta'); if(old && !lsGet('mp_card') && !lsGet('mp_sec')){ lsSet('mp_card',old); lsSet('mp_sec',old); } lsSet('mp_paleta',''); }
+aplicarColor('card', colActual('card')); aplicarColor('sec', colActual('sec'));
 
 /* ---------- confirmación ---------- */
 let dlgRes=null;
@@ -2570,6 +2605,7 @@ async function cargar(){
   invMovs = invOK ? im.data.map(x=>({...x,monto:Number(x.monto)})) : [];
   cfg = c.data ? {...DEF,...c.data,ingreso_quincenal:Number(c.data.ingreso_quincenal),ahorro_quincenal:Number(c.data.ahorro_quincenal),meta_monto:Number(c.data.meta_monto),ingreso_diario:Number(c.data.ingreso_diario||0),base_monto:Number(c.data.base_monto||0),inversion_capital:Number(c.data.inversion_capital||0),modo_ingreso:c.data.modo_ingreso||'quincenal',dias_trabajo:c.data.dias_trabajo??'1,2,3,4,5',ingreso_mensual:Number(c.data.ingreso_mensual||0),pago_monto:Number(c.data.pago_monto||0),dia_pago:Number(c.data.dia_pago||30),patron:c.data.patron||'[[2]]',patron_inicio:c.data.patron_inicio||null,pers_tipo:c.data.pers_tipo||'fijo',pagos_montos:c.data.pagos_montos||'[]',var_min:Number(c.data.var_min||0),var_max:Number(c.data.var_max||0),var_base:c.data.var_base||'floja',notif_activas:!!c.data.notif_activas,notif_hora:c.data.notif_hora??19,notif_tipos:c.data.notif_tipos||'{"registro":true,"deudas":true,"plantillas":true,"metas":true}'} : {...DEF};
   lsSet('mp_nombre', cfg.nombre||'');
+  aparienciaDePerfil(c.data);
   render();
 }
 async function guardar(tipo, nombre, monto){
@@ -2885,7 +2921,8 @@ $('iCapEdit').addEventListener('click',openCapital);
 $('iSetupBtn').addEventListener('click',openCapital);
 $('iNueva').addEventListener('click',()=>openInv());
 $('ahPlNueva').addEventListener('click',nuevaPlantilla);
-document.querySelectorAll('[data-tema]').forEach(b=>b.addEventListener('click',()=>{ aplicarTema(b.dataset.tema); renderTema(); }));
+document.querySelectorAll('[data-tema]').forEach(b=>b.addEventListener('click',()=>{ aplicarTema(b.dataset.tema); renderTema(); guardarApariencia(); }));
+$('colReset').addEventListener('click',()=>{ aplicarColor('card',''); aplicarColor('sec',''); renderTema(); guardarApariencia(); toast('Colores originales'); });
 $('nActivar').addEventListener('click',activarNotif);
 $('nApagar').addEventListener('click',desactivarNotif);
 $('nPrueba').addEventListener('click',notifPrueba);
