@@ -558,6 +558,7 @@ body{-webkit-font-smoothing:antialiased}
 .btn-del{margin-bottom:12px!important;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:4px;padding:12px;border-radius:999px;border:1.5px solid color-mix(in srgb,var(--danger) 40%,transparent);background:color-mix(in srgb,var(--danger) 8%,transparent);color:var(--danger);font-weight:600}
 .btn-del svg{width:18px;height:18px}
 .budget-top{grid-template-columns:minmax(0,1fr) auto auto auto auto}
+.meta-amt{display:block;font-size:.88rem;font-weight:600;margin-top:2px}
 </style>
 </head>
 <body>
@@ -1323,7 +1324,7 @@ function renderMetas(total){
     const n=document.createElement('span'); n.className='num'; n.textContent=fmt(ah)+' / '+fmt(m.monto);
     const ed=document.createElement('button'); ed.className='del'; ed.type='button'; ed.setAttribute('aria-label','Editar '+m.nombre); ed.innerHTML=PENCIL; ed.onclick=()=>openMeta(m.id);
     const tr=document.createElement('button'); tr.className='del trash'; tr.type='button'; tr.setAttribute('aria-label','Eliminar la meta '+m.nombre); tr.title='Eliminar meta'; tr.innerHTML=TRASH; tr.onclick=()=>borrar('metas',m.id);
-    top.append(b,n,ed,tr); div.appendChild(top);
+    n.className='num meta-amt'; top.append(b,ed,tr); div.appendChild(top); div.appendChild(n);
     const bar=document.createElement('div'); bar.className='budget-bar save'; const i=document.createElement('i'); i.style.width=pc+'%'; bar.appendChild(i); div.appendChild(bar);
     const sm=document.createElement('small'); sm.textContent=etaTxt(falta,m.aporte,m); if(falta<=0) sm.className='good'; div.appendChild(sm);
     const pb=document.createElement('button'); pb.type='button'; pb.className='mini meta-plan'+(m.plantilla?' primary':'');
