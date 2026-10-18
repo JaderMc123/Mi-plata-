@@ -527,8 +527,8 @@ body{-webkit-font-smoothing:antialiased}
 .cs-btn svg{width:16px;height:16px}
 @media (max-width:370px){.cs-foot{padding-right:0;flex-wrap:wrap;gap:10px 18px;margin-bottom:44px}}
 /* accesos rápidos */
-.qacts{display:flex;justify-content:space-around;gap:6px;padding:16px 10px}
-.qacts button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:.78rem;font-weight:500;color:var(--ink);min-width:64px}
+.qacts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 4px;padding:16px 8px}
+.qacts button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:.76rem;font-weight:500;color:var(--ink);min-width:0;text-align:center;line-height:1.2;padding:0}
 .qa-ico{width:54px;height:54px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;transition:transform .12s}
 .qa-ico svg{width:22px;height:22px}
 .qacts button:active .qa-ico{transform:scale(.92)}
@@ -602,6 +602,22 @@ body{-webkit-font-smoothing:antialiased}
 .pv-btn{background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:6px 12px;font-size:.72rem;font-weight:700}
 .pal-h{display:flex;justify-content:space-between;align-items:baseline}
 .pal-h button{background:none;border:0;color:var(--accent);font:inherit;font-size:.8rem;font-weight:600;padding:0;cursor:pointer}
+/* centro de configuración */
+.hub-g{margin:2px 0 16px}
+.hub-g>span{display:block;font-size:.74rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:0 2px 10px}
+.hub{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.hub button{border:1px solid var(--line);background:var(--surface-2);border-radius:18px;padding:14px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;font:inherit;font-size:.76rem;font-weight:600;color:var(--ink);text-align:center;line-height:1.2;cursor:pointer;transition:transform .12s}
+.hub button:active{transform:scale(.96)}
+.hub button small{display:block;font-weight:400;color:var(--muted);font-size:.68rem;margin-top:2px}
+.hub .qa-ico{width:40px;height:40px;background:var(--surface)}
+.hub .qa-ico svg{width:19px;height:19px}
+.flash{animation:flash 1.4s ease}
+@keyframes flash{0%,100%{box-shadow:var(--shadow)}25%,60%{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 55%,transparent),var(--shadow)}}
+.budget.tap{cursor:pointer}
+.b-empty{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.b-empty p{margin:0;color:var(--muted);font-size:.86rem}
+.sug{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:-6px -18px 14px;padding:0 18px 2px}
+.sug button{flex:none;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:999px;padding:7px 12px;font:inherit;font-size:.8rem;font-weight:500;cursor:pointer}
 /* ciclo de los gastos fijos */
 .ciclo-sub{display:block;margin-top:6px;font-size:.76rem;color:var(--muted)}
 .ciclo-sub b{color:var(--ink);font-weight:600}
@@ -694,6 +710,10 @@ body{-webkit-font-smoothing:antialiased}
         <button type="button" data-qa="ingreso"><span class="qa-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 7L7 17M15 17H7V9"/></svg></span>Ingreso</button>
         <button type="button" data-qa="ahorro"><span class="qa-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="7" rx="7" ry="3"/><path d="M5 7v5c0 1.7 3.1 3 7 3s7-1.3 7-3V7M5 12v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/></svg></span>Ahorrar</button>
         <button type="button" id="btnPasar"><span class="qa-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h14l-4-4M20 16H6l4 4"/></svg></span>Pasar plata</button>
+        <button type="button" data-qa="fijo"><span class="qa-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M16 3v4M8 3v4M4 11h16"/><path d="M12 14v4M10 16h4"/></svg></span>Gasto fijo</button>
+        <button type="button" data-qa="prestamo"><span class="qa-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 11h6M19 8v6"/></svg></span>Préstamo</button>
+        <button type="button" id="qaMeta"><span class="qa-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".6" fill="currentColor"/></svg></span>Nueva meta</button>
+        <button type="button" id="qaHub"><span class="qa-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></span>Configurar</button>
       </nav>
 
       <article class="card" id="dAlCard" hidden>
@@ -732,8 +752,8 @@ body{-webkit-font-smoothing:antialiased}
         <div id="dBase"></div>
       </article>
 
-      <article class="card" id="budgetsCard" hidden>
-        <div class="card-head"><h2>Tus presupuestos</h2><button class="link" type="button" data-go="analisis" style="font-size:.85rem;font-weight:600;padding:0">Ver análisis</button></div>
+      <article class="card" id="budgetsCard">
+        <div class="card-head"><h2>Gastos fijos</h2><button class="link" type="button" id="bAdd" style="font-size:.85rem;font-weight:600;padding:0">+ Agregar</button></div>
         <div id="budgets"></div>
       </article>
 
@@ -856,7 +876,7 @@ body{-webkit-font-smoothing:antialiased}
         <div id="cBase"></div>
       </article>
 
-      <article class="card">
+      <article class="card" id="cFijosCard">
         <div class="card-head"><h2>Gastos fijos</h2><span class="num" id="cFijosTot"></span></div>
         <div id="cFijos"></div>
         <button class="more" type="button" id="cAddFijo">+ Agregar gasto fijo</button>
@@ -1155,6 +1175,7 @@ body{-webkit-font-smoothing:antialiased}
     </div>
     <input class="amount-input" id="shMonto" inputmode="numeric" placeholder="$0" aria-label="Monto">
     <div class="field" id="shNombreWrap" style="margin-bottom:14px"><label for="shNombre" id="shNombreLbl">¿En qué?</label><input class="input" id="shNombre" maxlength="80" placeholder="Tinto, almuerzo, Uber…"></div>
+    <div class="sug" id="shSug" hidden></div>
     <div class="field" id="shCicloWrap" style="margin-bottom:14px" hidden></div>
     <div class="field" id="shCatWrap" style="margin-bottom:14px" hidden><label>Categoría (opcional)</label><div class="picks" id="shCats" role="group"></div></div>
     <div class="field" id="shMetaWrap" style="margin-bottom:14px" hidden><label>¿Para cuál meta?</label><div class="picks" id="shMetas" role="group"></div></div>
@@ -1982,13 +2003,66 @@ function cicloUI(box, ciclo='mes', dia=''){
   return ()=>{ const d=parseInt(di.value,10); return {ciclo:cur, dia_corte: cur==='corte' ? d : null, ok: cur!=='corte' || (d>=1&&d<=31)}; };
 }
 let leerCicloNuevo=null;
+const SUG_FIJO=[['Arriendo','mes'],['Gasolina','ingreso'],['Mercado','ingreso'],['Claude','corte'],['Netflix','corte'],['Spotify','corte'],['Celular','corte'],['Internet','corte'],['Gimnasio','corte'],['Transporte','ingreso']];
+function pintarSugFijo(){
+  const box=$('shSug'); box.textContent='';
+  const ya=new Set(gastos.filter(g=>g.tipo==='fijo').map(g=>(g.nombre||'').toLowerCase()));
+  for(const [n,c] of SUG_FIJO){ if(ya.has(n.toLowerCase())) continue;
+    const b=document.createElement('button'); b.type='button'; b.textContent=n;
+    b.onclick=()=>{ $('shNombre').value=n; leerCicloNuevo=cicloUI($('shCicloWrap'),c); if(c==='corte') setTimeout(()=>$('shCicloWrap').querySelector('input')?.focus(),60); else if(!$('shMonto').value) $('shMonto').focus(); };
+    box.appendChild(b); }
+}
+/* ir directo a una sección (y abrirla) en un solo toque */
+function marcar(el){ if(!el) return; el.scrollIntoView({block:'start',behavior:'smooth'}); el.classList.add('flash'); setTimeout(()=>el.classList.remove('flash'),1500); }
+function irA(view, o={}){
+  closeSheet(); go(view);
+  setTimeout(()=>{
+    if(o.menu){ const b=[...document.querySelectorAll('#menu .mitem[aria-expanded]')].find(x=>x.querySelector('b')?.textContent===o.menu);
+      if(b){ if(b.getAttribute('aria-expanded')!=='true') b.click(); marcar(b.closest('.mgroup')); } }
+    else if(o.el) marcar($(o.el));
+  },120);
+}
+const HUB=[
+  ['Tu plata',[
+    ['Cómo recibes tu plata','Quincena, sueldo o base','<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',()=>irA('cartera',{el:'cModoCard'})],
+    ['Cuentas','Nequi, efectivo, banco','<rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h3"/>',()=>irA('ajustes',{menu:'Cuentas'})],
+    ['Ajustar saldos','Corrige lo que tienes','<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',()=>{ closeSheet(); setTimeout(()=>openAjustar(),320); }],
+    ['Gastos fijos','Cortes y presupuestos','<rect x="4" y="5" width="16" height="16" rx="2"/><path d="M16 3v4M8 3v4M4 11h16"/>',()=>irA('cartera',{el:'cFijosCard'})],
+    ['Metas','Crear y editar','<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/>',()=>irA('ahorro')],
+    ['Plantillas','Casillas de ahorro','<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M15 17.5l2 2 4-4"/>',()=>irA('ahorro',{el:'ahPlantCard'})],
+  ]],
+  ['Seguimiento',[
+    ['Préstamos','Te deben y debes','<path d="M4 8h14l-4-4M20 16H6l4 4"/>',()=>irA('prestamos')],
+    ['Inversiones','Negocios e intereses','<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',()=>irA('inversion')],
+    ['Análisis','En qué se va tu plata','<path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="7" width="3" height="11"/><rect x="17" y="4" width="3" height="14"/>',()=>irA('analisis')],
+  ]],
+  ['Tu app',[
+    ['Apariencia','Modo y colores','<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',()=>irA('ajustes',{menu:'Apariencia'})],
+    ['Notificaciones','Recordatorios','<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',()=>irA('alertas',{el:'nCard'})],
+    ['Perfil y seguridad','Nombre y contraseña','<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>',()=>irA('ajustes',{menu:'Perfil'})],
+  ]],
+];
+function openHub(){
+  s2Mode='hub'; $('s2Btn').hidden=true; $('s2Title').textContent='Configura tu app';
+  const body=$('s2Body'); body.textContent='';
+  for(const [g,items] of HUB){
+    const w=document.createElement('div'); w.className='hub-g'; const t=document.createElement('span'); t.textContent=g; const grid=document.createElement('div'); grid.className='hub';
+    for(const [n,sub,ico,fn] of items){ const b=document.createElement('button'); b.type='button';
+      b.innerHTML='<span class="qa-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ico+'</svg></span>';
+      const l=document.createElement('span'); l.textContent=n; const sm=document.createElement('small'); sm.textContent=sub; l.appendChild(sm); b.appendChild(l); b.onclick=fn; grid.appendChild(b); }
+    w.append(t,grid); body.appendChild(w); }
+  openSheet2();
+}
 const TRASH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
 const PENCIL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
 function renderBudgets(hormigaMes){
   const fijos = gastos.filter(g=>g.tipo==='fijo');
-  const card = $('budgetsCard'); card.hidden = !fijos.length;
-  if(!fijos.length) return;
   const box = $('budgets'); box.textContent='';
+  if(!fijos.length){
+    const e=document.createElement('div'); e.className='b-empty';
+    const p=document.createElement('p'); p.textContent='Agrega arriendo, planes como Claude o Netflix, gasolina o mercado. Te mostramos cuánto te queda de cada uno y te avisamos antes del corte.';
+    const b=document.createElement('button'); b.type='button'; b.className='mini primary'; b.textContent='Agregar gasto fijo'; b.onclick=()=>openSheet('fijo');
+    e.append(p,b); box.appendChild(e); return; }
   const conUso = fijos.map(f=>{ const sp=spentOf(f,hormigaMes); return {f,sp,pct:f.monto?sp/f.monto:0}; }).sort((a,b)=>b.pct-a.pct);
   for(const {f,sp} of conUso){ box.appendChild(budgetRow(f,sp,true)); }
 }
@@ -2001,7 +2075,8 @@ function renderFijosConBudget(box, fijos, hormigaMes, mes=mesKey()){
   }
 }
 function budgetRow(f, spent, compact, actual){
-  const div=document.createElement('div'); div.className='budget';
+  const div=document.createElement('div'); div.className='budget tap';
+  div.addEventListener('click',e=>{ if(!e.target.closest('button')) openEditFijo(f.id); });
   const top=document.createElement('div'); top.className='budget-top';
   const b=document.createElement('b'); b.textContent=f.nombre;
   const n=document.createElement('span'); n.className='num'; n.textContent=fmt(f.monto);
@@ -2577,7 +2652,6 @@ function renderMoney(){
     const v=document.createElement('span'); v.className='num'+(c.saldo<0?' neg':''); v.textContent=fmt(c.saldo);
     b.append(top,v); b.onclick=()=>openAjustar(c.id); box.appendChild(b);
   }
-  $('btnPasar').hidden = cuentas.length<2;
 }
 function renderCuentasAjustes(){
   const box=$('acctList'); box.textContent='';
@@ -2780,6 +2854,7 @@ function setType(t){
   renderMetaPicks();
   $('shCatWrap').hidden = t!=='hormiga' || !gastos.filter(g=>g.tipo==='fijo').length;
   $('shCicloWrap').hidden = t!=='fijo'; leerCicloNuevo = t==='fijo' ? cicloUI($('shCicloWrap')) : null;
+  $('shSug').hidden = t!=='fijo'; if(t==='fijo') pintarSugFijo();
   renderCatPicks();
   updCuentaLbl(); renderPicks();
   $('sheetTitle').textContent = t==='ahorro' ? 'Guardar ahorro' : t==='fijo' ? 'Nuevo gasto fijo' : t==='prestamo' ? 'Nuevo préstamo' : t==='abono' ? $('sheetTitle').textContent : t==='ingreso' ? 'Nuevo ingreso' : 'Nuevo gasto';
@@ -2859,7 +2934,7 @@ function openPasar(){
   openSheet2(); setTimeout(()=>amt.focus(),250);
 }
 $('btnAjustar').addEventListener('click',()=>openAjustar());
-$('btnPasar').addEventListener('click',openPasar);
+$('btnPasar').addEventListener('click',()=>{ if(cuentas.length<2){ toast('Necesitas 2 cuentas para pasar plata. Agrega otra aquí.'); irA('ajustes',{menu:'Cuentas'}); return; } openPasar(); });
 $('sheet2').addEventListener('submit',async e=>{
   e.preventDefault(); const btn=$('s2Btn'); btn.disabled=true;
   try{
@@ -2933,7 +3008,7 @@ $('sheet2').addEventListener('submit',async e=>{
 $('fab').addEventListener('click',()=>{ if(!$('v-inversion').hidden) openInv(); else if(!$('v-ahorro').hidden){ if(metas.length) openSheet('ahorro'); else openMeta(); } else if(!$('v-cartera').hidden) openSheet('hormiga'); else openSheet(); });
 $('btnAhorro').addEventListener('click',()=>{ if(!metas.length){ openMeta(); toast('Primero crea una meta.'); } else openSheet('ahorro'); });
 $('btnReco').addEventListener('click',openReco);
-document.querySelectorAll('[data-qa]').forEach(b=>b.addEventListener('click',()=>{ const t=b.dataset.qa; if(t==='ahorro' && !metas.length){ openMeta(); toast('Primero crea una meta de ahorro.'); return; } openSheet(t); })); $('btnReco2').addEventListener('click',openReco); $('btnNuevaMeta').addEventListener('click',()=>openMeta());
+document.querySelectorAll('[data-qa]').forEach(b=>b.addEventListener('click',()=>{ const t=b.dataset.qa; if(t==='ahorro' && !metas.length){ openMeta(); toast('Primero crea una meta de ahorro.'); return; } openSheet(t); })); $('btnReco2').addEventListener('click',openReco); $('qaHub').addEventListener('click',openHub); $('qaMeta').addEventListener('click',()=>openMeta()); $('bAdd').addEventListener('click',()=>openSheet('fijo')); $('btnNuevaMeta').addEventListener('click',()=>openMeta());
 document.querySelectorAll('[data-mn]').forEach(b=>b.addEventListener('click',()=>{ const d=mesDate(mesSel); d.setMonth(d.getMonth()+Number(b.dataset.mn)); mesSel=mesKey(d); render(); }));
 document.querySelectorAll('#menu .mitem[aria-expanded]').forEach(b=>b.addEventListener('click',()=>{
   const open=b.getAttribute('aria-expanded')==='true';
