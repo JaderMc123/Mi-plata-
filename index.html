@@ -602,6 +602,11 @@ body{-webkit-font-smoothing:antialiased}
 .pv-btn{background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:6px 12px;font-size:.72rem;font-weight:700}
 .pal-h{display:flex;justify-content:space-between;align-items:baseline}
 .pal-h button{background:none;border:0;color:var(--accent);font:inherit;font-size:.8rem;font-weight:600;padding:0;cursor:pointer}
+/* ciclo de los gastos fijos */
+.ciclo-sub{display:block;margin-top:6px;font-size:.76rem;color:var(--muted)}
+.ciclo-sub b{color:var(--ink);font-weight:600}
+.ci-dia{display:flex;align-items:center;gap:10px;margin-top:10px}
+.ci-dia .input{width:84px;text-align:center}
 /* eliminar */
 .del.trash:hover,.del.trash:focus-visible{color:var(--danger)}
 .btn-del{margin-bottom:12px!important;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:4px;padding:12px;border-radius:999px;border:1.5px solid color-mix(in srgb,var(--danger) 40%,transparent);background:color-mix(in srgb,var(--danger) 8%,transparent);color:var(--danger);font-weight:600}
@@ -728,7 +733,7 @@ body{-webkit-font-smoothing:antialiased}
       </article>
 
       <article class="card" id="budgetsCard" hidden>
-        <div class="card-head"><h2>Presupuestos del mes</h2><button class="link" type="button" data-go="analisis" style="font-size:.85rem;font-weight:600;padding:0">Ver análisis</button></div>
+        <div class="card-head"><h2>Tus presupuestos</h2><button class="link" type="button" data-go="analisis" style="font-size:.85rem;font-weight:600;padding:0">Ver análisis</button></div>
         <div id="budgets"></div>
       </article>
 
@@ -934,6 +939,7 @@ body{-webkit-font-smoothing:antialiased}
             <label class="chk"><input type="checkbox" data-nt="deudas"> Deudas por vencer o vencidas</label>
             <label class="chk"><input type="checkbox" data-nt="plantillas"> Mi casilla de ahorro del día</label>
             <label class="chk"><input type="checkbox" data-nt="metas"> Aportes a mis metas</label>
+            <label class="chk"><input type="checkbox" data-nt="fijos"> Cortes de mis gastos fijos</label>
           </div>
         </div>
         <div class="row-btns" style="margin-top:0"><button class="btn ghost" type="button" id="nPrueba">Enviar una prueba</button><button class="btn ghost" type="button" id="nApagar">Desactivar</button></div>
@@ -1149,6 +1155,7 @@ body{-webkit-font-smoothing:antialiased}
     </div>
     <input class="amount-input" id="shMonto" inputmode="numeric" placeholder="$0" aria-label="Monto">
     <div class="field" id="shNombreWrap" style="margin-bottom:14px"><label for="shNombre" id="shNombreLbl">¿En qué?</label><input class="input" id="shNombre" maxlength="80" placeholder="Tinto, almuerzo, Uber…"></div>
+    <div class="field" id="shCicloWrap" style="margin-bottom:14px" hidden></div>
     <div class="field" id="shCatWrap" style="margin-bottom:14px" hidden><label>Categoría (opcional)</label><div class="picks" id="shCats" role="group"></div></div>
     <div class="field" id="shMetaWrap" style="margin-bottom:14px" hidden><label>¿Para cuál meta?</label><div class="picks" id="shMetas" role="group"></div></div>
     <div class="field" id="shFechaMovWrap" style="margin-bottom:14px" hidden><label for="shFechaMov">¿Para qué fecha? (vacío = hoy; una fecha futura lo deja programado)</label><input class="input" id="shFechaMov" type="date"></div>
@@ -1558,9 +1565,17 @@ function calcAlertas(){
     const hizo=ahorros.some(a=>a.meta_id===m.id && new Date(a.fecha)>=desde);
     if(!hizo) al.push({k:'metas',t:'warn',i:'★',titulo:'Te toca tu aporte para "'+m.nombre+'"',texto:fmt(m.aporte_monto||m.aporte)+' '+(AF[fr]||AF.quincenal).por+'. '+(fr==='mensual'?'Este mes aún no aportas.':'No has aportado en '+(fr==='semanal'?'esta semana':'esta quincena')+'.'),acc:['Ahorrar',()=>{ openSheet('ahorro'); metaSel=m.id; if(m.aporte_monto||m.aporte) $('shMonto').value='$'+dots(m.aporte_monto||m.aporte); renderMetaPicks(); }]});
   }
-  // 6. presupuestos y base
+  // 6. cortes de gastos fijos
+  for(const f of gastos.filter(g=>g.tipo==='fijo' && g.ciclo==='corte' && g.dia_corte>0)){
+    const ci=cicloInfo(f), dIni=Math.round((ci.ini-hoy)/864e5), dFin=Math.round((ci.fin-hoy)/864e5);
+    const sp=spentOf(f,hormigaDe(mesKey()));
+    const reg=()=>{ openSheet('hormiga'); catSel=f.id; renderCatPicks(); $('shNombre').value=f.nombre; $('shMonto').value='$'+dots(Math.max(0,f.monto-sp)||f.monto); };
+    if(dIni===0 && sp<f.monto) al.push({k:'fijos',t:'warn',i:'📅',titulo:'Hoy es el corte de '+f.nombre,texto:'Toca pagar '+fmt(f.monto-sp)+'. Cuando lo pagues, regístralo en esta categoría.',acc:['Registrar pago',reg]});
+    else if(dFin>=1 && dFin<=2) al.push({k:'fijos',t:'info',i:'📅',titulo:f.nombre+' se corta '+(dFin===1?'mañana':'en 2 días'),texto:'El '+fechaCorta(ci.fin)+'. Ten listos '+fmt(f.monto)+'.',acc:['Ver',()=>go('cartera')]});
+  }
+  // 7. presupuestos y base
   const mes=mesKey(), hm=hormigaDe(mes);
-  for(const f of gastos.filter(g=>g.tipo==='fijo')){ const sp=spentOf(f,hm,mes); if(f.monto>0 && sp>f.monto) al.push({k:'info',t:'warn',i:'!',titulo:'Te pasaste en '+f.nombre,texto:'Gastaste '+fmt(sp)+' de '+fmt(f.monto)+' este mes.',acc:['Ver',()=>go('cartera')]}); }
+  for(const f of gastos.filter(g=>g.tipo==='fijo')){ const sp=spentOf(f,hm,mes); if(f.monto>0 && sp>f.monto) al.push({k:'info',t:'warn',i:'!',titulo:'Te pasaste en '+f.nombre,texto:'Gastaste '+fmt(sp)+' de '+fmt(f.monto)+(usaCiclo(f)?' en este periodo.':' este mes.'),acc:['Ver',()=>go('cartera')]}); }
   const b=baseInfo(); if(b && b.dias!==null && b.dias<15) al.push({k:'info',t:'warn',i:'⌛',titulo:'Tu base alcanza para '+b.dias+' días',texto:'Te quedan '+fmt(b.queda)+'. Baja gastos o busca un ingreso extra.',acc:['Ver',()=>go('cartera')]});
   return al.sort((x,y)=>({warn:0,info:1,good:2}[x.t]-{warn:0,info:1,good:2}[y.t]));
 }
@@ -1592,7 +1607,7 @@ const VAPID_PUBLIC='BLZQTzjfgY-2m1Y108QW3a1cnRZ22IuCPm9BfYbG_0j5LoguK-e1o9c64XNP
 const esIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
 const enInicio=()=>matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
 const pushSoportado=()=>'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
-function notifTipos(){ try{ return {registro:true,deudas:true,plantillas:true,metas:true,...JSON.parse(cfg.notif_tipos||'{}')}; }catch(e){ return {registro:true,deudas:true,plantillas:true,metas:true}; } }
+function notifTipos(){ try{ return {registro:true,deudas:true,plantillas:true,metas:true,fijos:true,...JSON.parse(cfg.notif_tipos||'{}')}; }catch(e){ return {registro:true,deudas:true,plantillas:true,metas:true,fijos:true}; } }
 function b64u(s){ const p='='.repeat((4-s.length%4)%4), b=(s+p).replace(/-/g,'+').replace(/_/g,'/'), r=atob(b), u=new Uint8Array(r.length); for(let i=0;i<r.length;i++) u[i]=r.charCodeAt(i); return u; }
 let subLocal=null;
 async function revisarSub(){ try{ const reg=await navigator.serviceWorker?.getRegistration(); subLocal=await reg?.pushManager?.getSubscription()||null; }catch(e){ subLocal=null; } renderNotif(); }
@@ -1909,11 +1924,64 @@ function openMeta(id){
   $('sheet2').dataset.mid=id||''; openSheet2(); if(!m) setTimeout(()=>$('mtNombre').focus(),250);
 }
 
-function spentOf(f,hormigaMes,mes=mesKey()){
-  const sp=hormigaMes.filter(g=>g.categoria_id===f.id).reduce((s,g)=>s+g.monto,0);
-  const aj=(f.ajuste_mes===mes?(f.ajuste||0):0);
-  return Math.max(0,sp+aj);
+/* ---------- ciclo de cada gasto fijo: cuándo se reinicia lo gastado ---------- */
+const CICLOS=[['mes','Cada mes'],['corte','Día de corte'],['ingreso','Al recibir ingreso']];
+const MESES_C=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const fechaCorta=d=>d.getDate()+' '+MESES_C[d.getMonth()];
+const usaCiclo=f=>(f.ciclo==='corte'&&f.dia_corte>0)||f.ciclo==='ingreso';
+function cicloInfo(f, ref=new Date()){
+  if(f.ciclo==='corte' && f.dia_corte>0){
+    const D=Number(f.dia_corte), dia=(y,m)=>new Date(y,m,Math.min(D,new Date(y,m+1,0).getDate()));
+    let ini=dia(ref.getFullYear(),ref.getMonth()); if(ini>ref) ini=dia(ref.getFullYear(),ref.getMonth()-1);
+    const fin=dia(ini.getFullYear(),ini.getMonth()+1);
+    return {c:'corte', ini, fin, key:'c'+isoDia(ini)};
+  }
+  if(f.ciclo==='ingreso'){
+    const t=gastos.filter(g=>g.tipo==='ingreso').map(g=>new Date(g.fecha)).filter(d=>d<=ref);
+    const ini=t.length? new Date(Math.max(...t)) : new Date(ref.getFullYear(),ref.getMonth(),1);
+    return {c:'ingreso', ini, fin:null, key:'i'+ini.toISOString()};
+  }
+  return {c:'mes', ini:new Date(ref.getFullYear(),ref.getMonth(),1), fin:new Date(ref.getFullYear(),ref.getMonth()+1,1), key:mesKey(ref)};
 }
+/* lo gastado en el periodo, sin el ajuste manual */
+function gastadoReal(f, hormigaMes, mes=mesKey()){
+  if(usaCiclo(f) && mes===mesKey()){
+    const ci=cicloInfo(f), ahora=new Date();
+    const real=gastos.filter(g=>g.tipo==='hormiga'&&g.categoria_id===f.id).filter(g=>{ const d=new Date(g.fecha); return d>=ci.ini && d<=ahora; }).reduce((s,g)=>s+g.monto,0);
+    return {real, ciclo:true, key:ci.key};
+  }
+  return {real:hormigaMes.filter(g=>g.categoria_id===f.id).reduce((s,g)=>s+g.monto,0), ciclo:false, key:mes};
+}
+function spentOf(f,hormigaMes,mes=mesKey()){
+  const r=gastadoReal(f,hormigaMes,mes);
+  const aj = r.ciclo ? (f.ajuste_ciclo===r.key?(f.ajuste||0):0) : (f.ajuste_mes===mes?(f.ajuste||0):0);
+  return Math.max(0,r.real+aj);
+}
+function cicloTexto(f){
+  if(!usaCiclo(f)) return '';
+  const ci=cicloInfo(f);
+  if(ci.c==='corte'){ const hoy=new Date(); hoy.setHours(0,0,0,0); const d=Math.round((ci.fin-hoy)/864e5);
+    return 'Corte el '+f.dia_corte+' de cada mes · se reinicia '+(d<=0?'hoy':d===1?'mañana':'el '+fechaCorta(ci.fin)+' (en '+d+' días)'); }
+  return 'Se reinicia cuando registras un ingreso · va desde el '+fechaCorta(ci.ini);
+}
+/* controles "¿Cuándo se reinicia?" para crear y editar */
+function cicloUI(box, ciclo='mes', dia=''){
+  box.textContent='';
+  const l=document.createElement('label'); l.textContent='¿Cuándo se reinicia lo gastado?';
+  const sg=document.createElement('div'); sg.className='seg three'; sg.style.margin='0';
+  const dw=document.createElement('div'); dw.className='ci-dia';
+  const di=document.createElement('input'); di.className='input'; di.type='number'; di.inputMode='numeric'; di.min='1'; di.max='31'; di.placeholder='16'; di.value=dia||''; di.setAttribute('aria-label','Día de corte');
+  const dl=document.createElement('span'); dl.className='money-note'; dl.style.margin='0'; dl.textContent='Día del mes en que se corta o se paga';
+  dw.append(di,dl);
+  const nota=document.createElement('p'); nota.className='money-note'; nota.style.margin='8px 0 0';
+  const NOTAS={mes:'Vuelve a cero el día 1 de cada mes.',corte:'Vuelve a cero ese día cada mes y te avisamos 2 días antes. Ideal para planes y suscripciones (Claude, Netflix, celular).',ingreso:'Vuelve a cero cada vez que registras un ingreso, como tu quincena. Ideal para gasolina, mercado o transporte.'};
+  let cur=ciclo||'mes';
+  const pintar=()=>{ sg.querySelectorAll('button').forEach(b=>b.setAttribute('aria-selected',b.dataset.ci===cur)); dw.hidden=cur!=='corte'; nota.textContent=NOTAS[cur]; };
+  for(const [k,t] of CICLOS){ const b=document.createElement('button'); b.type='button'; b.textContent=t; b.dataset.ci=k; b.onclick=()=>{ cur=k; pintar(); if(k==='corte') setTimeout(()=>di.focus(),50); }; sg.appendChild(b); }
+  box.append(l,sg,dw,nota); pintar();
+  return ()=>{ const d=parseInt(di.value,10); return {ciclo:cur, dia_corte: cur==='corte' ? d : null, ok: cur!=='corte' || (d>=1&&d<=31)}; };
+}
+let leerCicloNuevo=null;
 const TRASH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
 const PENCIL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
 function renderBudgets(hormigaMes){
@@ -1929,10 +1997,10 @@ function renderFijosConBudget(box, fijos, hormigaMes, mes=mesKey()){
   if(!fijos.length){ const p=document.createElement('p'); p.className='empty'; p.textContent='No tienes gastos fijos registrados. Agrega el primero con +.'; box.appendChild(p); return; }
   for(const f of [...fijos].sort((a,b)=>b.monto-a.monto)){
     const sp=spentOf(f,hormigaMes,mes);
-    box.appendChild(budgetRow(f,sp,false));
+    box.appendChild(budgetRow(f,sp,false,mes===mesKey()));
   }
 }
-function budgetRow(f, spent, compact){
+function budgetRow(f, spent, compact, actual){
   const div=document.createElement('div'); div.className='budget';
   const top=document.createElement('div'); top.className='budget-top';
   const b=document.createElement('b'); b.textContent=f.nombre;
@@ -1953,6 +2021,8 @@ function budgetRow(f, spent, compact){
   else if(over){ sm.textContent='Te pasaste '+fmt(spent-f.monto)+' · gastaste '+fmt(spent); sm.className='over'; }
   else { sm.textContent='Gastaste '+fmt(spent)+' · te quedan '+fmt(f.monto-spent); }
   div.appendChild(sm);
+  const ct=actual!==false ? cicloTexto(f) : '';
+  if(ct){ const c=document.createElement('small'); c.className='ciclo-sub'; c.textContent=ct; div.appendChild(c); }
   return div;
 }
 function renderAnalisis(){
@@ -2623,6 +2693,9 @@ async function guardar(tipo, nombre, monto){
     r = await sb.from('prestamos').insert({direccion:sheetDir, persona:nombre, monto, fecha_limite:$('shFecha').value||null, cuenta_id}); }
   else { if(!nombre){ toast(tipo==='ingreso'?'Escribe de dónde vino la plata.':'Escribe en qué fue el gasto.',true); return false; }
     const row = {nombre,monto,tipo,cuenta_id};
+    if(tipo==='fijo' && leerCicloNuevo){ const ci=leerCicloNuevo();
+      if(!ci.ok){ toast('Escribe el día de corte (del 1 al 31).',true); return false; }
+      if(ci.ciclo!=='mes'){ row.ciclo=ci.ciclo; row.dia_corte=ci.dia_corte; } }
     if(tipo==='hormiga' && catSel) row.categoria_id = catSel;
     const fv=$('shFechaMov').value; if(fv && tipo!=='fijo') row.fecha=new Date(fv+'T12:00:00').toISOString();
     r = await sb.from('gastos').insert(row); }
@@ -2706,6 +2779,7 @@ function setType(t){
   $('shMetaWrap').hidden = t!=='ahorro' || !metas.length; $('shFechaMovWrap').hidden = !(t==='hormiga'||t==='ingreso');
   renderMetaPicks();
   $('shCatWrap').hidden = t!=='hormiga' || !gastos.filter(g=>g.tipo==='fijo').length;
+  $('shCicloWrap').hidden = t!=='fijo'; leerCicloNuevo = t==='fijo' ? cicloUI($('shCicloWrap')) : null;
   renderCatPicks();
   updCuentaLbl(); renderPicks();
   $('sheetTitle').textContent = t==='ahorro' ? 'Guardar ahorro' : t==='fijo' ? 'Nuevo gasto fijo' : t==='prestamo' ? 'Nuevo préstamo' : t==='abono' ? $('sheetTitle').textContent : t==='ingreso' ? 'Nuevo ingreso' : 'Nuevo gasto';
@@ -2759,9 +2833,11 @@ function openEditFijo(id){
     if(money){ i.inputMode='numeric'; i.value=val?'$'+dots(val):''; moneyInput(i); } else { i.maxLength=80; i.value=val; }
     w.append(l,i); body.appendChild(w); return i; };
   mk('Nombre','efNombre',f.nombre,false); mk('Presupuesto mensual','efMonto',f.monto,true);
-  const sp=spentOf(f,gastos.filter(g=>g.tipo==='hormiga'&&localMes(g.fecha)===mesSel));
-  mk('Lo que te queda este mes','efQueda',Math.max(0,f.monto-sp),true);
-  const p=document.createElement('p'); p.className='money-note'; p.textContent='Si cambias "lo que te queda", la app ajusta lo gastado de este mes. El mes siguiente vuelve al presupuesto completo.'; body.appendChild(p);
+  const sp=spentOf(f,gastos.filter(g=>g.tipo==='hormiga'&&localMes(g.fecha)===mesSel),mesSel);
+  mk(usaCiclo(f)&&mesSel===mesKey()?'Lo que te queda en este periodo':'Lo que te queda este mes','efQueda',Math.max(0,f.monto-sp),true);
+  const p=document.createElement('p'); p.className='money-note'; p.textContent='Si cambias "lo que te queda", la app ajusta lo gastado del periodo actual. Cuando se reinicia, vuelve al presupuesto completo.'; body.appendChild(p);
+  const cw=document.createElement('div'); cw.className='field'; cw.style.margin='4px 0 14px'; body.appendChild(cw);
+  $('sheet2')._ciclo=cicloUI(cw, f.ciclo||'mes', f.dia_corte||'');
   $('sheet2').dataset.fid=id; openSheet2();
 }
 function openPasar(){
@@ -2830,15 +2906,19 @@ $('sheet2').addEventListener('submit',async e=>{
       const nombre=$('efNombre').value.trim(); const monto=parse($('efMonto').value);
       if(!nombre||!monto){ toast('Pon nombre y monto.',true); btn.disabled=false; return; }
       const hm=gastos.filter(g=>g.tipo==='hormiga'&&localMes(g.fecha)===mesSel);
-      const real=hm.filter(g=>g.categoria_id===id).reduce((s,g)=>s+g.monto,0);
+      const ci=$('sheet2')._ciclo(); if(!ci.ok){ toast('Escribe el día de corte (del 1 al 31).',true); btn.disabled=false; return; }
       const quedaIn=$('efQueda').value; const queda=parse(quedaIn);
       const upd={nombre,monto};
-      const quedaAntes=Math.max(0,f.monto-spentOf(f,hm));
-      if(queda!==quedaAntes || monto!==f.monto){
-        const q = queda!==quedaAntes ? queda : Math.max(0,monto-spentOf(f,hm));
-        upd.ajuste=(monto-q)-real; upd.ajuste_mes=mesSel;
-      }
-      const {error}=await sb.from('gastos').update(upd).eq('id',id); if(error) throw error;
+      const cambiaCiclo = (ci.ciclo||'mes')!==(f.ciclo||'mes') || (ci.ciclo==='corte' && Number(f.dia_corte)!==ci.dia_corte);
+      if(cambiaCiclo){ upd.ciclo=ci.ciclo; upd.dia_corte=ci.dia_corte; }
+      const quedaAntes=Math.max(0,f.monto-spentOf(f,hm,mesSel));
+      if(!cambiaCiclo && (queda!==quedaAntes || monto!==f.monto)){
+        const r=gastadoReal(f,hm,mesSel);
+        const q = queda!==quedaAntes ? queda : Math.max(0,monto-spentOf(f,hm,mesSel));
+        upd.ajuste=(monto-q)-r.real;
+        if(r.ciclo){ upd.ajuste_ciclo=r.key; upd.ajuste_mes=null; } else upd.ajuste_mes=mesSel;
+      } else if(cambiaCiclo){ upd.ajuste=0; upd.ajuste_mes=null; upd.ajuste_ciclo=null; }
+      const {error}=await sb.from('gastos').update(upd).eq('id',id); if(error){ dbErr(error); btn.disabled=false; return; }
       toast('Gasto fijo actualizado');
     } else if(s2Mode==='pasar'){
       const {desde,hacia}=$('sheet2')._get(); const m=parse($('s2Monto').value);

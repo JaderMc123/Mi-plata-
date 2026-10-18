@@ -25,7 +25,7 @@ type Alerta = { clave: string; tipo: string; title: string; body: string; prio: 
 
 async function alertasDe(uid: string, hoyCo: string, ahora: Date): Promise<Alerta[]> {
   const [g, a, p, ab, m] = await Promise.all([
-    db.from('gastos').select('id,nombre,monto,tipo,fecha').eq('user_id', uid),
+    db.from('gastos').select('id,nombre,monto,tipo,fecha,categoria_id').eq('user_id', uid),
     db.from('ahorros').select('id,monto,fecha,meta_id').eq('user_id', uid),
     db.from('prestamos').select('id,direccion,persona,monto,fecha_limite').eq('user_id', uid),
     db.from('prestamo_abonos').select('prestamo_id,monto').eq('user_id', uid),
@@ -90,6 +90,26 @@ async function alertasDe(uid: string, hoyCo: string, ahora: Date): Promise<Alert
       out.push({ clave: 'meta-' + mt.id, tipo: 'metas', prio: 2, title: `Te toca tu aporte para "${mt.nombre}"`, body: `${fmt(Number(mt.aporte_monto || mt.aporte))} ${por}. Guárdalo hoy y sigue sumando.` });
     }
   }
+  // 5. Cortes de gastos fijos (planes, suscripciones): el día del corte y 2 días antes
+  const fx = await db.from('gastos').select('id,nombre,monto,dia_corte,ajuste,ajuste_ciclo').eq('user_id', uid).eq('tipo', 'fijo').eq('ciclo', 'corte');
+  if (!fx.error) {
+    for (const f of fx.data || []) {
+      const D = Number(f.dia_corte); if (!(D > 0)) continue;
+      const dia = (y: number, m: number) => { const last = new Date(Date.UTC(y, m + 1, 0)).getUTCDate(); return new Date(Date.UTC(y, m, Math.min(D, last))); };
+      let ini = dia(hoy.getUTCFullYear(), hoy.getUTCMonth());
+      if (ini > hoy) ini = dia(hoy.getUTCFullYear(), hoy.getUTCMonth() - 1);
+      const fin = dia(ini.getUTCFullYear(), ini.getUTCMonth() + 1);
+      const dIni = Math.round((ini.getTime() - hoy.getTime()) / 864e5), dFin = Math.round((fin.getTime() - hoy.getTime()) / 864e5);
+      const desde = ini.getTime() - TZ; // medianoche de Colombia
+      const key = 'c' + ini.toISOString().slice(0, 10);
+      const sp = gastos.filter((x) => x.tipo === 'hormiga' && x.categoria_id === f.id)
+        .filter((x) => { const t = new Date(x.fecha).getTime(); return t >= desde && t <= ahora.getTime(); })
+        .reduce((s, x) => s + Number(x.monto), 0) + (f.ajuste_ciclo === key ? Number(f.ajuste || 0) : 0);
+      const monto = Number(f.monto);
+      if (dIni === 0 && sp < monto) out.push({ clave: 'corte-' + f.id, tipo: 'fijos', prio: 1, title: `Hoy es el corte de ${f.nombre}`, body: `Toca pagar ${fmt(monto - Math.max(0, sp))}. Cuando lo pagues, regístralo en la app.` });
+      else if (dFin >= 1 && dFin <= 2) out.push({ clave: 'corte-' + f.id, tipo: 'fijos', prio: 2, title: `${f.nombre} se corta ${dFin === 1 ? 'mañana' : 'en 2 días'}`, body: `Ten listos ${fmt(monto)}.` });
+    }
+  }
   return out.sort((x, y) => x.prio - y.prio);
 }
 
@@ -110,7 +130,7 @@ Deno.serve(async (req) => {
   for (const u of usuarios || []) {
     const { data: subs } = await db.from('push_subs').select('id,endpoint,p256dh,auth').eq('user_id', u.user_id);
     if (!subs?.length) continue;
-    let tipos: Record<string, boolean> = { registro: true, deudas: true, plantillas: true, metas: true };
+    let tipos: Record<string, boolean> = { registro: true, deudas: true, plantillas: true, metas: true, fijos: true };
     try { tipos = { ...tipos, ...JSON.parse(u.notif_tipos || '{}') }; } catch (_) { /* usar valores por defecto */ }
     const todas = (await alertasDe(u.user_id, hoyCo, ahora)).filter((x) => tipos[x.tipo] !== false);
     const nuevas: Alerta[] = [];
